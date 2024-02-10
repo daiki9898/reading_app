@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+	<title>読書リスト</title>
+	<style>
+		@media (max-width: 575px) {
+			.card-img-top {
+				height: 20rem !important;
+			}
+		}
+    </style>
+</head>
+<body>
+	<div th:replace="~{reading-booklist::header}"></div>
+	<div class="container">
+		<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4">
+            <div th:each="book,iterStat : ${bookList}" th:object="${book}" class="col">
+				<div class="card h-100">
+	                <img th:src="*{imgFile}" class="card-img-top" style="height: 12rem;">
+					<div class="modal" th:id="'deletemodal-' + ${iterStat.index}" tabindex="-1">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title">本の削除</h5>
+									<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+								</div>
+								<div class="modal-body">
+		        					<p>削除してもよろしいですか？</p>
+		        				</div>
+		        				<div class="modal-footer">
+									<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
+									<a class="btn btn-danger" th:href="@{/user/update/execute-delete(id=*{bookId})}" role="button">削除</a>
+								</div>
+							</div>
+						</div>
+					</div> 
+					<button type="button" class="btn-close position-absolute top-0 end-0" data-bs-toggle="modal" data-bs-target="#deletemodal" th:attr="data-bs-target='#deletemodal-' + ${iterStat.index}" aria-label="Close"></button>
+	                <div class="card-body">
+						<h5 class="card-title" th:text="*{title}"></h5>
+						<a th:href="@{/user/book-detail(id=*{bookId})}" style="text-decoration: none;">詳細</a>
+	                </div>
+	                <div class="card-footer">
+						<small class="text-body-secondary">From </small><small class="text-body-secondary" th:text="*{#temporals.format(startDate, 'yyyy/MM/dd')}"></small>
+	                </div>
+              	</div>
+            </div>
+		</div>
+		<a class="icon-link icon-link-hover mt-4" style="--bs-icon-link-transform: translate3d(0, -.125rem, 0);" href="/user/update/display-registerform">
+			<i class="fs-5 bi bi-plus-square"></i>
+		</a>
+	</div>
+	<!-- Bootstrap js -->
+	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js" integrity="sha384-fbbOQedDUMZZ5KreZpsbe1LCZPVmfTnH7ois6mU1QK+m14rQ1l2bGBq41eYeM/fS" crossorigin="anonymous"></script>
+	<!-- js -->
+	<script type="text/javascript">
+	 	// modalを開いた状態をデフォルトに
+	    document.addEventListener("DOMContentLoaded", function() {
+	        const searchBox = document.getElementById("search-box");
+	        searchBox.click();
+	    });
+	</script>
+</body>
+</html>

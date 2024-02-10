@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+	<title>読書リスト</title>
+	<style>
+		@media (max-width: 575px) {
+			.card-img-top {
+				height: 20rem !important;
+			}
+		}
+    </style>
+</head>
+<body>
+	<!-- navbar -->
+	<nav class="navbar navbar-expand-md bg-info mb-5" th:fragment="header" style="--bs-navbar-color: rgba(255, 255, 255, 0.55);
+	    --bs-navbar-hover-color: rgba(255, 255, 255, 0.75);
+	    --bs-navbar-disabled-color: rgba(255, 255, 255, 0.25);
+	    --bs-navbar-active-color: #fff;
+	    --bs-navbar-brand-color: #fff;
+	    --bs-navbar-brand-hover-color: #fff;
+	    --bs-navbar-toggler-border-color: rgba(255, 255, 255, 0.1);">
+		<div class="container-fluid">
+			<a class="navbar-brand" href="/user/home">
+				<i class="bi bi-book d-inline-block align-text-top" alt="Logo"></i>
+				My Library
+			</a>
+		    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon" style="background-image: url('data:image/svg+xml,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 30 30\'%3e%3cpath stroke=\'rgba%28255, 255, 255, 0.55%29\' stroke-linecap=\'round\' stroke-miterlimit=\'10\' stroke-width=\'2\' d=\'M4 7h22M4 15h22M4 23h22\'/%3e%3c/svg%3e');"></span>
+		    </button>
+		    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+				<ul class="navbar-nav">
+					<li class="nav-item">
+						<a class="nav-link active" aria-current="page" href="/user/home">Home</a>
+					</li>
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">書籍一覧</a>
+						<ul class="dropdown-menu">
+							<li><a class="dropdown-item" href="/user/home">読書中</a></li>
+							<li><a class="dropdown-item" href="/user/finished-booklist">読了済み</a></li>
+						</ul>
+					</li>
+				</ul>
+				<!-- 検索ボックス -->
+				<div id="search-box" class="position-absolute" style="right: 50%; transform: translateX(50%);" data-bs-toggle="modal" data-bs-target="#searchModal">
+					<input class="form-control" type="search" placeholder="検索" aria-label="Search">
+					<span class="position-absolute top-50 translate-middle" style="right: 0%;"><i class="bi bi-search text-secondary"></i></span>
+				</div>
+				<div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h1 class="modal-title fs-5" id="searchModalLabel">読書リスト検索</h1>
+								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+							</div>
+							<div class="modal-body">
+								<form th:action="@{/user/search-reading-booklist}" method="post">
+									<div id="inputHelp" class="text-danger text-center">最低1項目の入力が必要です</div>
+			         				<div class="mb-3">
+							            <label for="book-title" class="col-form-label">タイトル</label>
+							            <input type="text" class="form-control" id="book-title" th:field="${searchInput.title}">
+						         	</div>
+						         	<div class="mb-3">
+							            <select class="form-select" aria-label="Book genre select" th:field="${searchInput.genre}">
+											<option selected value="">本のジャンルを選んでください</option>
+											<option value="小説">小説</option>
+											<option value="ミステリー/サスペンス">ミステリー/サスペンス</option>
+											<option value="SF/ファンタジー">SF/ファンタジー</option>
+											<option value="ロマンス">ロマンス</option>
+											<option value="歴史/自伝">歴史/自伝</option>
+											<option value="自己啓発">自己啓発</option>
+											<option value="お金">お金</option>
+											<option value="学習">学習</option>
+											<option value="コミック">コミック</option>
+											<option value="その他">その他</option>
+										</select>
+			         				</div>
+			         				<div class="mb-3">
+							            <label for="book-author" class="col-form-label">著者</label>
+							            <input type="text" class="form-control" id="book-author" th:field="${searchInput.author}">
+			         				</div>
+			         				<div class="mb-3">
+							            <label for="rough-start-date" class="col-form-label">開始日</label>
+							            <input type="month" class="form-control" id="rough-start-date" th:field="${searchInput.roughStartDate}">
+			         				</div>
+			         				<div class="mb-3">
+							            <label for="specific-start-date" class="col-form-label">詳細日程</label>
+							            <input type="date" class="form-control" id="specific-start-date" th:field="${searchInput.specificStartDate}">
+			         				</div>
+			         				 <span id="dateHelp" class="form-text">指定した日付以降に登録した本を表示します</span>
+		      				</div>
+		     				<div class="modal-footer">
+						        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
+						        <input type="submit" class="btn btn-primary" value="検索"></form>
+		      				</div>
+	    				</div>
+	 				</div>
+				</div>
+				<!-- プロフィールアイコン -->
+				<div class="ms-auto me-2">
+					<div class="drop-down position-relative" style="color: white;">
+						<div class="dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+							<i class="text-light fs-2 position-relative bi bi-person-circle" id="profile" style="opacity: 0.9;">
+								<span class="position-absolute translate-middle border border-info rounded-circle hover" style="background-color: rgb(6, 255, 58); top: 15%; left: 72%; padding: 0.4rem;">
+									<span class="visually-hidden">User Profile</span>
+								</span>
+						  	</i>
+					  	</div>
+					  	<ul class="dropdown-menu text-center" id="custom-dropdown">
+							  <li class="dropdown-item"><p>ユーザー名</p></li>
+							  <li class="dropdown-item"><p>読書中の本</p></li>
+							  <li class="dropdown-item"><p>今まで読んだ本</p></li>
+							  <li><hr class="dropdown-divider"></li>
+							  <li><a class="btn btn-secondary" href="/logout">ログアウト</a></li>
+					 	</ul>
+					 	<script type="text/javascript">
+						 	// hover effect
+						 	const point = document.getElementById("profile");
+						 	point.addEventListener("mouseover", () => {
+								 point.style.opacity = 1;
+						 	});
+						 	point.addEventListener("mouseleave", () => {
+								 point.style.opacity = 0.9;
+						 	});
+						 	// ドロップダウン位置調整
+						 	const dropdownMenu = document.getElementById("custom-dropdown");
+						 	const mediaQuery = window.matchMedia("(min-width: 768px)");
+						 	function adjustDropdownMenuPosition() {
+								 if (mediaQuery.matches) {
+									 dropdownMenu.style.left = "-200%";
+								} else {
+									dropdownMenu.style.left = "auto";
+							 	}
+						  	}
+						 	window.addEventListener("resize", adjustDropdownMenuPosition);
+						 	adjustDropdownMenuPosition();
+					 	</script>
+				 	</div>
+			 	</div>
+		    </div>
+	    </div>
+	</nav>
+	<!-- navbar終わり -->
+	<div class="container">
+		<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4">
+            <div th:each="book,iterStat : ${bookList}" th:object="${book}" class="col">
+				<div class="card h-100">
+	                <img th:src="*{imgFile}" class="card-img-top" style="height: 12rem;">
+					<div class="modal" th:id="'deletemodal-' + ${iterStat.index}" tabindex="-1">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title">本の削除</h5>
+									<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+								</div>
+								<div class="modal-body">
+		        					<p>削除してもよろしいですか？</p>
+		        				</div>
+		        				<div class="modal-footer">
+									<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
+									<a class="btn btn-danger" th:href="@{/user/update/execute-delete(id=*{bookId})}" role="button">削除</a>
+								</div>
+							</div>
+						</div>
+					</div> 
+					<button type="button" class="btn-close position-absolute top-0 end-0" data-bs-toggle="modal" data-bs-target="#deletemodal" th:attr="data-bs-target='#deletemodal-' + ${iterStat.index}" aria-label="Close"></button>
+	                <div class="card-body">
+						<h5 class="card-title" th:text="*{title}"></h5>
+						<a th:href="@{/user/book-detail(id=*{bookId})}" style="text-decoration: none;">詳細</a>
+	                </div>
+	                <div class="card-footer">
+						<small class="text-body-secondary">From </small><small class="text-body-secondary" th:text="*{#temporals.format(startDate, 'yyyy/MM/dd')}"></small>
+	                </div>
+              	</div>
+            </div>
+		</div>
+		<a class="icon-link icon-link-hover mt-4" style="--bs-icon-link-transform: translate3d(0, -.125rem, 0);" href="/user/update/display-registerform">
+			<i class="fs-5 bi bi-plus-square"></i>
+		</a>
+	</div>
+	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js" integrity="sha384-fbbOQedDUMZZ5KreZpsbe1LCZPVmfTnH7ois6mU1QK+m14rQ1l2bGBq41eYeM/fS" crossorigin="anonymous"></script>
+</body>
+</html>
