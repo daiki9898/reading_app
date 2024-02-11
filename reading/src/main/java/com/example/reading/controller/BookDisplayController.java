@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -56,8 +57,8 @@ public class BookDisplayController {
 		return "reading-booklist";
 	}
 	
-	@GetMapping("/book-detail")
-	public String displayDetail(@RequestParam String id, Model model) throws NumberFormatException {
+	@GetMapping("/book-detail/{id}")
+	public String displayDetail(@PathVariable String id, Model model) throws NumberFormatException {
 		EditBookInput editBookInput = bookService.findById(Integer.valueOf(id));
 		model.addAttribute("editBookInput", editBookInput);
 		return "book-detail";
@@ -73,8 +74,8 @@ public class BookDisplayController {
 		return "finished-booklist";
 	}
 	
-	@GetMapping("/finished-book-detail")
-	public String displayFinishedDetail(@RequestParam String id, Model model) throws NumberFormatException {
+	@GetMapping("/finished-book-detail/{id}")
+	public String displayFinishedDetail(@PathVariable String id, Model model) throws NumberFormatException {
 		FinishedEditBookInput finishedEditBookInput = bookService.findFinishedBookById(Integer.valueOf(id));
 		model.addAttribute("finishedEditBookInput", finishedEditBookInput);
 		return "finished-book-detail";

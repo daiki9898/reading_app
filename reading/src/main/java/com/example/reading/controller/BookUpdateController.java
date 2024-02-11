@@ -49,20 +49,6 @@ public class BookUpdateController {
 		return "registerform";
 	}
 	
-	@GetMapping("/display-editform")
-	public String displayEditForm(@RequestParam String id, Model model) throws NumberFormatException {
-		EditBookInput editBookInput = bookService.findById(Integer.valueOf(id));
-		model.addAttribute("editBookInput", editBookInput);
-		return "editform";
-	}
-	
-	@GetMapping("/display-finished-editform")
-	public String displayFinishedEditForm(@RequestParam String id, Model model) throws NumberFormatException {
-		FinishedEditBookInput finishedEditBookInput = bookService.findFinishedBookById(Integer.valueOf(id));
-		model.addAttribute("finishedEditBookInput", finishedEditBookInput);
-		return "finished-editform";
-	}
-	
 	@GetMapping("/execute-delete")
 	public String executeDelete(@RequestParam String id) throws NumberFormatException {
 		Integer bookId = Integer.valueOf(id);
@@ -94,9 +80,11 @@ public class BookUpdateController {
 	}
 	
 	@PostMapping("/execute-edit")
-	public String executeEdit(@RequestParam(name = "isFinished", required = false, defaultValue = "no") String isFinished, @Validated EditBookInput editBookInput, BindingResult bindingResult) {
+	public String executeEdit(@RequestParam(name = "isFinished", required = false, defaultValue = "no") String isFinished, @Validated EditBookInput editBookInput, BindingResult bindingResult, Model model) {
 		if (bindingResult.hasErrors()) {
-			return "editform";
+			EditBookInput nowBook = bookService.findById(editBookInput.getBookId());
+			model.addAttribute("nowBook", nowBook);
+			return "edit-error";
 		}
 		readingListService.update(editBookInput);
         Integer userId = getUserId();
@@ -106,13 +94,15 @@ public class BookUpdateController {
 			finishedListService.toFinishedList(readingListRegistration);
 			return "redirect:/user/home";
 		}
-		return "redirect:/user/book-detail?id=" + editBookInput.getBookId();
+		return "redirect:/user/book-detail/" + editBookInput.getBookId();
 	}
 	
 	@PostMapping("/execute-edit-finishedbook")
-	public String executeEditFinishedBook(@RequestParam(name = "isFinished", required = false, defaultValue = "no") String isFinished, @Validated FinishedEditBookInput finishedEditBookInput, BindingResult bindingResult) {
+	public String executeEditFinishedBook(@RequestParam(name = "isFinished", required = false, defaultValue = "no") String isFinished, @Validated FinishedEditBookInput finishedEditBookInput, BindingResult bindingResult, Model model) {
 		if (bindingResult.hasErrors()) {
-			return "finished-editform";
+			FinishedEditBookInput nowBook = bookService.findFinishedBookById(finishedEditBookInput.getBookId());
+			model.addAttribute("nowBook", nowBook);
+			return "finished-edit-error";
 		}
 		finishedListService.update(finishedEditBookInput);
 		Integer userId = getUserId();
@@ -122,6 +112,6 @@ public class BookUpdateController {
 			readingListService.toReadingList(finishedListRegistration);
 			return "redirect:/user/finished-booklist";
 		}
-		return "redirect:/user/finished-book-detail?id=" + finishedEditBookInput.getBookId();
+		return "redirect:/user/finished-book-detail/" + finishedEditBookInput.getBookId();
 	}
 }

@@ -57,7 +57,7 @@
 								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 							</div>
 							<div class="modal-body">
-								<form th:action="@{/user/search-finished-booklist}" method="post">
+								<form id="search-form" th:action="@{/user/search-finished-booklist}" method="post">
 									<div id="inputHelp" class="text-danger text-center">最低1項目の入力が必要です</div>
 			         				<div class="mb-3">
 							            <label for="book-title" class="col-form-label">タイトル</label>
@@ -95,10 +95,11 @@
 							            <input type="date" class="form-control" id="specific-end-date" th:field="${finishedSearchInput.specificEndDate}">
 			         				</div>
 			         				 <span id="dateHelp" class="form-text">読み終えた日付で検索します</span>
+			         			</form>
 		      				</div>
 		     				<div class="modal-footer">
 						        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
-						        <input type="submit" class="btn btn-primary" value="検索"></form>
+						        <button type="submit" form="search-form" class="btn btn-primary">検索</button>
 		      				</div>
 	    				</div>
 	 				</div>
@@ -172,7 +173,8 @@
 					</div> 
 					<button type="button" class="btn-close position-absolute top-0 end-0" data-bs-toggle="modal" data-bs-target="#deletemodal" th:attr="data-bs-target='#deletemodal-' + ${iterStat.index}" aria-label="Close"></button>
 	                <div class="card-body">
-						<h5 class="card-title" th:text="*{title}"></h5><a th:href="@{/user/finished-book-detail(id=*{bookId})}" style="text-decoration: none;">詳細</a>
+						<h5 class="card-title" th:text="*{title}"></h5>
+						<a th:href="@{'/user/finished-book-detail/' + *{bookId}}" style="text-decoration: none;">詳細</a>
 	                </div>
 	                <div class="card-footer">
 						<small class="text-body-secondary" th:text="*{#temporals.format(startDate, 'yyyy/MM/dd')}"></small><small> 〜 </small><small class="text-body-secondary" th:text="*{#temporals.format(endDate, 'yyyy/MM/dd')}"></small>
