@@ -10,7 +10,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
@@ -49,9 +51,12 @@ public class SecurityConfig {
 		http
 			.authenticationProvider(customAuthenticationProvider)
 			.cors(customizer -> customizer.configurationSource(corsConfigurationSource()))
-			.csrf(csrf -> csrf.disable())
+			.csrf(csrf -> csrf
+					.csrfTokenRepository(new HttpSessionCsrfTokenRepository())
+					.ignoringRequestMatchers(new AntPathRequestMatcher("/register-user"))
+			)
 			.authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
-				.requestMatchers("/", "/register-user", "/login").permitAll()
+				.requestMatchers("/", "/register-user", "/login", "/timeout").permitAll()
 				.anyRequest().authenticated()
 			)
 			.formLogin((formLogin) -> formLogin

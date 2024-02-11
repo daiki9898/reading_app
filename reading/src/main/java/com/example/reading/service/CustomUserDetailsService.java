@@ -21,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 @Transactional
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
+	
 	private final AccountRepository accountRepository;
 	private final PasswordEncoder passwordEncoder;
 	
@@ -38,11 +39,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 	
 	public void insert(UserRegistrationInput userInput) {
 		String hashedPassword = passwordEncoder.encode(userInput.getPassword());
-//		Account account = new Account();
-//		account.setUserName(userInput.getUserName());
-//		account.setPassword(hashedPassword);
-//		account.setRegisteredDate(LocalDateTime.now());
-//		account.setRole(UserRole.USER);
 		accountRepository.customSave(userInput.getUsername(), hashedPassword);
 	}
 	

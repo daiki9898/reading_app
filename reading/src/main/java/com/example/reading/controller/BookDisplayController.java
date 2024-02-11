@@ -10,13 +10,10 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.MissingServletRequestParameterException;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.reading.dto.BookResult;
 import com.example.reading.input.EditBookInput;
@@ -34,12 +31,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/user")
 public class BookDisplayController {
+	
 	private final CustomUserDetailsService userService;
 	private final FinishedListService finishedListService;
 	private final BookService bookService;
 	private final ReadingListService readingListService;
 	
-	// userIdを取得する関数
+	// get userid method
 	public Integer getUserId() {
 		SecurityContext context = SecurityContextHolder.getContext();
 		Authentication authentication = context.getAuthentication();
@@ -58,7 +56,7 @@ public class BookDisplayController {
 	}
 	
 	@GetMapping("/book-detail/{id}")
-	public String displayDetail(@PathVariable String id, Model model) throws NumberFormatException {
+	public String displayDetail(Model model, @PathVariable String id) throws NumberFormatException {
 		EditBookInput editBookInput = bookService.findById(Integer.valueOf(id));
 		model.addAttribute("editBookInput", editBookInput);
 		return "book-detail";
@@ -75,7 +73,7 @@ public class BookDisplayController {
 	}
 	
 	@GetMapping("/finished-book-detail/{id}")
-	public String displayFinishedDetail(@PathVariable String id, Model model) throws NumberFormatException {
+	public String displayFinishedDetail(Model model, @PathVariable String id) throws NumberFormatException {
 		FinishedEditBookInput finishedEditBookInput = bookService.findFinishedBookById(Integer.valueOf(id));
 		model.addAttribute("finishedEditBookInput", finishedEditBookInput);
 		return "finished-book-detail";
@@ -83,7 +81,7 @@ public class BookDisplayController {
 	
 	// 読書リスト検索関係
 	@PostMapping("/search-reading-booklist")
-	public String searchBook(SearchInput searchInput, Model model) throws IOException {
+	public String searchBook(Model model, SearchInput searchInput) throws IOException {
 		if (searchInput == null) {
 			return "redirect:/user/home";
 		}
@@ -93,7 +91,7 @@ public class BookDisplayController {
 		YearMonth roughStartDate = searchInput.getRoughStartDate();
 		LocalDate specificStartDate = searchInput.getSpecificStartDate();
 		if (title.isBlank() && genre.isEmpty() && author.isBlank() && roughStartDate == null && specificStartDate == null) {
-			return "redirect:/user/search-reading-booklist?error";
+			return "redirect:/user/search-reading-booklist-error";
 		}
 		Integer userId = getUserId();
 		List<BookResult> searchBookList = readingListService.searchBook(userId, searchInput);
@@ -102,8 +100,8 @@ public class BookDisplayController {
 		return "search/search-result";
 	}
 	
-	@GetMapping("/search-reading-booklist")
-	public String showSearchError(@RequestParam(name = "error", required = true) String error, Model model) throws IOException {
+	@GetMapping("/search-reading-booklist-error")
+	public String showSearchError(Model model) throws IOException {
 		Integer userId = getUserId();
 		List<BookResult> bookList = readingListService.findAll(userId);
 		model.addAttribute("bookList", bookList);
@@ -112,15 +110,9 @@ public class BookDisplayController {
 		return "search/search-result-error";
 	}
 	
-	// 後々、@GetMapping("/search-finsihed-booklist")と分ける
-	@ExceptionHandler(MissingServletRequestParameterException.class)
-	public String handleMissingParameter(MissingServletRequestParameterException e) {
-		return "redirect:/user/home";
-	}
-	
-	// 本棚(読了済みリスト検索関係)
+    // 本棚(読了済みリスト検索関係)
 	@PostMapping("/search-finished-booklist")
-	public String searchFinishedBook(FinishedSearchInput finishedSearchInput, Model model) throws IOException {
+	public String searchFinishedBook(Model model, FinishedSearchInput finishedSearchInput) throws IOException {
 		if (finishedSearchInput == null) {
 			return "redirect:/user/finished-booklist";
 		}
@@ -131,7 +123,7 @@ public class BookDisplayController {
 		YearMonth roughEndDate = finishedSearchInput.getRoughEndDate();
 		LocalDate specificEndDate = finishedSearchInput.getSpecificEndDate();
 		if (title.isBlank() && genre.isEmpty() && author.isBlank() && roughStartDate == null && roughEndDate == null && specificEndDate == null) {
-			return "redirect:/user/search-finished-booklist?error";
+			return "redirect:/user/search-finished-booklist-error";
 		}
 		Integer userId = getUserId();
 		List<BookResult> finishedSearchBookList = finishedListService.searchBook(userId, finishedSearchInput);
@@ -140,8 +132,8 @@ public class BookDisplayController {
 		return "search/finished-search-result";
 	}
 	
-	@GetMapping("/search-finished-booklist")
-	public String showFinishedSearchError(@RequestParam(name = "error", required = true) String error, Model model) throws IOException {
+	@GetMapping("/search-finished-booklist-error")
+	public String showFinishedSearchError(Model model) throws IOException {
 		Integer userId = getUserId();
 		List<BookResult> finishedBookList = finishedListService.findAll(userId);
 		model.addAttribute("finishedBookList", finishedBookList);

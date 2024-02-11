@@ -34,6 +34,7 @@ import lombok.RequiredArgsConstructor;
 @Transactional
 @RequiredArgsConstructor
 public class BookService {
+	
 	private final BookRepository bookRepository;
 	private final ReadingRegistrationRepository readingRepository;
 	private final FinishedRegistrationRepository finishedRepository;
@@ -129,7 +130,6 @@ public class BookService {
 		book.setAuthor(editBookInput.getAuthor());
 		book.setGenre(editBookInput.getGenre());
 		book.setComment(editBookInput.getComment());
-//		author, genre追加予定
 		if (!(editBookInput.getImgFile().isEmpty())) {
 			if (!(nowBook.getImgSrc().equals(defaultPath))) {
 				File file = new File(nowBook.getImgSrc());
@@ -170,7 +170,6 @@ public class BookService {
 		book.setAuthor(finishedEditBookInput.getAuthor());
 		book.setGenre(finishedEditBookInput.getGenre());
 		book.setComment(finishedEditBookInput.getComment());
-//		author, genre追加予定
 		if (!(finishedEditBookInput.getImgFile().isEmpty())) {
 			if (!(nowBook.getImgSrc().equals(defaultPath))) {
 				File file = new File(nowBook.getImgSrc());

@@ -1,5 +1,7 @@
 package com.example.reading.controller;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -11,13 +13,18 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.reading.input.UserRegistrationInput;
 import com.example.reading.service.CustomUserDetailsService;
+import com.example.reading.service.UserStatusService;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequiredArgsConstructor
 public class AuthenticationController {
+	
 	private final CustomUserDetailsService userService;
+	private final UserStatusService userStatusService;
 	
 	@GetMapping("/register-user")
 	public String displayUserForm(Model model) {
@@ -26,16 +33,20 @@ public class AuthenticationController {
 	}
 	
 	@GetMapping("/login")
-	public String displayLoginForm(@RequestParam(name = "error", required = false) String error, Model model) {
+	public String displayLoginForm(@RequestParam(name = "error", required = false) String error, @RequestParam(name = "timeout", required = false) String isTimeout, Model model) {
 		if (error != null) {
 			model.addAttribute("errorMessage", "ログインに失敗しました");
+		} else if (isTimeout != null) {
+			return "timeout";
 		}
 		return "login";
 	}
 	
 	@GetMapping("/timeout")
-	public String displayTimeoutPage() {
-		return "timeout";
+	public String displayTimeoutPage(Authentication authentication, HttpServletRequest request, HttpServletResponse response) {
+		SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();
+		logoutHandler.logout(request, response, authentication);
+		return "redirect:/login?timeout";
 	}
 	
 	@PostMapping("/register-user")
@@ -48,6 +59,7 @@ public class AuthenticationController {
 			return "user-registerform";
 		}
 		userService.insert(userInput);
+		userStatusService.insert(userService.getUserIdbyUsername(userInput.getUsername()));
 		redirectAttributes.addFlashAttribute("successMessage", "successMessage");
 		return "redirect:/login";
 	}

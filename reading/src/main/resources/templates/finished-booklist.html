@@ -114,12 +114,12 @@
 								</span>
 						  	</i>
 					  	</div>
-					  	<ul class="dropdown-menu text-center" id="custom-dropdown">
-							  <li class="dropdown-item"><p>ユーザー名</p></li>
-							  <li class="dropdown-item"><p>読書中の本</p></li>
-							  <li class="dropdown-item"><p>今まで読んだ本</p></li>
-							  <li><hr class="dropdown-divider"></li>
-							  <li><a class="btn btn-secondary" href="/logout">ログアウト</a></li>
+					  	<ul class="dropdown-menu text-center" id="custom-dropdown" th:object="${userProfile}">
+							<li class="dropdown-item"><u>ユーザー名</u><p class="fs-5" th:text="*{username}"></p></li>
+						 	<li class="dropdown-item"><u>読書中の本</u><p><span class="fs-5" th:text="*{readingNumber}"></span><span>冊</span></p></li>
+						 	<li class="dropdown-item"><u>今まで読んだ本</u><div><span class="fs-5" th:text="*{finishedNumber}"></span><span>冊</span></div></li>
+						 	<li><hr class="dropdown-divider"></li>
+							<li><form th:action="@{/logout}" method="post"><button type="submit" class="btn btn-secondary">ログアウト</button></form></li>
 					 	</ul>
 					 	<script type="text/javascript">
 						 	// hover effect
@@ -150,6 +150,10 @@
 	</nav>
 	<!-- navbar終わり -->
 	<div class="container">
+		<div th:if="${#lists.isEmpty(finishedBookList)}">
+			<h2><span th:text="${userProfile.username}"></span>さんが読み終えた本はまだありません</h2>
+			<a class="btn btn-primary" href="/user/home" role="button">読書リストへ</a>
+		</div>
 		<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4">
             <div th:each="book,iterStat : ${finishedBookList}" th:object="${book}" class="col">
 				<div class="card h-100">
@@ -166,7 +170,7 @@
 		        				</div>
 		        				<div class="modal-footer">
 									<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
-									<a class="btn btn-danger" th:href="@{user/update/execute-delete-finishedbook(id=*{bookId})}" role="button">削除</a>
+									<a class="btn btn-danger" th:href="@{'/user/update/execute-delete-finishedbook/' + *{bookId}}" role="button">削除</a>
 								</div>
 							</div>
 						</div>

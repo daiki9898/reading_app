@@ -37,12 +37,12 @@
 							</span>
 					  	</i>
 				  	</div>
-				  	<ul class="dropdown-menu text-center" id="custom-dropdown">
-						  <li class="dropdown-item"><p>ユーザー名</p></li>
-						  <li class="dropdown-item"><p>読書中の本</p></li>
-						  <li class="dropdown-item"><p>今まで読んだ本</p></li>
+				  	<ul class="dropdown-menu text-center" id="custom-dropdown" th:object="${userProfile}">
+						  <li class="dropdown-item"><u>ユーザー名</u><p class="fs-5" th:text="*{username}"></p></li>
+						  <li class="dropdown-item"><u>読書中の本</u><p><span class="fs-5" th:text="*{readingNumber}"></span><span>冊</span></p></li>
+						  <li class="dropdown-item"><u>今まで読んだ本</u><div><span class="fs-5" th:text="*{finishedNumber}"></span><span>冊</span></div></li>
 						  <li><hr class="dropdown-divider"></li>
-						  <li><a class="btn btn-secondary" href="/logout">ログアウト</a></li>
+						  <li><form th:action="@{/logout}" method="post"><button type="submit" class="btn btn-secondary">ログアウト</button></form></li>
 				 	</ul>
 				 	<script type="text/javascript">
 					 	// hover effect

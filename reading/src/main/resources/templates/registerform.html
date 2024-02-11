@@ -14,9 +14,9 @@
 		<div class="border border-4 border-secondary-subtle rounded p-3 mb-4"><form class="needs-validation" th:action="@{/user/update/execute-register}" method="post" enctype="multipart/form-data" th:object="${bookInput}">
 			<div class="mb-4">
 				<p th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="text-danger">Title Error</p>
-				<label for="bookTitle" class="form-label">タイトル</label>
+				<label for="book-title" class="form-label">タイトル</label>
 				<p class="d-inline-block text-danger">必須</p>
-				<input type="text" id="bookTitle" class="form-control" th:field="*{title}" required>
+				<input type="text" id="book-title" class="form-control" th:field="*{title}" required>
 <!--				<div class="invalid-feedback">タイトルを入力してください</div>-->
 			</div>
 			<div class="mb-4">
@@ -40,14 +40,14 @@
 			</div>
 			<div class="mb-4">
 				<p th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}" class="text-danger">Date Error</p>
-				<label for="bookStartDate" class="form-label">開始日</label>
+				<label for="start-date" class="form-label">開始日</label>
 				<p class="d-inline-block text-danger">必須</p>
-				<input type="date" id="bookStartDate" class="form-control" th:field="*{startDate}" required>
+				<input type="date" id="start-date" class="form-control" th:field="*{startDate}" required>
 <!--				<div class="invalid-feedback">開始日を選択してください</div>-->
 			</div>
 			<div class="mb-4">
-				<label for="bookImage" class="form-label">本の画像</label>
-				<input type="file" id="bookImage" class="form-control" accept="image/*" th:field="*{imgFile}">
+				<label for="book-image" class="form-label">本の画像</label>
+				<input type="file" id="book-image" class="form-control" accept="image/*" th:field="*{imgFile}">
 				<div id="fileHelp" class="form-text">サイズは10MBまでです、画像を登録すると読み込みが遅くなります</div>
 			</div>
 			<div class="input-group">
@@ -56,7 +56,7 @@
 			</div></div>
 			<div>
 				<input type="submit" class="btn btn-primary" value="新規登録">
-				<a class="btn btn-secondary ms-3" th:href="@{/user/home}" role="button">一覧に戻る</a>
+				<a class="btn btn-secondary ms-3" href="/user/home" role="button">一覧に戻る</a>
 			</div>
 		</form>
 	</div>

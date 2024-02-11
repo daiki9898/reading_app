@@ -17,7 +17,7 @@
 <body>
 	<div th:replace="~{finished-booklist::header}"></div>
 	<div class="container">
-		<h2 id="null-message" class="" th:if="${#lists.isEmpty(finishedSearchBookList)}">該当の本は見つかりませんでした</h2>
+		<h2 id="null-message" th:if="${#lists.isEmpty(finishedSearchBookList)}">該当の本は見つかりませんでした</h2>
 		<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4">
             <div th:each="book,iterStat : ${finishedSearchBookList}" th:object="${book}" class="col">
 				<div class="card h-100">
@@ -34,14 +34,15 @@
 		        				</div>
 		        				<div class="modal-footer">
 									<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
-									<a class="btn btn-danger" th:href="@{user/update/execute-delete-finishedbook(id=*{bookId})}" role="button">削除</a>
+									<a class="btn btn-danger" th:href="@{'/user/update/execute-delete-finishedbook/' + *{bookId}}" role="button">削除</a>
 								</div>
 							</div>
 						</div>
 					</div> 
 					<button type="button" class="btn-close position-absolute top-0 end-0" data-bs-toggle="modal" data-bs-target="#deletemodal" th:attr="data-bs-target='#deletemodal-' + ${iterStat.index}" aria-label="Close"></button>
 	                <div class="card-body">
-						<h5 class="card-title" th:text="*{title}"></h5><a th:href="@{/user/finished-book-detail(id=*{bookId})}" style="text-decoration: none;">詳細</a>
+						<h5 class="card-title" th:text="*{title}"></h5>
+						<a th:href="@{'/user/finished-book-detail/' + *{bookId}}" style="text-decoration: none;">詳細</a>
 	                </div>
 	                <div class="card-footer">
 						<small class="text-body-secondary" th:text="*{#temporals.format(startDate, 'yyyy/MM/dd')}"></small><small> 〜 </small><small class="text-body-secondary" th:text="*{#temporals.format(endDate, 'yyyy/MM/dd')}"></small>

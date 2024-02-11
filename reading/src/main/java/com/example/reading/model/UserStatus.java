@@ -13,17 +13,17 @@ public class UserStatus {
 	
 	@Id
 	@Column(name="user_id")
-	private Integer id;
+	private Integer userId;
 	
 	@Column(name="reading_book_number")
-	private int reading_book_number;
+	private int readingBookNumber;
 	
 	@Column(name="reading_image_number")
-	private int reading_image_number;
+	private int readingImageNumber;
 	
 	@Column(name="finished_book_number")
-	private int finished_book_number;
+	private int finishedBookNumber;
 	
 	@Column(name="finished_image_number")
-	private int finished_image_number;
+	private int finishedImageNumber;
 }
