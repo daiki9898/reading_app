@@ -18,14 +18,14 @@
       <img src="https://img.shields.io/badge/-JavaScript-276DC3.svg?logo=javascript">
     </td>
     <td>
-      <img src="https://img.shields.io/badge/-Spring-bfcfcf.svg?logo=spring">
-      <img src="https://img.shields.io/badge/-Spring_Boot-bfcfcf.svg?logo=springboot">
-      <img src="https://img.shields.io/badge/-Spring_Security-bfcfcf.svg?logo=springsecurity">
+      <img src="https://img.shields.io/badge/-Spring-EEE.svg?logo=spring">
+      <img src="https://img.shields.io/badge/-Spring_Boot-EEE.svg?logo=springboot">
+      <img src="https://img.shields.io/badge/-Spring_Security-EEE.svg?logo=springsecurity">
       <br>
       <img src="https://img.shields.io/badge/-Bootstrap-7952B3.svg?logo=bootstrap">
     </td>
     <td>
-      <img src="https://img.shields.io/badge/-PostgreSQL-336791.svg?logo=postgresql&style=flat">
+      <img src="https://img.shields.io/badge/-PostgreSQL-336791.svg?logo=postgresql">
     </td>
     <td>
       <img src="https://img.shields.io/badge/-Eclipse_IDE-2C2255.svg?logo=eclipseide">
