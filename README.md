@@ -19,8 +19,8 @@
     </td>
     <td>
       <img src="https://img.shields.io/badge/-Spring-EEE.svg?logo=spring">
-      <img src="https://img.shields.io/badge/-Spring_Boot-EEE.svg?logo=springboot">
-      <img src="https://img.shields.io/badge/-Spring_Security-EEE.svg?logo=springsecurity">
+      <img src="https://img.shields.io/badge/Spring_Boot-v3.2.2-gray?logo=springboot&labelColor=EEE">
+      <img src="https://img.shields.io/badge/Spring_Security-v3.6.2-gray?logo=springsecurity&labelColor=EEE">
       <br>
       <img src="https://img.shields.io/badge/-Bootstrap-7952B3.svg?logo=bootstrap">
     </td>
