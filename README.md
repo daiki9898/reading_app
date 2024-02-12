@@ -9,7 +9,7 @@
   <!-- ボディ -->
   <tr>
     <td>
-      <img src="http://img.shields.io/badge/Java-gray-v21-blue.svg>
+      <img ="https://img.shields.io/badge/21?label=Java&labelColor=%234682b4&color=%23dcdcdc">
       <br>
       <img src="https://img.shields.io/badge/-HTML5-333.svg?logo=html5">
       <br>
