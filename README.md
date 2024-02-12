@@ -1,1 +1,1 @@
-<img src="https://img.shields.io/badge/%234169E1">
+<img src="https://img.shields.io/badge/-eclipseide-2C2255.svg?logo=eclipseide">
