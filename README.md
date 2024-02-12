@@ -59,8 +59,14 @@ My Libraryは読書を管理するアプリです。Spring Boot × Thymeleafで�
 </table>
 
 # DB設計
-### - ER図 ###
-### - テーブル定義書 ###
+### - ER図
+<img width="1440" alt="ER" src="https://github.com/daiki9898/reading_app/assets/158798056/7f1e1ba1-e960-4fc8-9682-b0f911aeab65">
+
+### - テーブル定義書 user関係
+![table-user](https://github.com/daiki9898/reading_app/assets/158798056/7d495566-b47a-4530-8868-a66dddde9e46)
+
+### - book関係
+![table-book](https://github.com/daiki9898/reading_app/assets/158798056/dc37f6b2-d6cf-42bb-8058-baeee518fde0)
 
 # セキュリティ対策
 ### 1. **CSRFトークンを使用**
@@ -83,8 +89,10 @@ postリクエスト時にcsrfトークンを送信しています。
 ### 2. **JOIN結果をDTOにセット**
 - 一般的なCRUD操作だけならSpring Data JPAを使えば、クエリをかかず楽に操作ができます。しかし、JOIN結果を取得するには適していませんでした。
 - ネット上のあらゆるサイトを検索し試しました。そこでは、Repositoryのメソッドに@Queryアノテーションで、データを受け取るDTOクラスをFQCNで指定し、インスタンス化して値をセットすればうまくいくと書いてありました。しかし、いくらやっても上手くいきませんでした。
-- 結局、JdbcTemplateでDTOとJOIN結果のmappingを行いました、そしたら一発でいけました。めんどくさがらず最初からやっておけばよかったです😢<br>
+- 結局、JdbcTemplateでDTOとJOIN結果のmappingを行いました、そしたら一発でいけました。めんどくさがらず最初からやっておけばよかったです😢
 [この本](https://www.amazon.co.jp/%E3%83%97%E3%83%AD%E3%81%AB%E3%81%AA%E3%82%8B%E3%81%9F%E3%82%81%E3%81%AESpring%E5%85%A5%E9%96%80%E3%83%BC%E3%83%BC%E3%82%BC%E3%83%AD%E3%81%8B%E3%82%89%E3%81%AE%E9%96%8B%E7%99%BA%E5%8A%9B%E9%A4%8A%E6%88%90%E8%AC%9B%E5%BA%A7-%E5%9C%9F%E5%B2%90-%E5%AD%9D%E5%B9%B3/dp/4297136139/ref=sr_1_3?__mk_ja_JP=%E3%82%AB%E3%82%BF%E3%82%AB%E3%83%8A&crid=26EDW40QRJ39B&keywords=Spring&qid=1707758787&sprefix=spring%2Caps%2C166&sr=8-3-spons&sp_csd=d2lkZ2V0TmFtZT1zcF9hdGY&psc=1 "プロになるためのSpring入門")にのっています、非常におすすめです。
+- 追記: Postgresのテーブルと対応したJavaのModel(Entity)をDBにinsertする際、enum型のmappingが上手くいかず、enum型なのに文字列を挿入しようとしているとエラーが出ました。
+フィールドに@Enumerated(TYPE.String)を付与すれば、EntityとTableのenum型のmappingは上手くいくようですが、結局解決しませんでした。分かる方がいれば教えていただきたいです。
 ### 3. **Spring Securityを理解する**
 - 一番の難関です、まず仕組みを理解するのに相当時間がかかりました。今まで無事に動作していたアプリにSpring Securityを導入した途端にエラー祭りでした。
 - 様々な機能がありとてもパワフルです、数多くのサイトを参考にしました、日本語の情報が少なく海外のサイトにしかない情報もありました。様々経験してわかったことは公式のドキュメントが最も信頼できるということです、わかりづらい表現が多いですが結局すべてドキュメント通りであるし、個人のサイトは古かったり間違ったりしているものが多いです。Securiy周りは今後も勉強していきたいと思います。
