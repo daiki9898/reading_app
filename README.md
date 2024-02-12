@@ -30,6 +30,8 @@
     <td>
       <img src="https://img.shields.io/badge/-Eclipse_IDE-2C2255.svg?logo=eclipseide">
       <br>
+      <img src="https://img.shields.io/badge/Maven-red">
+      <br>
       <img src="https://img.shields.io/badge/-Windows_11-0078D4.svg?logo=windows11">
     </td>
   </tr>
