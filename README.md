@@ -1,6 +1,6 @@
 # My Libraryとは
 My Libraryは読書を管理するアプリです。Spring Boot × Thymeleafで作成しました。<br>
-俗にいうRESTAPIではなく、SSRでHTMLを返す方式です。<br>
+SSRでHTMLを返す方式です。<br>
 まだ完成していませんが、日々更新していきます。※基本機能は実装済み、あとはオプション機能搭載<br>
 完成したらデプロイしてみたいです。
 
