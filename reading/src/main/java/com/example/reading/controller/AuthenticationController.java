@@ -1,7 +1,6 @@
 package com.example.reading.controller;
 
 import org.springframework.security.core.Authentication;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -33,20 +32,16 @@ public class AuthenticationController {
 	}
 	
 	@GetMapping("/login")
-	public String displayLoginForm(@RequestParam(name = "error", required = false) String error, @RequestParam(name = "timeout", required = false) String isTimeout, Model model) {
+	public String displayLoginForm(@RequestParam(name = "error", required = false) String error, Model model) {
 		if (error != null) {
 			model.addAttribute("errorMessage", "ログインに失敗しました");
-		} else if (isTimeout != null) {
-			return "timeout";
 		}
 		return "login";
 	}
 	
 	@GetMapping("/timeout")
 	public String displayTimeoutPage(Authentication authentication, HttpServletRequest request, HttpServletResponse response) {
-		SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();
-		logoutHandler.logout(request, response, authentication);
-		return "redirect:/login?timeout";
+		return "timeout";
 	}
 	
 	@PostMapping("/register-user")

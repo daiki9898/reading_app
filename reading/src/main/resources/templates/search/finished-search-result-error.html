@@ -17,41 +17,104 @@
 <body>
 	<div th:replace="~{finished-booklist::header}"></div>
 	<div class="container">
-		<div th:if="${#lists.isEmpty(finishedBookList)}">
-			<h2><span th:text="${userProfile.username}"></span>さんが読み終えた本はまだありません</h2>
-			<a class="btn btn-primary" href="/user/home" role="button">読書リストへ</a>
-		</div>
-		<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4">
-            <div th:each="book,iterStat : ${finishedBookList}" th:object="${book}" class="col">
-				<div class="card h-100">
-	                <img th:src="*{imgFile}" class="card-img-top" style="height: 12rem;">
-					<div class="modal" th:id="'deletemodal-' + ${iterStat.index}" tabindex="-1">
-						<div class="modal-dialog">
-							<div class="modal-content">
-								<div class="modal-header">
-									<h5 class="modal-title">本の削除</h5>
-									<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		<div class="row">
+			<div class="col-9 col-sm-10">
+				<div th:if="${#lists.isEmpty(finishedBookList)}">
+					<h2><span th:text="${userProfile.username}"></span>さんが読み終えた本はまだありません</h2>
+					<a class="btn btn-primary" href="/user/home" role="button">読書リストへ</a>
+				</div>
+				<div class="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
+		            <div th:each="book,iterStat : ${finishedBookList}" th:object="${book}" class="col">
+						<div class="card h-100">
+			                <img th:src="*{imgFile}" class="card-img-top" style="height: 12rem;">
+							<div class="modal" th:id="'deletemodal-' + ${iterStat.index}" tabindex="-1">
+								<div class="modal-dialog">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title">本の削除</h5>
+											<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+										</div>
+										<div class="modal-body">
+				        					<p>削除してもよろしいですか？</p>
+				        				</div>
+				        				<div class="modal-footer">
+											<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
+											<a class="btn btn-danger" th:href="@{'/user/update/execute-delete-finishedbook/' + *{bookId}}" role="button">削除</a>
+										</div>
+									</div>
 								</div>
-								<div class="modal-body">
-		        					<p>削除してもよろしいですか？</p>
-		        				</div>
-		        				<div class="modal-footer">
-									<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
-									<a class="btn btn-danger" th:href="@{'/user/update/execute-delete-finishedbook/' + *{bookId}}" role="button">削除</a>
-								</div>
-							</div>
+							</div> 
+							<button type="button" class="btn-close position-absolute top-0 end-0" data-bs-toggle="modal" data-bs-target="#deletemodal" th:attr="data-bs-target='#deletemodal-' + ${iterStat.index}" aria-label="Close"></button>
+			                <div class="card-body">
+								<h5 class="card-title" th:text="*{title}"></h5>
+								<a th:href="@{'/user/finished-book-detail/' + *{bookId}}" style="text-decoration: none;">詳細</a>
+			                </div>
+			                <div class="card-footer">
+								<small class="text-body-secondary" th:text="*{#temporals.format(startDate, 'yyyy/MM/dd')}"></small><small> 〜 </small><small class="text-body-secondary" th:text="*{#temporals.format(endDate, 'yyyy/MM/dd')}"></small>
+			                </div>
+		              	</div>
+		            </div>
+				</div>
+			</div>
+			<div class="col-3 col-sm-2 col-md-2 col-lg-2 col-xl-2 p-0" aria-label="tag-area" style="position: fixed; right: 0%;">
+				<div class="d-flex flex-column border">
+					<a class="text-dark" href="/user/finished-booklist" style="text-decoration: none;">
+						<div class="tag bg-primary-subtle border rounded p-1 m-2">
+							<i class="bi bi-bookmark"></i><span>すべて</span>
 						</div>
-					</div> 
-					<button type="button" class="btn-close position-absolute top-0 end-0" data-bs-toggle="modal" data-bs-target="#deletemodal" th:attr="data-bs-target='#deletemodal-' + ${iterStat.index}" aria-label="Close"></button>
-	                <div class="card-body">
-						<h5 class="card-title" th:text="*{title}"></h5>
-						<a th:href="@{'/user/finished-book-detail/' + *{bookId}}" style="text-decoration: none;">詳細</a>
-	                </div>
-	                <div class="card-footer">
-						<small class="text-body-secondary" th:text="*{#temporals.format(startDate, 'yyyy/MM/dd')}"></small><small> 〜 </small><small class="text-body-secondary" th:text="*{#temporals.format(endDate, 'yyyy/MM/dd')}"></small>
-	                </div>
-              	</div>
-            </div>
+					</a>
+					<a class="text-dark" href="/user/search-finished-booklist?genre=小説" style="text-decoration: none;">
+						<div class="tag bg-primary-subtle border rounded p-1 m-2">
+							<i class="bi bi-bookmark"></i><span>小説</span>
+						</div>
+					</a>
+					<a class="text-dark" href="/user/search-finished-booklist?genre=ミステリー/サスペンス" style="text-decoration: none;">
+						<div class="tag bg-primary-subtle border rounded p-1 m-2">
+							<i class="bi bi-bookmark"></i><span>ミステリー/サスペンス</span>
+						</div>
+					</a>
+					<a class="text-dark" href="/user/search-finished-booklist?genre=SF/ファンタジー" style="text-decoration: none;">
+						<div class="tag bg-primary-subtle border rounded p-1 m-2">
+							<i class="bi bi-bookmark"></i><span>SF/ファンタジー</span>
+						</div>
+					</a>
+					<a class="text-dark" href="/user/search-finished-booklist?genre=ロマンス" style="text-decoration: none;">
+						<div class="tag bg-primary-subtle border rounded p-1 m-2">
+							<i class="bi bi-bookmark"></i><span>ロマンス</span>
+						</div>
+					</a>
+					<a class="text-dark" href="/user/search-finished-booklist?genre=歴史/自伝" style="text-decoration: none;">
+						<div class="tag bg-primary-subtle p-1 m-2">
+							<i class="bi bi-bookmark"></i><span>歴史/自伝</span>
+						</div>
+					</a>
+					<a class="text-dark" href="/user/search-finished-booklist?genre=自己啓発" style="text-decoration: none;">
+						<div class="tag bg-primary-subtle border rounded p-1 m-2">
+							<i class="bi bi-bookmark"></i><span>自己啓発</span>
+						</div>
+					</a>
+					<a class="text-dark" href="/user/search-finished-booklist?genre=お金" style="text-decoration: none;">
+						<div class="tag bg-primary-subtle border rounded p-1 m-2">
+							<i class="bi bi-bookmark"></i><span>お金</span>
+						</div>
+					</a>
+					<a class="text-dark" href="/user/search-finished-booklist?genre=学習" style="text-decoration: none;">
+						<div class="tag bg-primary-subtle border rounded p-1 m-2">
+							<i class="bi bi-bookmark"></i><span>学習</span>
+						</div>
+					</a>
+					<a class="text-dark" href="/user/search-finished-booklist?genre=コミック" style="text-decoration: none;">
+						<div class="tag bg-primary-subtle border rounded p-1 m-2">
+							<i class="bi bi-bookmark"></i><span>コミック</span>
+						</div>
+					</a>
+					<a class="text-dark" href="/user/search-finished-booklist?genre=その他" style="text-decoration: none;">
+						<div class="tag bg-primary-subtle border rounded p-1 m-2">
+							<i class="bi bi-bookmark"></i><span>その他</span>
+						</div>
+					</a>
+				</div>
+			</div>
 		</div>
 	</div>
 	<!-- Bootstrap js -->

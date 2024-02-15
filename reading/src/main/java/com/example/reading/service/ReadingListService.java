@@ -28,10 +28,12 @@ import lombok.RequiredArgsConstructor;
 @Transactional
 @RequiredArgsConstructor
 public class ReadingListService {
+	
 	private final ReadingRegistrationRepository readingRepository;
 	private final FinishedRegistrationRepository finishedRepository;
 	private final ListRepository listRepository;
 	
+	// display Booklist
 	public List<BookResult> findAll(Integer userId) throws IOException {
 		List<ReadingListDto> readingBookList =  listRepository.getReadingListByUserId(userId);
 		List<BookResult> resultList = new ArrayList<BookResult>();
@@ -68,6 +70,26 @@ public class ReadingListService {
 		return resultList;
 	}
 	
+	public List<BookResult> searchBookByGenre(Integer userId, String genre) throws IOException {
+		List<ReadingListDto> readingBookList = listRepository.searchBookByGenre(userId, genre);
+		List<BookResult> resultList = new ArrayList<BookResult>();
+		for (ReadingListDto book : readingBookList) {
+			BookResult result = new BookResult();
+			result.setBookId(book.getBookId());
+			result.setTitle(book.getBookInfoDto().getTitle());
+			result.setStartDate(book.getStartDate());
+			// 画像のエンコード
+			Path filePath = Paths.get(book.getBookInfoDto().getImgSrc());
+			byte[] bytes = Files.readAllBytes(filePath);
+			String textData = Base64.getEncoder().encodeToString(bytes);
+			result.setImgFile("data:image/jpg;base64," + textData);
+			resultList.add(result);
+		}
+		return resultList;
+	}
+	
+	
+	// 登録情報のCRUD
 	public ReadingListRegistration findByBookId(Integer bookId) {
 		ReadingListRegistration readingListRegistration  = readingRepository.findByBookId(bookId).orElseThrow(() -> new EntityNotFoundException("登録情報は見つかりませんでした"));
 		return readingListRegistration;

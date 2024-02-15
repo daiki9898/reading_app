@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.reading.dto.BookResult;
+import com.example.reading.input.BookInput;
 import com.example.reading.input.EditBookInput;
 import com.example.reading.input.FinishedEditBookInput;
 import com.example.reading.input.FinishedSearchInput;
@@ -52,6 +54,20 @@ public class BookDisplayController {
 		model.addAttribute("bookList", bookList);
 		SearchInput searchInput = new SearchInput();
 		model.addAttribute("searchInput", searchInput);
+		BookInput bookInput = new BookInput();
+		model.addAttribute("bookInput", bookInput);
+		return "reading-booklist";
+	}
+	
+	// タグ検索
+	@GetMapping("/search-reading-booklist")
+	public String searchBookByGenre(Model model, @RequestParam(name= "genre", required = true) String genre) throws IOException {
+		List<BookResult> bookList = readingListService.searchBookByGenre(getUserId(), genre);
+		model.addAttribute("bookList", bookList);
+		SearchInput searchInput = new SearchInput();
+		model.addAttribute("searchInput", searchInput);
+		BookInput bookInput = new BookInput();
+		model.addAttribute("bookInput", bookInput);
 		return "reading-booklist";
 	}
 	
@@ -72,12 +88,24 @@ public class BookDisplayController {
 		return "finished-booklist";
 	}
 	
+	// タグ検索
+	@GetMapping("/search-finished-booklist")
+	public String searchFinishedBookByGenre(Model model, @RequestParam(name= "genre", required = true) String genre) throws IOException {
+		List<BookResult> finishedBookList = finishedListService.searchBook(getUserId(), genre);
+		model.addAttribute("finishedBookList", finishedBookList);
+		FinishedSearchInput finishedSearchInput = new FinishedSearchInput();
+		model.addAttribute("finishedSearchInput", finishedSearchInput);
+		return "finished-booklist";
+	}
+	
+		
 	@GetMapping("/finished-book-detail/{id}")
 	public String displayFinishedDetail(Model model, @PathVariable String id) throws NumberFormatException {
 		FinishedEditBookInput finishedEditBookInput = bookService.findFinishedBookById(Integer.valueOf(id));
 		model.addAttribute("finishedEditBookInput", finishedEditBookInput);
 		return "finished-book-detail";
 	}
+	
 	
 	// 読書リスト検索関係
 	@PostMapping("/search-reading-booklist")
@@ -107,6 +135,8 @@ public class BookDisplayController {
 		model.addAttribute("bookList", bookList);
 		SearchInput searchInput = new SearchInput();
 		model.addAttribute("searchInput", searchInput);
+		BookInput bookInput = new BookInput();
+		model.addAttribute("bookInput", bookInput);
 		return "search/search-result-error";
 	}
 	

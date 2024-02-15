@@ -1,5 +1,8 @@
 package com.example.reading.controller;
 
+import java.io.IOException;
+import java.util.List;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -13,10 +16,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.example.reading.dto.BookResult;
 import com.example.reading.dto.UserProfile;
 import com.example.reading.input.BookInput;
 import com.example.reading.input.EditBookInput;
 import com.example.reading.input.FinishedEditBookInput;
+import com.example.reading.input.SearchInput;
 import com.example.reading.model.Book;
 import com.example.reading.model.FinishedListRegistration;
 import com.example.reading.model.ReadingListRegistration;
@@ -100,10 +105,15 @@ public class BookUpdateController {
 	}
 	
 	@PostMapping("/execute-register")
-	public String executeRegister(@Validated BookInput bookInput, BindingResult bindingResult, Model model) {
+	public String executeRegister(@Validated BookInput bookInput, BindingResult bindingResult, Model model) throws IOException {
 		if (bindingResult.hasErrors()) {
 			addUserProfileData(model);
-			return "registerform";
+			Integer userId = getUserId();
+			List<BookResult> bookList = readingListService.findAll(userId);
+			model.addAttribute("bookList", bookList);
+			SearchInput searchInput = new SearchInput();
+			model.addAttribute("searchInput", searchInput);
+			return "register-error";
 		}
 		// 本の登録
         Integer userId = getUserId();

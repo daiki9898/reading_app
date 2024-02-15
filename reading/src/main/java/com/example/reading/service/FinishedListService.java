@@ -40,6 +40,7 @@ public class FinishedListService {
 	@Value("${default.pic}")
 	private String defaultPath;
 	
+	// display finsihedlist
 	public List<BookResult> findAll(Integer userId) throws IOException {
 		List<FinishedListDto> finishedBookList =  listRepository.getFinishedListByUserId(userId);
 		List<BookResult> resultList = new ArrayList<BookResult>();
@@ -78,6 +79,26 @@ public class FinishedListService {
 		return resultList;
 	}
 	
+	public List<BookResult> searchBook(Integer userId, String genre) throws IOException {
+		List<FinishedListDto> finishedBookList =  listRepository.searchFinishedBookByGenre(userId, genre);
+		List<BookResult> resultList = new ArrayList<BookResult>();
+		for (FinishedListDto book : finishedBookList) {
+			BookResult result = new BookResult();
+			result.setBookId(book.getBookId());
+			result.setTitle(book.getBookInfoDto().getTitle());
+			result.setStartDate(book.getStartDate());
+			result.setEndDate(book.getEndDate());
+			// 画像のエンコード
+			Path filePath = Paths.get(book.getBookInfoDto().getImgSrc());
+			byte[] bytes = Files.readAllBytes(filePath);
+			String textData = Base64.getEncoder().encodeToString(bytes);
+			result.setImgFile("data:image/jpg;base64," + textData);
+			resultList.add(result);
+		}
+		return resultList;
+	}
+	
+	// crud for registration
 	public FinishedListRegistration findByBookId(Integer bookId) {
 		FinishedListRegistration registration  = finishedRepository.findByBookId(bookId).orElseThrow(() -> new EntityNotFoundException("登録情報は見つかりませんでした"));
 		return registration;

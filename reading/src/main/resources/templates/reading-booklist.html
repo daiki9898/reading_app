@@ -16,7 +16,7 @@
 </head>
 <body>
 	<!-- navbar -->
-	<nav class="navbar navbar-expand-md bg-info mb-5" th:fragment="header" style="--bs-navbar-color: rgba(255, 255, 255, 0.55);
+	<nav class="navbar navbar-expand-lg bg-info mb-5" th:fragment="header" style="--bs-navbar-color: rgba(255, 255, 255, 0.55);
 	    --bs-navbar-hover-color: rgba(255, 255, 255, 0.75);
 	    --bs-navbar-disabled-color: rgba(255, 255, 255, 0.25);
 	    --bs-navbar-active-color: #fff;
@@ -36,6 +36,9 @@
 					<li class="nav-item">
 						<a class="nav-link active" aria-current="page" href="/user/home">Home</a>
 					</li>
+					<li class="nav-item">
+						<a class="nav-link active" href="/user/finished-booklist">本棚</a>
+					</li>
 					<li class="nav-item dropdown">
 						<a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">書籍一覧</a>
 						<ul class="dropdown-menu">
@@ -43,6 +46,9 @@
 							<li><a class="dropdown-item" href="/user/finished-booklist">読了済み</a></li>
 						</ul>
 					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="/user/update/display-registerform">登録</a>
+        			</li>
 				</ul>
 				<!-- 検索ボックス -->
 				<div id="search-box" class="position-absolute" style="right: 50%; transform: translateX(50%);" data-bs-toggle="modal" data-bs-target="#searchModal">
@@ -146,44 +152,167 @@
 	</nav>
 	<!-- navbar終わり -->
 	<div class="container">
-		<div th:if="${#lists.isEmpty(bookList)}">
-			<h2><span th:text="${userProfile.username}"></span>さんの読書中の本はありません</h2>
-		</div>
-		<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4">
-            <div th:each="book,iterStat : ${bookList}" th:object="${book}" class="col">
-				<div class="card h-100">
-	                <img th:src="*{imgFile}" class="card-img-top" style="height: 12rem;">
-					<div class="modal" th:id="'deletemodal-' + ${iterStat.index}" tabindex="-1">
-						<div class="modal-dialog">
-							<div class="modal-content">
-								<div class="modal-header">
-									<h5 class="modal-title">本の削除</h5>
-									<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		<div class="row">
+			<div class="col-9 col-sm-10">
+				<div th:if="${#lists.isEmpty(bookList)}">
+					<h2><span th:text="${userProfile.username}"></span>さんが読書中の本はありません</h2>
+				</div>
+				<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 g-4">
+		            <div th:each="book,iterStat : ${bookList}" th:object="${book}" class="col">
+						<div class="card h-100">
+			                <img th:src="*{imgFile}" class="card-img-top" style="height: 12rem;">
+							<div class="modal" th:id="'deletemodal-' + ${iterStat.index}" tabindex="-1">
+								<div class="modal-dialog">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title">本の削除</h5>
+											<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+										</div>
+										<div class="modal-body">
+				        					<p>削除してもよろしいですか？</p>
+				        				</div>
+				        				<div class="modal-footer">
+											<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
+											<a class="btn btn-danger" th:href="@{'/user/update/execute-delete/' + *{bookId}}" role="button">削除</a>
+										</div>
+									</div>
 								</div>
-								<div class="modal-body">
-		        					<p>削除してもよろしいですか？</p>
-		        				</div>
-		        				<div class="modal-footer">
-									<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
-									<a class="btn btn-danger" th:href="@{'/user/update/execute-delete/' + *{bookId}}" role="button">削除</a>
-								</div>
-							</div>
+							</div> 
+							<button type="button" class="btn-close position-absolute top-0 end-0" data-bs-toggle="modal" data-bs-target="#deletemodal" th:attr="data-bs-target='#deletemodal-' + ${iterStat.index}" aria-label="Close"></button>
+			                <div class="card-body">
+								<h5 class="card-title" th:text="*{title}"></h5>
+								<a th:href="@{'/user/book-detail/' + *{bookId}}" style="text-decoration: none;">詳細</a>
+			                </div>
+			                <div class="card-footer">
+								<small class="text-body-secondary">From </small><small class="text-body-secondary" th:text="*{#temporals.format(startDate, 'yyyy/MM/dd')}"></small>
+			                </div>
+		              	</div>
+		            </div>
+				</div>
+			</div>
+			<div class="col-3 col-sm-2 col-md-2 col-lg-2 col-xl-2 p-0" aria-label="tag-area" style="position: fixed; right: 0%;">
+				<div class="d-flex flex-column border">
+					<a class="text-dark" href="/user/home" style="text-decoration: none;">
+						<div class="tag bg-primary-subtle border rounded p-1 m-2">
+							<i class="bi bi-bookmark"></i><span>すべて</span>
 						</div>
-					</div> 
-					<button type="button" class="btn-close position-absolute top-0 end-0" data-bs-toggle="modal" data-bs-target="#deletemodal" th:attr="data-bs-target='#deletemodal-' + ${iterStat.index}" aria-label="Close"></button>
-	                <div class="card-body">
-						<h5 class="card-title" th:text="*{title}"></h5>
-						<a th:href="@{'/user/book-detail/' + *{bookId}}" style="text-decoration: none;">詳細</a>
-	                </div>
-	                <div class="card-footer">
-						<small class="text-body-secondary">From </small><small class="text-body-secondary" th:text="*{#temporals.format(startDate, 'yyyy/MM/dd')}"></small>
-	                </div>
-              	</div>
-            </div>
+					</a>
+					<a class="text-dark" href="/user/search-reading-booklist?genre=小説" style="text-decoration: none;">
+						<div class="tag bg-primary-subtle border rounded p-1 m-2">
+							<i class="bi bi-bookmark"></i><span>小説</span>
+						</div>
+					</a>
+					<a class="text-dark" href="/user/search-reading-booklist?genre=ミステリー/サスペンス" style="text-decoration: none;">
+						<div class="tag bg-primary-subtle border rounded p-1 m-2">
+							<i class="bi bi-bookmark"></i><span>ミステリー/サスペンス</span>
+						</div>
+					</a>
+					<a class="text-dark" href="/user/search-reading-booklist?genre=SF/ファンタジー" style="text-decoration: none;">
+						<div class="tag bg-primary-subtle border rounded p-1 m-2">
+							<i class="bi bi-bookmark"></i><span>SF/ファンタジー</span>
+						</div>
+					</a>
+					<a class="text-dark" href="/user/search-reading-booklist?genre=ロマンス" style="text-decoration: none;">
+						<div class="tag bg-primary-subtle border rounded p-1 m-2">
+							<i class="bi bi-bookmark"></i><span>ロマンス</span>
+						</div>
+					</a>
+					<a class="text-dark" href="/user/search-reading-booklist?genre=歴史/自伝" style="text-decoration: none;">
+						<div class="tag bg-primary-subtle p-1 m-2">
+							<i class="bi bi-bookmark"></i><span>歴史/自伝</span>
+						</div>
+					</a>
+					<a class="text-dark" href="/user/search-reading-booklist?genre=自己啓発" style="text-decoration: none;">
+						<div class="tag bg-primary-subtle border rounded p-1 m-2">
+							<i class="bi bi-bookmark"></i><span>自己啓発</span>
+						</div>
+					</a>
+					<a class="text-dark" href="/user/search-reading-booklist?genre=お金" style="text-decoration: none;">
+						<div class="tag bg-primary-subtle border rounded p-1 m-2">
+							<i class="bi bi-bookmark"></i><span>お金</span>
+						</div>
+					</a>
+					<a class="text-dark" href="/user/search-reading-booklist?genre=学習" style="text-decoration: none;">
+						<div class="tag bg-primary-subtle border rounded p-1 m-2">
+							<i class="bi bi-bookmark"></i><span>学習</span>
+						</div>
+					</a>
+					<a class="text-dark" href="/user/search-reading-booklist?genre=コミック" style="text-decoration: none;">
+						<div class="tag bg-primary-subtle border rounded p-1 m-2">
+							<i class="bi bi-bookmark"></i><span>コミック</span>
+						</div>
+					</a>
+					<a class="text-dark" href="/user/search-reading-booklist?genre=その他" style="text-decoration: none;">
+						<div class="tag bg-primary-subtle border rounded p-1 m-2">
+							<i class="bi bi-bookmark"></i><span>その他</span>
+						</div>
+					</a>
+				</div>
+			</div>
 		</div>
-		<a class="icon-link icon-link-hover mt-4" style="--bs-icon-link-transform: translate3d(0, -.125rem, 0);" href="/user/update/display-registerform">
+		<a id="register-button" class="icon-link icon-link-hover mt-4" style="--bs-icon-link-transform: translate3d(0, -.125rem, 0);" data-bs-toggle="modal" data-bs-target="#registerModal">
 			<i class="fs-5 bi bi-plus-square"></i>
 		</a>
+		<!-- registerModal -->
+		<div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h1 class="modal-title fs-5" id="registerModalLabel">本を登録する</h1>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<form id="register-form" class="needs-validation" th:action="@{/user/update/execute-register}" method="post" enctype="multipart/form-data" th:object="${bookInput}">
+							<div class="mb-4">
+								<p th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="text-danger">Title Error</p>
+								<label for="book-title" class="form-label">タイトル</label>
+								<p class="d-inline-block text-danger">必須</p>
+								<input type="text" id="book-title" class="form-control" th:field="*{title}" required>
+							</div>
+							<div class="mb-4">
+								<select class="form-select" aria-label="Book genre select" th:field="*{genre}">
+									<option selected value="">本のジャンルを選んでください</option>
+									<option value="小説">小説</option>
+									<option value="ミステリー/サスペンス">ミステリー/サスペンス</option>
+									<option value="SF/ファンタジー">SF/ファンタジー</option>
+									<option value="ロマンス">ロマンス</option>
+									<option value="歴史/自伝">歴史/自伝</option>
+									<option value="自己啓発">自己啓発</option>
+									<option value="お金">お金</option>			
+									<option value="学習">学習</option>
+									<option value="コミック">コミック</option>
+									<option value="その他">その他</option>
+								</select>
+							</div>
+							<div class="mb-4">
+								<label for="author" class="form-label">著者</label>
+								<input type="text" id="author" class="form-control" th:field="*{author}">
+							</div>
+							<div class="mb-4">
+								<p th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}" class="text-danger">Date Error</p>
+								<label for="start-date" class="form-label">開始日</label>
+								<p class="d-inline-block text-danger">必須</p>
+								<input type="date" id="start-date" class="form-control" th:field="*{startDate}" required>
+							</div>
+							<div class="mb-4">
+								<label for="book-image" class="form-label">本の画像</label>
+								<input type="file" id="book-image" class="form-control" accept="image/*" th:field="*{imgFile}">
+								<div id="fileHelp" class="form-text">サイズは10MBまでです、画像を登録すると読み込みが遅くなります</div>
+							</div>
+							<div class="input-group">
+								<span class="input-group-text">メモ</span>
+								<textarea class="form-control" aria-label="comment" placeholder="ご自由にお書きください" th:field="*{comment}"></textarea>
+							</div>
+						</form>
+					</div>
+					<div class="modal-footer">
+				        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
+				        <button type="submit" form="register-form" class="btn btn-primary">登録</button>
+      				</div>
+				</div>
+			</div>
+		</div>
+		<!-- registerModal終わり -->
 	</div>
 	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js" integrity="sha384-fbbOQedDUMZZ5KreZpsbe1LCZPVmfTnH7ois6mU1QK+m14rQ1l2bGBq41eYeM/fS" crossorigin="anonymous"></script>

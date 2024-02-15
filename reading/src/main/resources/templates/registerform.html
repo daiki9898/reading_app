@@ -3,62 +3,71 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>新規登録画面</title>
+	<title>本の登録</title>
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+	<style>
+		html, body {
+			height: 100%;
+		}
+	</style>
 </head>
 <body>
 	<div th:replace="~{share::header}"></div>
 	<div class="container">
-<!--		<h2 class="fw-medium mt-5">本を新規で登録する</h2>-->
-		<div class="border border-4 border-secondary-subtle rounded p-3 mb-4"><form class="needs-validation" th:action="@{/user/update/execute-register}" method="post" enctype="multipart/form-data" th:object="${bookInput}">
-			<div class="mb-4">
-				<p th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="text-danger">Title Error</p>
-				<label for="book-title" class="form-label">タイトル</label>
-				<p class="d-inline-block text-danger">必須</p>
-				<input type="text" id="book-title" class="form-control" th:field="*{title}" required>
+<!--	<h2 class="fw-medium mt-5">本を新規で登録する</h2>-->
+	<div style="position: absolute; bottom: 0%; left: 0%; width: 100vw;">
+		<div class="register-area px-5">
+			<div class="border border-4 border-secondary-subtle rounded p-3 mb-4"><form class="needs-validation" th:action="@{/user/update/execute-register}" method="post" enctype="multipart/form-data" th:object="${bookInput}">
+				<div class="mb-4">
+					<p th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="text-danger">Title Error</p>
+					<label for="book-title" class="form-label">タイトル</label>
+					<p class="d-inline-block text-danger">必須</p>
+					<input type="text" id="book-title" class="form-control" th:field="*{title}" required>
 <!--				<div class="invalid-feedback">タイトルを入力してください</div>-->
-			</div>
-			<div class="mb-4">
-				<select class="form-select" aria-label="Book genre select" th:field="*{genre}">
-					<option selected value="">本のジャンルを選んでください</option>
-					<option value="小説">小説</option>
-					<option value="ミステリー/サスペンス">ミステリー/サスペンス</option>
-					<option value="SF/ファンタジー">SF/ファンタジー</option>
-					<option value="ロマンス">ロマンス</option>
-					<option value="歴史/自伝">歴史/自伝</option>
-					<option value="自己啓発">自己啓発</option>
-					<option value="お金">お金</option>
-					<option value="学習">学習</option>
-					<option value="コミック">コミック</option>
-					<option value="その他">その他</option>
-				</select>
-			</div>
-			<div class="mb-4">
-				<label for="author" class="form-label">著者</label>
-				<input type="text" id="author" class="form-control" th:field="*{author}">
-			</div>
-			<div class="mb-4">
-				<p th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}" class="text-danger">Date Error</p>
-				<label for="start-date" class="form-label">開始日</label>
-				<p class="d-inline-block text-danger">必須</p>
-				<input type="date" id="start-date" class="form-control" th:field="*{startDate}" required>
-<!--				<div class="invalid-feedback">開始日を選択してください</div>-->
-			</div>
-			<div class="mb-4">
-				<label for="book-image" class="form-label">本の画像</label>
-				<input type="file" id="book-image" class="form-control" accept="image/*" th:field="*{imgFile}">
-				<div id="fileHelp" class="form-text">サイズは10MBまでです、画像を登録すると読み込みが遅くなります</div>
-			</div>
-			<div class="input-group">
-				<span class="input-group-text">メモ</span>
-				<textarea class="form-control" aria-label="comment" placeholder="ご自由にお書きください" th:field="*{comment}"></textarea>
-			</div></div>
-			<div>
-				<input type="submit" class="btn btn-primary" value="新規登録">
-				<a class="btn btn-secondary ms-3" href="/user/home" role="button">一覧に戻る</a>
-			</div>
-		</form>
+				</div>
+				<div class="mb-4">
+					<select class="form-select" aria-label="Book genre select" th:field="*{genre}">
+						<option selected value="">本のジャンルを選んでください</option>
+						<option value="小説">小説</option>
+						<option value="ミステリー/サスペンス">ミステリー/サスペンス</option>
+						<option value="SF/ファンタジー">SF/ファンタジー</option>
+						<option value="ロマンス">ロマンス</option>
+						<option value="歴史/自伝">歴史/自伝</option>
+						<option value="自己啓発">自己啓発</option>
+						<option value="お金">お金</option>			
+						<option value="学習">学習</option>
+						<option value="コミック">コミック</option>
+						<option value="その他">その他</option>
+					</select>
+				</div>
+				<div class="mb-4">
+					<label for="author" class="form-label">著者</label>
+					<input type="text" id="author" class="form-control" th:field="*{author}">
+				</div>
+				<div class="mb-4">
+					<p th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}" class="text-danger">Date Error</p>
+					<label for="start-date" class="form-label">開始日</label>
+					<p class="d-inline-block text-danger">必須</p>
+					<input type="date" id="start-date" class="form-control" th:field="*{startDate}" required>
+	<!--				<div class="invalid-feedback">開始日を選択してください</div>-->
+				</div>
+				<div class="mb-4">
+					<label for="book-image" class="form-label">本の画像</label>
+					<input type="file" id="book-image" class="form-control" accept="image/*" th:field="*{imgFile}">
+					<div id="fileHelp" class="form-text">サイズは10MBまでです、画像を登録すると読み込みが遅くなります</div>
+				</div>
+				<div class="input-group">
+					<span class="input-group-text">メモ</span>
+					<textarea class="form-control" aria-label="comment" placeholder="ご自由にお書きください" th:field="*{comment}"></textarea>
+				</div></div>
+				<div>
+					<input type="submit" class="btn btn-primary" value="新規登録">
+					<a class="btn btn-secondary ms-3" href="/user/home" role="button">一覧に戻る</a>
+				</div>
+			</form>
+		</div>
+	</div>
 	</div>
 	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js" integrity="sha384-fbbOQedDUMZZ5KreZpsbe1LCZPVmfTnH7ois6mU1QK+m14rQ1l2bGBq41eYeM/fS" crossorigin="anonymous"></script>
