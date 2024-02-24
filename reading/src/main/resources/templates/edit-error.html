@@ -42,21 +42,24 @@
 							<form id="edit-form" class="needs-validation" th:action="@{/user/update/execute-edit}" method="post" enctype="multipart/form-data" th:object="${editBookInput}">
 								<input type="hidden" th:field="*{bookId}">
 								<div class="mb-4">
-									<p th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="text-danger">Title Error</p>
+									<div th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="text-danger">Title Error</div>
 									<label for="book-title" class="form-label">タイトル</label>
-									<p class="d-inline-block text-danger">必須</p>
+									<span class="text-danger">必須</span>
 									<input type="text" id="book-title" class="form-control" th:field="*{title}" required>
 								</div>
 								<div class="mb-4">
 									<select class="form-select" aria-label="Book genre select" th:field="*{genre}">
 										<option selected value="">本のジャンルを選んでください</option>
 										<option value="小説">小説</option>
-										<option value="ミステリー/サスペンス">ミステリー/サスペンス</option>
-										<option value="SF/ファンタジー">SF/ファンタジー</option>
+										<option value="ノンフィクション">ノンフィクション</option>
+										<option value="ミステリー">ミステリー</option>
+										<option value="サスペンス">サスペンス</option>
+										<option value="SF">SF</option>
+										<option value="ファンタジー">ファンタジー</option>
 										<option value="ロマンス">ロマンス</option>
-										<option value="歴史/自伝">歴史/自伝</option>
+										<option value="歴史">歴史</option>
 										<option value="自己啓発">自己啓発</option>
-										<option value="お金">お金</option>
+										<option value="お金">お金</option>			
 										<option value="学習">学習</option>
 										<option value="コミック">コミック</option>
 										<option value="その他">その他</option>
@@ -67,9 +70,9 @@
 									<input type="text" id="author" class="form-control" th:field="*{author}">
 								</div>
 								<div class="mb-4">
-									<p th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}" class="text-danger">Date Error</p>
+									<div th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}" class="text-danger">Date Error</div>
 									<label for="start-date" class="form-label">開始日</label>
-									<p class="d-inline-block text-danger">必須</p>
+									<span class="d-inline-block text-danger">必須</span>
 									<input type="date" id="start-date" class="form-control" th:field="*{startDate}" required>
 								</div>
 								<div class="mb-4">
@@ -94,7 +97,7 @@
 					</div>
 				</div>
 			</div>
-			<!-- editModal終わり -->
+			<!-- end editModal -->
 			<a class="btn btn-secondary ms-3" href="/user/home" role="button">一覧に戻る</a>
 		</div>
 	</div>

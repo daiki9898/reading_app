@@ -46,9 +46,9 @@
 							<li><a class="dropdown-item" href="/user/finished-booklist">読了済み</a></li>
 						</ul>
 					</li>
-					<li class="nav-item">
-						<a class="nav-link" href="/user/update/display-registerform">登録</a>
-        			</li>
+<!--					<li class="nav-item">-->
+<!--						<a class="nav-link" href="/user/update/display-registerform">登録</a>-->
+<!--        			</li>-->
 				</ul>
 				<!-- 検索ボックス -->
 				<div id="search-box" class="position-absolute" style="right: 50%; transform: translateX(50%);" data-bs-toggle="modal" data-bs-target="#searchModal">
@@ -115,7 +115,7 @@
 					<div class="drop-down position-relative" style="color: white;">
 						<div class="dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 							<i class="text-light fs-2 position-relative bi bi-person-circle" id="profile" style="opacity: 0.9;">
-								<span class="position-absolute translate-middle border border-info rounded-circle hover" style="background-color: rgb(6, 255, 58); top: 15%; left: 72%; padding: 0.4rem;">
+								<span class="position-absolute translate-middle border border-info rounded-circle hover" style="background-color: rgb(6, 255, 58); top: 25%; left: 72%; padding: 0.4rem;">
 									<span class="visually-hidden">User Profile</span>
 								</span>
 						  	</i>
@@ -156,7 +156,29 @@
 	</nav>
 	<!-- navbar終わり -->
 	<div class="container">
+		<!-- sort -->
+		<div class="row mb-3">
+			<div class="col-auto">
+				 <select class="form-select" aria-label="Order">
+			     	<option selected>昇順</option>
+			        <option value="descend">降順</option>
+			     </select>
+    		</div>
+    		<div class="col-auto">
+				<select class="form-select" aria-label="Sort by">
+        			<option selected>日付</option>
+        			<option value="name">名前</option>
+      			</select>
+    		</div>
+    		<div class="col-auto" style="position: absolute; right: 0%;">
+				<button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#genre-tags" aria-expanded="true" aria-controls="genre-tags">
+					<i class="bi bi-caret-down-fill"></i>
+				</button>
+			</div>
+		</div>
+		<!-- sort -->
 		<div class="row">
+			<!-- book -->
 			<div class="col-9 col-sm-10">
 				<div th:if="${#lists.isEmpty(finishedBookList)}">
 					<h2><span th:text="${userProfile.username}"></span>さんが読み終えた本はまだありません</h2>
@@ -195,7 +217,8 @@
 		            </div>
 				</div>
 			</div>
-			<div class="col-3 col-sm-2 col-md-2 col-lg-2 col-xl-2 p-0" aria-label="tag-area" style="position: fixed; right: 0%;">
+			<!-- genre tag -->
+			<div id="genre-tags" class="collapse show col-3 col-sm-2 col-md-2 col-lg-2 col-xl-2 p-0" aria-label="tag-area" style="position: fixed; right: 0%;">
 				<div class="d-flex flex-column border">
 					<a class="text-dark" href="/user/finished-booklist" style="text-decoration: none;">
 						<div class="tag bg-primary-subtle border rounded p-1 m-2">
@@ -254,6 +277,7 @@
 					</a>
 				</div>
 			</div>
+			<!-- finish genre tag -->
 		</div>
 	</div>
 	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>

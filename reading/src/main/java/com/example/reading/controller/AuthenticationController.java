@@ -1,6 +1,5 @@
 package com.example.reading.controller;
 
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -14,8 +13,6 @@ import com.example.reading.input.UserRegistrationInput;
 import com.example.reading.service.CustomUserDetailsService;
 import com.example.reading.service.UserStatusService;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @Controller
@@ -32,16 +29,14 @@ public class AuthenticationController {
 	}
 	
 	@GetMapping("/login")
-	public String displayLoginForm(@RequestParam(name = "error", required = false) String error, Model model) {
+	public String displayLoginForm(@RequestParam(name = "error", required = false) String error, @RequestParam(name = "timeout", required = false) String timeout, Model model) {
+		if (timeout != null) {
+			return "timeout";
+		}
 		if (error != null) {
 			model.addAttribute("errorMessage", "ログインに失敗しました");
 		}
 		return "login";
-	}
-	
-	@GetMapping("/timeout")
-	public String displayTimeoutPage(Authentication authentication, HttpServletRequest request, HttpServletResponse response) {
-		return "timeout";
 	}
 	
 	@PostMapping("/register-user")

@@ -3,6 +3,7 @@ package com.example.reading.controller;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.security.core.Authentication;
@@ -48,28 +49,82 @@ public class BookDisplayController {
 	}
 	
 	@GetMapping("/home")
-	public String displayList(Model model) throws IOException {
+	public String displayList(Model model, @RequestParam(name="order", defaultValue="asc") String order, @RequestParam(name="sort", defaultValue="date") String sort, @RequestParam(name="search-error", required=false) String searchError) throws IOException {
 		Integer userId = getUserId();
 		List<BookResult> bookList = readingListService.findAll(userId);
+		
+		// sort bookList
+		if (bookList != null) {
+			if (sort.equals("date")) {
+				if (order.equals("asc")) {
+					bookList.sort(Comparator.comparing(BookResult::getStartDate));
+				} else if (order.equals("desc")) {
+					bookList.sort(Comparator.comparing(BookResult::getStartDate).reversed());
+				}
+			} else if (sort.equals("title")) {
+				if (order.equals("asc")) {
+					bookList.sort(Comparator.comparing(BookResult::getTitle));
+				} else if (order.equals("desc")) {
+					bookList.sort(Comparator.comparing(BookResult::getTitle).reversed());
+				}
+			}
+		}
 		model.addAttribute("bookList", bookList);
 		SearchInput searchInput = new SearchInput();
 		model.addAttribute("searchInput", searchInput);
 		BookInput bookInput = new BookInput();
+		bookInput.setStartDate(LocalDate.now());
 		model.addAttribute("bookInput", bookInput);
+		model.addAttribute("order", order);
+		model.addAttribute("sort", sort);
+		if (searchError != null) {
+			model.addAttribute("searchError", searchError);
+		}
 		return "reading-booklist";
 	}
 	
-	// タグ検索
-	@GetMapping("/search-reading-booklist")
-	public String searchBookByGenre(Model model, @RequestParam(name= "genre", required = true) String genre) throws IOException {
-		List<BookResult> bookList = readingListService.searchBookByGenre(getUserId(), genre);
+	@GetMapping("/home/{genre}")
+	public String displayListByGenre(Model model, @PathVariable(name= "genre", required = true) String genre, @RequestParam(name="order", defaultValue="asc") String order, @RequestParam(name="sort", defaultValue="date") String sort) throws IOException {
+		Integer userId = getUserId();
+		List<BookResult> bookList = readingListService.searchBookByGenre(userId, genre);
+		
+		// sort bookList
+		if (bookList != null) {
+			if (sort.equals("date")) {
+				if (order.equals("asc")) {
+					bookList.sort(Comparator.comparing(BookResult::getStartDate));
+				} else if (order.equals("desc")) {
+					bookList.sort(Comparator.comparing(BookResult::getStartDate).reversed());
+				}
+			} else if (sort.equals("title")) {
+				if (order.equals("asc")) {
+					bookList.sort(Comparator.comparing(BookResult::getTitle));
+				} else if (order.equals("desc")) {
+					bookList.sort(Comparator.comparing(BookResult::getTitle).reversed());
+				}
+			}
+		}
 		model.addAttribute("bookList", bookList);
 		SearchInput searchInput = new SearchInput();
 		model.addAttribute("searchInput", searchInput);
 		BookInput bookInput = new BookInput();
 		model.addAttribute("bookInput", bookInput);
+		model.addAttribute("order", order);
+		model.addAttribute("sort", sort);
 		return "reading-booklist";
 	}
+	
+//	// タグ検索
+//	@GetMapping("/search-reading-booklist")
+//	public String searchBookByGenre(Model model, @RequestParam(name= "genre", required = true) String genre) throws IOException {
+//		List<BookResult> bookList = readingListService.searchBookByGenre(getUserId(), genre);
+//		model.addAttribute("bookList", bookList);
+//		SearchInput searchInput = new SearchInput();
+//		model.addAttribute("searchInput", searchInput);
+//		BookInput bookInput = new BookInput();
+//		model.addAttribute("bookInput", bookInput);
+//		return "reading-booklist";
+//	}
 	
 	@GetMapping("/book-detail/{id}")
 	public String displayDetail(Model model, @PathVariable String id) throws NumberFormatException {
@@ -88,15 +143,15 @@ public class BookDisplayController {
 		return "finished-booklist";
 	}
 	
-	// タグ検索
-	@GetMapping("/search-finished-booklist")
-	public String searchFinishedBookByGenre(Model model, @RequestParam(name= "genre", required = true) String genre) throws IOException {
-		List<BookResult> finishedBookList = finishedListService.searchBook(getUserId(), genre);
-		model.addAttribute("finishedBookList", finishedBookList);
-		FinishedSearchInput finishedSearchInput = new FinishedSearchInput();
-		model.addAttribute("finishedSearchInput", finishedSearchInput);
-		return "finished-booklist";
-	}
+//	// タグ検索
+//	@GetMapping("/search-finished-booklist")
+//	public String searchFinishedBookByGenre(Model model, @RequestParam(name= "genre", required = true) String genre) throws IOException {
+//		List<BookResult> finishedBookList = finishedListService.searchBook(getUserId(), genre);
+//		model.addAttribute("finishedBookList", finishedBookList);
+//		FinishedSearchInput finishedSearchInput = new FinishedSearchInput();
+//		model.addAttribute("finishedSearchInput", finishedSearchInput);
+//		return "finished-booklist";
+//	}
 	
 		
 	@GetMapping("/finished-book-detail/{id}")
@@ -109,7 +164,7 @@ public class BookDisplayController {
 	
 	// 読書リスト検索関係
 	@PostMapping("/search-reading-booklist")
-	public String searchBook(Model model, SearchInput searchInput) throws IOException {
+	public String searchBook(Model model, SearchInput searchInput, @RequestParam(name="order", defaultValue="asc") String order, @RequestParam(name="sort", defaultValue="date") String sort) throws IOException {
 		if (searchInput == null) {
 			return "redirect:/user/home";
 		}
@@ -119,28 +174,43 @@ public class BookDisplayController {
 		YearMonth roughStartDate = searchInput.getRoughStartDate();
 		LocalDate specificStartDate = searchInput.getSpecificStartDate();
 		if (title.isBlank() && genre.isEmpty() && author.isBlank() && roughStartDate == null && specificStartDate == null) {
-			return "redirect:/user/search-reading-booklist-error";
+			return "redirect:/user/home?search-error";
 		}
 		Integer userId = getUserId();
 		List<BookResult> searchBookList = readingListService.searchBook(userId, searchInput);
+		if (sort.equals("date")) {
+			if (order.equals("asc")) {
+				searchBookList.sort(Comparator.comparing(BookResult::getStartDate));
+			} else if (order.equals("desc")) {
+				searchBookList.sort(Comparator.comparing(BookResult::getStartDate).reversed());
+			}
+		} else if (sort.equals("title")) {
+			if (order.equals("asc")) {
+				searchBookList.sort(Comparator.comparing(BookResult::getTitle));
+			} else if (order.equals("desc")) {
+				searchBookList.sort(Comparator.comparing(BookResult::getTitle).reversed());
+			}
+		}
 		model.addAttribute("searchBookList", searchBookList);
 		model.addAttribute("searchInput", searchInput);
+		model.addAttribute("order", order);
+		model.addAttribute("sort", sort);
 		return "search/search-result";
 	}
 	
-	@GetMapping("/search-reading-booklist-error")
-	public String showSearchError(Model model) throws IOException {
-		Integer userId = getUserId();
-		List<BookResult> bookList = readingListService.findAll(userId);
-		model.addAttribute("bookList", bookList);
-		SearchInput searchInput = new SearchInput();
-		model.addAttribute("searchInput", searchInput);
-		BookInput bookInput = new BookInput();
-		model.addAttribute("bookInput", bookInput);
-		return "search/search-result-error";
-	}
+//	@GetMapping("/search-reading-booklist-error")
+//	public String showSearchError(Model model) throws IOException {
+//		Integer userId = getUserId();
+//		List<BookResult> bookList = readingListService.findAll(userId);
+//		model.addAttribute("bookList", bookList);
+//		SearchInput searchInput = new SearchInput();
+//		model.addAttribute("searchInput", searchInput);
+//		BookInput bookInput = new BookInput();
+//		model.addAttribute("bookInput", bookInput);
+//		return "search/search-result-error";
+//	}
 	
-    // 本棚(読了済みリスト検索関係)
+    // 本棚(読了済みリスト)検索関係
 	@PostMapping("/search-finished-booklist")
 	public String searchFinishedBook(Model model, FinishedSearchInput finishedSearchInput) throws IOException {
 		if (finishedSearchInput == null) {

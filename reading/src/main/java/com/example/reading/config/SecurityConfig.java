@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
@@ -72,11 +73,17 @@ public class SecurityConfig {
 			).rememberMe(remember -> remember
 				.tokenRepository(persistentTokenRepository())
 			).sessionManagement(session -> session
-				.invalidSessionUrl("/timeout")
 				.maximumSessions(1).expiredUrl("/logout")
+			).exceptionHandling(exception -> exception
+				.authenticationEntryPoint(authenticationEntryPoint())
 			);
 		return http.build();
 	}
+	
+	@Bean
+    AuthenticationEntryPoint authenticationEntryPoint() {
+        return new TimeoutUrlAuthenticationEntryPoint("/login");
+    }
 	
 	@Bean
 	public PersistentTokenRepository persistentTokenRepository() {
