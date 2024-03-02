@@ -27,10 +27,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		Account account = accountRepository.findByUserName(username);
-		if (account == null) {
-			throw new UsernameNotFoundException(username + "was not found");
-		}
+		Account account = accountRepository.findByUserName(username).orElseThrow(() -> new UsernameNotFoundException(username + "was not found"));
 		return User.withUsername(account.getUserName())
 				.password(account.getPassword())
 				.roles(account.getRole().toString())
@@ -43,10 +40,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 	}
 	
 	public Integer getUserIdbyUsername(String username) throws UsernameNotFoundException {
-		Account account = accountRepository.findByUserName(username);
-		if (account == null) {
-			throw new UsernameNotFoundException(username + "was not found");
-		}
+		Account account = accountRepository.findByUserName(username).orElseThrow(() -> new UsernameNotFoundException(username + "was not found"));
 		return account.getUserId();
 	}
 	

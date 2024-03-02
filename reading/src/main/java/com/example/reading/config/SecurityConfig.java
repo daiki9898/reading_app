@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
@@ -18,6 +19,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.example.reading.authentication.CustomAuthenticationProvider;
+import com.example.reading.authentication.CustomAuthenticationSuccessHandler;
 
 import lombok.RequiredArgsConstructor;
 
@@ -53,17 +55,19 @@ public class SecurityConfig {
 			.authenticationProvider(customAuthenticationProvider)
 			.cors(customizer -> customizer.configurationSource(corsConfigurationSource()))
 			.csrf(csrf -> csrf
-					.csrfTokenRepository(new HttpSessionCsrfTokenRepository())
-					.ignoringRequestMatchers(new AntPathRequestMatcher("/register-user"))
+				.csrfTokenRepository(new HttpSessionCsrfTokenRepository())
+				.ignoringRequestMatchers(new AntPathRequestMatcher("/register-user"))
 			)
 			.authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
-				.requestMatchers("/", "/register-user", "/login", "/timeout").permitAll()
+				.requestMatchers("/", "/register-user", "/login").permitAll()
+				.requestMatchers("/admin/**").hasRole("ADMIN")
+				.requestMatchers("/admin/**").fullyAuthenticated()
 				.anyRequest().authenticated()
 			)
 			.formLogin((formLogin) -> formLogin
 				.loginPage("/login")
 				.loginProcessingUrl("/execute-login")
-				.defaultSuccessUrl("/user/home")
+				.successHandler(authenticationSuccessHandler())
 			)
 			.logout(logout -> logout
 				.deleteCookies("JSESSIONID")
@@ -81,9 +85,14 @@ public class SecurityConfig {
 	}
 	
 	@Bean
-    AuthenticationEntryPoint authenticationEntryPoint() {
+    public AuthenticationEntryPoint authenticationEntryPoint() {
         return new TimeoutUrlAuthenticationEntryPoint("/login");
     }
+	
+	@Bean
+	public AuthenticationSuccessHandler authenticationSuccessHandler() {
+		return new CustomAuthenticationSuccessHandler();
+	}
 	
 	@Bean
 	public PersistentTokenRepository persistentTokenRepository() {

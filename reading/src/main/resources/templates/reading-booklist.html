@@ -169,24 +169,32 @@
         			<option value="title" th:selected="${sort == 'title'}">タイトル</option>
       			</select></form>
 	    	</div>
-    		<div class="col-auto" style="position: absolute; right: 0%;">
+    		<div id="genre-button" class="col-auto" style="position: absolute; right: 0%;">
 				<button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#genre-tags" aria-expanded="true" aria-controls="genre-tags">
 					<i class="bi bi-caret-down-fill"></i>
 				</button>
 			</div>
 		</div>
+		<script type="text/javascript">
+	        const selects = document.querySelectorAll(".sort");
+	        selects.forEach((select) => {
+				select.addEventListener("change", () => {
+					document.getElementById("sort-form").submit();
+				});
+			});
+	</script>
 		<!-- end sort area -->
 		<div class="row">
 			<!-- book -->
-			<div class="col-9 col-sm-10">
+			<div id="book-area" class="col-9 col-sm-10">
 				<div th:if="${#lists.isEmpty(bookList)}">
 					<h2><span th:text="${userProfile.username}"></span>さんが読書中の本はありません</h2>
 				</div>
-				<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 g-4">
+				<div id="card-area" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 g-4">
 		            <div th:each="book,iterStat : ${bookList}" th:object="${book}" class="col">
 						<div class="card h-100">
 			                <img th:src="*{imgFile}" class="card-img-top" style="height: 12rem;">
-							<div class="modal" th:id="'deletemodal-' + ${iterStat.index}" tabindex="-1">
+							<div th:id="'deletemodal-' + ${iterStat.index}" class="modal" tabindex="-1">
 								<div class="modal-dialog">
 									<div class="modal-content">
 										<div class="modal-header">
@@ -305,6 +313,7 @@
 				</div>
 			</div>
 			<script type="text/javascript">
+				// genreタグ遷移
 				document.querySelectorAll(".tag-button").forEach(button => {
 					button.addEventListener("click", function() {
 						const sortForm = document.getElementById("sort-form")
@@ -316,6 +325,52 @@
 						}
 						sortForm.submit();
 					});
+				});
+				
+				// genreタグの開閉
+				const genreButton = document.getElementById("genre-button");
+				const bookArea = document.getElementById("book-area")
+				const cardArea = document.getElementById("card-area")
+				const genreTags = document.getElementById("genre-tags");
+				function getClickCount() {
+					const cookieValue = document.cookie.split('=')[1];
+					return cookieValue ? parseInt(cookieValue) : 0;
+				}
+				let clickCount =　getClickCount();
+				if (clickCount % 2 === 1) {
+					genreTags.classList.remove(...genreTags.classList);
+					genreTags.className += "collapse";
+					bookArea.classList.remove(...bookArea.classList);
+					bookArea.classList.add("col-12")
+					cardArea.classList.remove(...cardArea.classList);
+					cardArea.className += "row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4";
+				} else {
+					bookArea.classList.remove(...bookArea.classList);
+					bookArea.className += "col-9 col-sm-10";
+					cardArea.classList.remove(...cardArea.classList);
+					cardArea.className += "row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 g-4";
+					genreTags.classList.remove(...genreTags.classList);
+					genreTags.className += "collapse show col-3 col-sm-2 col-md-2 col-lg-2 col-xl-2 p-0";
+				}
+				console.log(clickCount);
+				genreButton.addEventListener("click", function() {
+					clickCount ++;
+					document.cookie = `clickCount=${clickCount}`;
+					if (clickCount % 2 === 1) {
+						genreTags.classList.remove(...genreTags.classList);
+						genreTags.className += "collapse";
+						bookArea.classList.remove(...bookArea.classList);
+						bookArea.classList.add("col-12")
+						cardArea.classList.remove(...cardArea.classList);
+						cardArea.className += "row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4";
+					} else {
+						bookArea.classList.remove(...bookArea.classList);
+						bookArea.className += "col-9 col-sm-10";
+						cardArea.classList.remove(...cardArea.classList);
+						cardArea.className += "row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 g-4";
+						genreTags.classList.remove(...genreTags.classList);
+						genreTags.className += "collapse show col-3 col-sm-2 col-md-2 col-lg-2 col-xl-2 p-0";
+					}
 				});
 			</script>
 			<!-- end genre tag -->
@@ -394,22 +449,9 @@
 	<div th:if="${searchError} != null">
 		<script type="text/javascript">
 			// modalを開いた状態をデフォルトに
-		    document.addEventListener("DOMContentLoaded", function() {
-		        const searchBox = document.getElementById("search-box");
-		        searchBox.click();
-		    });
+	        const searchBox = document.getElementById("search-box");
+	        searchBox.click();
 		</script>
 	</div>
-	<!-- sort -->
-	<script type="text/javascript">
-		document.addEventListener("DOMContentLoaded", function() {
-	        const selects = document.querySelectorAll(".sort");
-	        selects.forEach((select) => {
-				select.addEventListener("change", () => {
-					document.getElementById("sort-form").submit();
-				});
-			});
-	    });
-	</script>
 </body>
 </html>

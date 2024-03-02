@@ -1,5 +1,7 @@
 package com.example.reading.repository;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 //import org.springframework.data.jpa.repository.Query;
@@ -14,5 +16,5 @@ public interface AccountRepository extends JpaRepository<Account, Integer>{
 	void customSave(String userName, String password);
 	
 	boolean existsByUserName(String userName);
-	Account findByUserName(String userName);
+	Optional<Account> findByUserName(String userName);
 }
