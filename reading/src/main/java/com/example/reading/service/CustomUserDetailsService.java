@@ -1,5 +1,7 @@
 package com.example.reading.service;
 
+import java.time.LocalDateTime;
+
 //import java.time.LocalDateTime;
 
 import org.springframework.security.core.userdetails.User;
@@ -46,6 +48,10 @@ public class CustomUserDetailsService implements UserDetailsService {
 	
 	public boolean isUserNameExists(String username) {
 		return accountRepository.existsByUserName(username);
+	}
+	
+	public void updateLastLoginDateByUsername(LocalDateTime lastLoginDate, String username) {
+		accountRepository.updateLastLoginDateByUsername(lastLoginDate, username);
 	}
 	
 }

@@ -20,6 +20,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.example.reading.authentication.CustomAuthenticationProvider;
 import com.example.reading.authentication.CustomAuthenticationSuccessHandler;
+import com.example.reading.service.CustomUserDetailsService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,6 +32,7 @@ public class SecurityConfig {
 	
 	private final CustomAuthenticationProvider customAuthenticationProvider;
 	private final DataSource dataSource;
+	private final CustomUserDetailsService userService;
 	
 	@Bean
 	public UrlBasedCorsConfigurationSource corsConfigurationSource() {
@@ -91,7 +93,7 @@ public class SecurityConfig {
 	
 	@Bean
 	public AuthenticationSuccessHandler authenticationSuccessHandler() {
-		return new CustomAuthenticationSuccessHandler();
+		return new CustomAuthenticationSuccessHandler(userService);
 	}
 	
 	@Bean

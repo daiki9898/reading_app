@@ -45,7 +45,7 @@ public class UserListService {
 	}
 	
 	public List<UserDto> getUserList() {
-		List<Account> accounts = accountRepository.findAll();
+		List<Account> accounts = accountRepository.findAllExceptADMIN();
 		List<UserDto> userDtoList = new ArrayList<>();
 		
 		for (Account account : accounts) {
