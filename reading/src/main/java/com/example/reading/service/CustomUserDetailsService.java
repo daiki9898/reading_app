@@ -29,8 +29,8 @@ public class CustomUserDetailsService implements UserDetailsService {
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		Account account = accountRepository.findByUserName(username).orElseThrow(() -> new UsernameNotFoundException(username + "was not found"));
-		return User.withUsername(account.getUserName())
+		Account account = accountRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username + "was not found"));
+		return User.withUsername(account.getUsername())
 				.password(account.getPassword())
 				.roles(account.getRole().toString())
 				.build();
@@ -42,12 +42,12 @@ public class CustomUserDetailsService implements UserDetailsService {
 	}
 	
 	public Integer getUserIdbyUsername(String username) throws UsernameNotFoundException {
-		Account account = accountRepository.findByUserName(username).orElseThrow(() -> new UsernameNotFoundException(username + "was not found"));
+		Account account = accountRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username + "was not found"));
 		return account.getUserId();
 	}
 	
 	public boolean isUserNameExists(String username) {
-		return accountRepository.existsByUserName(username);
+		return accountRepository.existsByUsername(username);
 	}
 	
 	public void updateLastLoginDateByUsername(LocalDateTime lastLoginDate, String username) {

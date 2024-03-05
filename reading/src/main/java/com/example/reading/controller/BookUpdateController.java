@@ -10,11 +10,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import com.example.reading.dto.BookResult;
 import com.example.reading.dto.UserProfile;
@@ -170,5 +172,10 @@ public class BookUpdateController {
 			return "redirect:/user/finished-booklist";
 		}
 		return "redirect:/user/finished-book-detail/" + finishedEditBookInput.getBookId();
+	}
+	
+	@ExceptionHandler(MaxUploadSizeExceededException.class)
+	public String handleMaxSixeException(Model model) {
+		return "filesize-error";
 	}
 }

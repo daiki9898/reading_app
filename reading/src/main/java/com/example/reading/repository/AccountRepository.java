@@ -8,11 +8,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 //import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
 
 import com.example.reading.model.Account;
 
-@Repository
 public interface AccountRepository extends JpaRepository<Account, Integer>{
 	
 	@Modifying
@@ -22,8 +20,8 @@ public interface AccountRepository extends JpaRepository<Account, Integer>{
 	@Query(value = "SELECT * FROM user_login_info WHERE role = 'USER'", nativeQuery = true)
 	List<Account> findAllExceptADMIN();
 	
-	boolean existsByUserName(String userName);
-	Optional<Account> findByUserName(String userName);
+	boolean existsByUsername(String username);
+	Optional<Account> findByUsername(String username);
 	
 	@Modifying
 	@Query(value = "UPDATE user_login_info SET last_login_date = ?1 WHERE user_name = ?2", nativeQuery = true)

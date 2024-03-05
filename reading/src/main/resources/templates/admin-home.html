@@ -26,6 +26,9 @@
 		<div th:if="${#lists.isEmpty(userList)}">
 			<h2>登録中のユーザーはまだいません</h2>
 		</div>
+		<div th:if="${not #lists.isEmpty(userList)}">
+			<h4 th:text="'ユーザー数：' + ${#lists.size(userList)}"></h4>
+		</div>
 		<div id="card-area" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4 mb-5">
 			<div th:each="user : ${userList}" th:object="${user}" class="col">
 				<div class="card">

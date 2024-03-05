@@ -5,6 +5,8 @@ import java.time.LocalDate;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.reading.validator.MaxFileSize;
+
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
@@ -24,5 +26,6 @@ public class BookInput {
 	
 	private String comment;
 	
+	@MaxFileSize
 	private MultipartFile imgFile;
 }

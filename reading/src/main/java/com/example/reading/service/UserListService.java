@@ -50,7 +50,7 @@ public class UserListService {
 		
 		for (Account account : accounts) {
 			UserDto userDto = new UserDto();
-			userDto.setUsername(account.getUserName());
+			userDto.setUsername(account.getUsername());
 			userDto.setRegisteredDate(account.getRegisteredDate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd")));
 			if (account.getLastLoginDate() != null) {
 				userDto.setLoginDuration(formatTimeDifference(account.getLastLoginDate()));

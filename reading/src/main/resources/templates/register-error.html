@@ -368,9 +368,10 @@
 								<input type="date" id="start-date" class="form-control" th:field="*{startDate}" required>
 							</div>
 							<div class="mb-4">
+								<div th:if="${#fields.hasErrors('imgFile')}" th:errors="*{imgFile}" class="text-danger">FileSize Error</div>
 								<label for="book-image" class="form-label">本の画像</label>
 								<input type="file" id="book-image" class="form-control" accept="image/*" th:field="*{imgFile}">
-								<div id="fileHelp" class="form-text">サイズは10MBまでです、画像を登録すると読み込みが遅くなります</div>
+								<div id="fileHelp" class="form-text">サイズは1MBまでです、画像を登録すると読み込みが遅くなります</div>
 							</div>
 							<div class="input-group">
 								<span class="input-group-text">メモ</span>
