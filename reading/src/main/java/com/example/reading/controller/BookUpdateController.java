@@ -1,5 +1,6 @@
 package com.example.reading.controller;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
@@ -10,13 +11,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import com.example.reading.dto.BookResult;
 import com.example.reading.dto.UserProfile;
@@ -85,10 +84,14 @@ public class BookUpdateController {
 	@GetMapping("/execute-delete/{id}")
 	public String executeDelete(@PathVariable String id) throws NumberFormatException {
 		Integer bookId = Integer.valueOf(id);
-		// 本の削除
+		// delete book
 		readingListService.deleteByBookId(bookId);
-		bookService.delete(bookId);
-		// user_statusの更新
+		try {
+			bookService.delete(bookId);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		// update user_status
         Integer userId = getUserId();
 		userStatusService.updateReadingNumber(userId, -1);
 		return "redirect:/user/home";
@@ -97,10 +100,14 @@ public class BookUpdateController {
 	@GetMapping("/execute-delete-finishedbook/{id}")
 	public String executeDeleteFinishedBook(@PathVariable String id) throws NumberFormatException {
 		Integer bookId = Integer.valueOf(id);
-		// 本の削除
+		// delete book
 		finishedListService.deleteByBookId(bookId);
-		bookService.delete(bookId);
-		// user_statusの更新
+		try {
+			bookService.delete(bookId);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		// update user_status
         Integer userId = getUserId();
 		userStatusService.updateFinishedNumber(userId, -1);
 		return "redirect:/user/finished-booklist";
@@ -117,13 +124,13 @@ public class BookUpdateController {
 			model.addAttribute("searchInput", searchInput);
 			return "register-error";
 		}
-		// 本の登録
+		// register book
         Integer userId = getUserId();
 		Book book = bookService.insert(bookInput, userId);
-		// 登録情報
+		// register book in reading list
 		ReadingListRegistration registration = new ReadingListRegistration(userId, book.getBookId(), bookInput.getStartDate());
 		readingListService.insert(registration);
-		// user_statusの更新
+		// update user_status
 		userStatusService.updateReadingNumber(userId, 1);
 		return "redirect:/user/home";
 	}
@@ -138,12 +145,16 @@ public class BookUpdateController {
 		}
 		readingListService.update(editBookInput);
         Integer userId = getUserId();
-		bookService.update(editBookInput, userId);
+		try {
+			bookService.update(editBookInput, userId);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 		if (isFinished.equals("yes")) {
-			// 読書リストから読了済みへ
+			// move book from readinglist to finishedlist
 			ReadingListRegistration readingListRegistration = readingListService.findByBookId(editBookInput.getBookId());
 			finishedListService.toFinishedList(readingListRegistration);
-			// user_statusの更新
+			// update user_status
 			userStatusService.updateReadingNumber(userId, -1);
 			userStatusService.updateFinishedNumber(userId, 1);
 			return "redirect:/user/home";
@@ -161,21 +172,20 @@ public class BookUpdateController {
 		}
 		finishedListService.update(finishedEditBookInput);
 		Integer userId = getUserId();
-		bookService.updateFinishedBook(finishedEditBookInput, userId);
+		try {
+			bookService.updateFinishedBook(finishedEditBookInput, userId);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 		if (!(isFinished.equals("yes"))) {
-			// 読了済みから読書リストへ
+			// move book from finishedlist to readinglist
 			FinishedListRegistration finishedListRegistration = finishedListService.findByBookId(finishedEditBookInput.getBookId());
 			readingListService.toReadingList(finishedListRegistration);
-			// user_statusの更新
+			// update user_status
 			userStatusService.updateFinishedNumber(userId, -1);
 			userStatusService.updateReadingNumber(userId, 1);
 			return "redirect:/user/finished-booklist";
 		}
 		return "redirect:/user/finished-book-detail/" + finishedEditBookInput.getBookId();
-	}
-	
-	@ExceptionHandler(MaxUploadSizeExceededException.class)
-	public String handleMaxSixeException(Model model) {
-		return "filesize-error";
 	}
 }

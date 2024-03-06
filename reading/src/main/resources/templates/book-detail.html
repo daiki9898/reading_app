@@ -78,6 +78,10 @@
 								<div class="mb-4">
 									<div th:if="${#fields.hasErrors('imgFile')}" th:errors="*{imgFile}" class="text-danger">FileSize Error</div>
 									<label for="book-image" class="form-label">画像を変更する</label>
+									<div class="d-inline-block form-check">
+										<input class="form-check-input" type="checkbox" value="default" id="default-check" th:field="*{checkBoxValue}">
+										<label class="form-check-label" for="default-check">デフォルト画像にする</label>
+									</div>
 									<input type="file" id="book-image" class="form-control" accept="image/*" th:field="*{imgFile}">
 									<div id="fileHelp" class="form-text">サイズは1MBまでです、画像を登録すると読み込みが遅くなります</div>
 								</div>

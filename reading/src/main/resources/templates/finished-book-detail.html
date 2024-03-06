@@ -44,9 +44,9 @@
 							<form id="edit-form" class="needs-validation" th:action="@{/user/update/execute-edit-finishedbook}" method="post" enctype="multipart/form-data">
 								<input type="hidden" th:field="*{bookId}">
 								<div class="mb-4">
-									<p th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="text-danger">Title Error</p>
+									<div th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="text-danger">Title Error</div>
 									<label for="book-title" class="form-label">タイトル</label>
-									<p class="d-inline-block text-danger">必須</p>
+									<span class="text-danger">必須</span>
 									<input type="text" id="book-title" class="form-control" th:field="*{title}" required>
 								</div>
 								<div class="mb-4">
@@ -70,21 +70,25 @@
 								</div>
 								<div class="row mb-4">
 									<div class="col">
-										<p th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}" class="text-danger">Date Error</p>
+										<div th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}" class="text-danger">Date Error</div>
 										<label for="start-date" class="form-label">開始日</label>
-										<p class="d-inline-block text-danger">必須</p>
+										<span class="text-danger">必須</span>
 										<input type="date" id="start-date" class="form-control" th:field="*{startDate}" required>
 									</div>
 									<div class="col">
-										<p th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}" class="text-danger">Date Error</p>
+										<div th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}" class="text-danger">Date Error</div>
 										<label for="end-date" class="form-label">終了日</label>
-										<p class="d-inline-block text-danger">必須</p>
+										<span class="text-danger">必須</span>
 										<input type="date" id="end-date" class="form-control" th:field="*{endDate}" required>
 									</div>
 								</div>
 								<div class="mb-4">
 									<div th:if="${#fields.hasErrors('imgFile')}" th:errors="*{imgFile}" class="text-danger">FileSize Error</div>
 									<label for="book-image" class="form-label">画像を変更する</label>
+									<div class="d-inline-block form-check">
+										<input class="form-check-input" type="checkbox" value="default" id="default-check" th:field="*{checkBoxValue}">
+										<label class="form-check-label" for="default-check">デフォルト画像にする</label>
+									</div>
 									<input type="file" id="book-image" class="form-control" accept="image/*" th:field="*{imgFile}">
 									<div id="fileHelp" class="form-text">サイズは1MBまでです、画像を登録すると読み込みが遅くなります</div>
 								</div>

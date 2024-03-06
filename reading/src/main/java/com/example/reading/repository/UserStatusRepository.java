@@ -11,4 +11,9 @@ public interface UserStatusRepository extends JpaRepository<UserStatus, Integer>
 	@Modifying
 	@Query(value = "INSERT INTO user_status (user_id) VALUES (?1)", nativeQuery = true)
 	void customSave(Integer userId);
+	
+	@Modifying
+	@Query(value = "UPDATE user_status SET uploaded_image_number = ?1, total_image_size = ?2 WHERE user_id =?3", nativeQuery = true)
+	void updateImageRegistrationStatus(Integer userId, int imageNumber, long imageSize);
+	
 }

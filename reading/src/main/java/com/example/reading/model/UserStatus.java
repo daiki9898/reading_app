@@ -18,12 +18,15 @@ public class UserStatus {
 	@Column(name="reading_book_number")
 	private int readingBookNumber;
 	
-	@Column(name="reading_image_number")
-	private int readingImageNumber;
-	
 	@Column(name="finished_book_number")
 	private int finishedBookNumber;
 	
-	@Column(name="finished_image_number")
-	private int finishedImageNumber;
+	@Column(name="uploaded_image_number")
+	private int uploadedImageNumber;
+	
+	@Column(name="total_image_size")
+	private long totalImageSize;
+	
+	@Column(name="genre_tag_open_status")
+	private Boolean gnereTagOpenStatus;
 }

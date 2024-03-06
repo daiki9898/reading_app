@@ -34,5 +34,7 @@ public class FinishedEditBookInput {
 	@MaxFileSize
 	private MultipartFile imgFile;
 	
+	private String checkBoxValue;
+	
 	private String comment;
 }

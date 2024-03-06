@@ -1,6 +1,7 @@
 package com.example.reading.service;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -25,6 +26,7 @@ import com.example.reading.model.ReadingListRegistration;
 import com.example.reading.repository.BookRepository;
 import com.example.reading.repository.FinishedRegistrationRepository;
 import com.example.reading.repository.ReadingRegistrationRepository;
+import com.example.reading.repository.UserStatusRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +40,7 @@ public class BookService {
 	private final BookRepository bookRepository;
 	private final ReadingRegistrationRepository readingRepository;
 	private final FinishedRegistrationRepository finishedRepository;
+	private final UserStatusRepository userStatusRepository;
 	
 	@Value("${image.folder}")
 	private String imgFolder;
@@ -45,7 +48,7 @@ public class BookService {
 	@Value("${default.pic}")
 	private String defaultPath;
 	
-//	userIdをハッシュ化する関数
+    // Method to hash userid
 	public String caluculateHash(Integer userId) {
 		String id = userId.toString();
 		String hexString = "";
@@ -94,25 +97,25 @@ public class BookService {
 		book.setGenre(bookInput.getGenre());
 		book.setComment(bookInput.getComment());
 		if (!(bookInput.getImgFile().isEmpty())) {
+			// update user_status
 			MultipartFile imgFile = bookInput.getImgFile();
-//			ユーザーの画像保存ディレクトリを作成
+			userStatusRepository.updateImageRegistrationStatus(userId, 1, imgFile.getSize());
+			// create derectory for user's image storage
 			String fileDirectory = imgFolder + caluculateHash(userId);
 			try {
 	            Files.createDirectories(Paths.get(fileDirectory));
 	        } catch (IOException e) {
-	            e.printStackTrace();
 	            throw new RuntimeException("ディレクトリの作成に失敗しました", e);
 	        }
 			String fileName = bookInput.getTitle() + "_" + UUID.randomUUID().toString() + ".jpg";
 			String fullPath =  fileDirectory + "/" + fileName;
 			book.setImgSrc(fullPath);
-//			画像の保存
+			// save image
 			Path filePath = Paths.get(fullPath);
 			try (OutputStream stream = Files.newOutputStream(filePath)) {
 				byte[] bytes = imgFile.getBytes();
 				stream.write(bytes);
 			} catch (IOException e) {
-				e.printStackTrace();
 				throw new RuntimeException("画像の保存に失敗しました", e);
 			}
 		} else {
@@ -122,7 +125,7 @@ public class BookService {
 		return book;
 	}
 	
-	public void update(EditBookInput editBookInput, Integer userId) {
+	public void update(EditBookInput editBookInput, Integer userId) throws FileNotFoundException {
 		Book nowBook = bookRepository.findById(editBookInput.getBookId()).orElseThrow(() -> new EntityNotFoundException(editBookInput.getTitle() + "was not found"));
 		Book book = new Book();
 		book.setBookId(editBookInput.getBookId());
@@ -131,38 +134,56 @@ public class BookService {
 		book.setGenre(editBookInput.getGenre());
 		book.setComment(editBookInput.getComment());
 		if (!(editBookInput.getImgFile().isEmpty())) {
+			long fileSize = 0;
 			if (!(nowBook.getImgSrc().equals(defaultPath))) {
 				File file = new File(nowBook.getImgSrc());
-				file.delete();
+				if (file.exists()) {
+					fileSize -= file.length();
+					file.delete();
+				} else {
+					throw new FileNotFoundException("指定されたファイルは存在しません：" + nowBook.getImgSrc());
+				}
 			}
+			// update user_status
 			MultipartFile imgFile = editBookInput.getImgFile();
-//			ユーザーの画像保存ディレクトリを作成
+			userStatusRepository.updateImageRegistrationStatus(userId, 0, fileSize + imgFile.getSize());
+			
+			// create derectory for user's image storage
 			String fileDirectory = imgFolder + caluculateHash(userId);
 			try {
 	            Files.createDirectories(Paths.get(fileDirectory));
 	        } catch (IOException e) {
-	            e.printStackTrace();
 	            throw new RuntimeException("ディレクトリの作成に失敗しました", e);
 	        }
 			String fileName = editBookInput.getTitle() + "_" + UUID.randomUUID().toString() + ".jpg";
 			String fullPath =  fileDirectory + "/" + fileName;
 			book.setImgSrc(fullPath);
-//			画像の保存
+			// sava image
 			Path filePath = Paths.get(fullPath);
 			try (OutputStream stream = Files.newOutputStream(filePath);) {
 				byte[] bytes = imgFile.getBytes();
 				stream.write(bytes);
 			} catch (IOException e) {
-				e.printStackTrace();
 				throw new RuntimeException("画像の保存に失敗しました", e);
 			}
 		} else {
-			book.setImgSrc(nowBook.getImgSrc());
+			if (editBookInput.getCheckBoxValue() != null && !(nowBook.getImgSrc().equals(defaultPath))) {
+				File file = new File(nowBook.getImgSrc());
+				if (file.exists()) {
+					userStatusRepository.updateImageRegistrationStatus(userId, -1, -file.length());
+					file.delete();
+					book.setImgSrc(defaultPath);
+				} else {
+					throw new FileNotFoundException("指定されたファイルは存在しません：" + nowBook.getImgSrc());
+				}
+			} else {
+				book.setImgSrc(nowBook.getImgSrc());
+			}
 		}
 		bookRepository.save(book);
 	}
 	
-	public void updateFinishedBook(FinishedEditBookInput finishedEditBookInput, Integer userId) {
+	public void updateFinishedBook(FinishedEditBookInput finishedEditBookInput, Integer userId) throws FileNotFoundException {
 		Book nowBook = bookRepository.findById(finishedEditBookInput.getBookId()).orElseThrow(() -> new EntityNotFoundException(finishedEditBookInput.getTitle() + "was not found"));
 		Book book = new Book();
 		book.setBookId(finishedEditBookInput.getBookId());
@@ -171,41 +192,65 @@ public class BookService {
 		book.setGenre(finishedEditBookInput.getGenre());
 		book.setComment(finishedEditBookInput.getComment());
 		if (!(finishedEditBookInput.getImgFile().isEmpty())) {
+			long fileSize = 0;
 			if (!(nowBook.getImgSrc().equals(defaultPath))) {
 				File file = new File(nowBook.getImgSrc());
-				file.delete();
+				if (file.exists()) {
+					fileSize -= file.length();
+					file.delete();
+				} else {
+					throw new FileNotFoundException("指定されたファイルは存在しません：" + nowBook.getImgSrc());
+				}
 			}
+			// update user_status
 			MultipartFile imgFile = finishedEditBookInput.getImgFile();
-//			ユーザーの画像保存ディレクトリを作成
+			userStatusRepository.updateImageRegistrationStatus(userId, 0, fileSize + imgFile.getSize());
+			
+			// create derectory for user's image storage
 			String fileDirectory = imgFolder + caluculateHash(userId);
 			try {
 	            Files.createDirectories(Paths.get(fileDirectory));
 	        } catch (IOException e) {
-	            e.printStackTrace();
 	            throw new RuntimeException("ディレクトリの作成に失敗しました", e);
 	        }
 			String fileName = finishedEditBookInput.getTitle() + "_" + UUID.randomUUID().toString() + ".jpg";
 			String fullPath =  fileDirectory + "/" + fileName;
-//			画像の保存
+			book.setImgSrc(fullPath);
+			// save image
 			Path filePath = Paths.get(fullPath);
 			try (OutputStream stream = Files.newOutputStream(filePath);) {
 				byte[] bytes = imgFile.getBytes();
 				stream.write(bytes);
 			} catch (IOException e) {
-				e.printStackTrace();
 				throw new RuntimeException("画像の保存に失敗しました", e);
 			}
 		} else {
-			book.setImgSrc(nowBook.getImgSrc());
+			if (finishedEditBookInput.getCheckBoxValue() != null && !(nowBook.getImgSrc().equals(defaultPath))) {
+				File file = new File(nowBook.getImgSrc());
+				if (file.exists()) {
+					userStatusRepository.updateImageRegistrationStatus(userId, -1, -file.length());
+					file.delete();
+					book.setImgSrc(defaultPath);
+				} else {
+					throw new FileNotFoundException("指定されたファイルは存在しません：" + nowBook.getImgSrc());
+				}
+			} else {
+				book.setImgSrc(nowBook.getImgSrc());
+			}
 		}
 		bookRepository.save(book);
 	}
 	
-	public void delete(Integer bookId) {
+	public void delete(Integer bookId) throws FileNotFoundException {
 		Book book = bookRepository.findById(bookId).orElseThrow(() -> new EntityNotFoundException("本が見つかりませんでした"));
 		if (!(book.getImgSrc().equals(defaultPath))) {
 			File file = new File(book.getImgSrc());
-			file.delete();
+			if (file.exists()) {
+				userStatusRepository.updateImageRegistrationStatus(bookId, -1, -file.length());
+				file.delete();
+			} else {
+				throw new FileNotFoundException("指定されたファイルは存在しません" + book.getImgSrc());
+			}
 		}
 		bookRepository.deleteById(bookId);
 	}
