@@ -15,8 +15,10 @@
     </style>
 </head>
 <body>
+	<div id="overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 999; display: none;"></div>
 	<!-- navbar -->
-	<nav class="navbar navbar-expand-lg bg-info mb-5" th:fragment="header" style="--bs-navbar-color: rgba(255, 255, 255, 0.55);
+	<nav class="navbar navbar-expand-lg bg-info mb-5" th:fragment="header" style="position: relative; 
+		--bs-navbar-color: rgba(255, 255, 255, 0.55);
 	    --bs-navbar-hover-color: rgba(255, 255, 255, 0.75);
 	    --bs-navbar-disabled-color: rgba(255, 255, 255, 0.25);
 	    --bs-navbar-active-color: #fff;
@@ -28,7 +30,7 @@
 				<i class="bi bi-book d-inline-block align-text-top" alt="Logo"></i>
 				My Library
 			</a>
-		    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon" style="background-image: url('data:image/svg+xml,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 30 30\'%3e%3cpath stroke=\'rgba%28255, 255, 255, 0.55%29\' stroke-linecap=\'round\' stroke-miterlimit=\'10\' stroke-width=\'2\' d=\'M4 7h22M4 15h22M4 23h22\'/%3e%3c/svg%3e');"></span>
 		    </button>
 		    <div class="collapse navbar-collapse" id="navbarNavDropdown">
@@ -50,48 +52,159 @@
 						<a class="nav-link" href="/user/update/display-registerform">登録</a>
         			</li>
 				</ul>
-				<!-- profile icon -->
-				<div class="ms-auto me-2">
-					<div class="drop-down position-relative" style="color: white;">
-						<div class="dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-							<i class="text-light fs-2 position-relative bi bi-person-circle" id="profile" style="opacity: 0.9;">
-								<span class="position-absolute translate-middle border border-info rounded-circle hover" style="background-color: rgb(6, 255, 58); top: 25%; left: 72%; padding: 0.4rem;">
-									<span class="visually-hidden">User Profile</span>
-								</span>
-						  	</i>
-					  	</div>
-					  	<ul class="dropdown-menu text-center" id="custom-dropdown" th:object="${userProfile}">
-							<li class="dropdown-item"><u>ユーザー名</u><p class="fs-5" th:text="*{username}"></p></li>
-						 	<li class="dropdown-item"><u>読書中の本</u><p><span class="fs-5" th:text="*{readingNumber}"></span><span>冊</span></p></li>
-						 	<li class="dropdown-item"><u>今まで読んだ本</u><div><span class="fs-5" th:text="*{finishedNumber}"></span><span>冊</span></div></li>
-						 	<li><hr class="dropdown-divider"></li>
-						 	<li><form th:action="@{/logout}" method="post"><button type="submit" class="btn btn-secondary">ログアウト</button></form></li>
-					 	</ul>
-					 	<script type="text/javascript">
-						 	// hover effect
-						 	const point = document.getElementById("profile");
-						 	point.addEventListener("mouseover", () => {
-								 point.style.opacity = 1;
-						 	});
-						 	point.addEventListener("mouseleave", () => {
-								 point.style.opacity = 0.9;
-						 	});
-						 	// ドロップダウン位置調整
-						 	const dropdownMenu = document.getElementById("custom-dropdown");
-						 	const mediaQuery = window.matchMedia("(min-width: 768px)");
-						 	function adjustDropdownMenuPosition() {
-								 if (mediaQuery.matches) {
-									 dropdownMenu.style.left = "-200%";
-								} else {
-									dropdownMenu.style.left = "auto";
-							 	}
-						  	}
-						 	window.addEventListener("resize", adjustDropdownMenuPosition);
-						 	adjustDropdownMenuPosition();
-					 	</script>
-				 	</div>
-			 	</div>
+			</div>
+			<!-- search box -->
+<!--		<div id="search-box me-0" data-bs-toggle="modal" data-bs-target="#searchModal">-->
+<!--			<i class="bi bi-search text-secondary"></i>-->
+<!--		</div>-->
+<!--		<div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">-->
+<!--			<div class="modal-dialog">-->
+<!--				<div class="modal-content">-->
+<!--					<div class="modal-header">-->
+<!--						<h1 class="modal-title fs-5" id="searchModalLabel">読書リスト検索</h1>-->
+<!--						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
+<!--					</div>-->
+<!--					<div class="modal-body">-->
+<!--						<form id="search-form" th:action="@{/user/search-reading-booklist}" method="post">-->
+<!--							<div id="inputHelp" class="text-danger text-center">最低1項目の入力が必要です</div>-->
+<!--	         				<div class="mb-3">-->
+<!--					            <label for="book-title" class="col-form-label">タイトル</label>-->
+<!--					            <input type="text" class="form-control" id="book-title" th:field="${searchInput.title}">-->
+<!--				         	</div>-->
+<!--				         	<div class="mb-3">-->
+<!--					            <select class="form-select" aria-label="Book genre select" th:field="${searchInput.genre}">-->
+<!--									<option selected value="">本のジャンルを選んでください</option>-->
+<!--									<option value="小説">小説</option>-->
+<!--									<option value="ノンフィクション">ノンフィクション</option>-->
+<!--									<option value="ミステリー">ミステリー</option>-->
+<!--									<option value="サスペンス">サスペンス</option>-->
+<!--									<option value="SF">SF</option>-->
+<!--									<option value="ファンタジー">ファンタジー</option>-->
+<!--									<option value="ロマンス">ロマンス</option>-->
+<!--									<option value="歴史">歴史</option>-->
+<!--									<option value="自己啓発">自己啓発</option>-->
+<!--									<option value="お金">お金</option>			-->
+<!--									<option value="学習">学習</option>-->
+<!--									<option value="コミック">コミック</option>-->
+<!--									<option value="その他">その他</option>-->
+<!--								</select>-->
+<!--	         				</div>-->
+<!--	         				<div class="mb-3">-->
+<!--					            <label for="book-author" class="col-form-label">著者</label>-->
+<!--					            <input type="text" class="form-control" id="book-author" th:field="${searchInput.author}">-->
+<!--	         				</div>-->
+<!--	         				<div class="mb-3">-->
+<!--					            <label for="rough-start-date" class="col-form-label">開始日</label>-->
+<!--					            <input type="month" class="form-control" id="rough-start-date" th:field="${searchInput.roughStartDate}">-->
+<!--	         				</div>-->
+<!--	         				<div class="mb-3">-->
+<!--					            <label for="specific-start-date" class="col-form-label">詳細日程</label>-->
+<!--					            <input type="date" class="form-control" id="specific-start-date" th:field="${searchInput.specificStartDate}">-->
+<!--	         				</div>-->
+<!--	         				 <span id="dateHelp" class="form-text">指定した日付以降に登録した本を表示します</span>-->
+<!--	         			</form>-->
+<!--      				</div>-->
+<!--     				<div class="modal-footer">-->
+<!--				        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>-->
+<!--				        <button type="submit" form="search-form" class="btn btn-primary">検索</button>-->
+<!--      				</div>-->
+<!--				</div>-->
+<!--			</div>-->
+<!--		</div>-->
+			<!-- profile icon -->
+			<div class="ms-auto">
+				 <a data-bs-toggle="collapse" href="#user-profile-collapse" role="button" aria-expanded="false" aria-controls="user-profile-collapase" style="text-decoration: none;">
+					 <i class="fs-2 text-light position-relative bi bi-person-circle" id="profile" style="font-style: normal;">
+						 <span class="position-absolute translate-middle badge rounded-pill" style="background-color: rgb(255, 19, 19); font-size: 10px; top: 23%; left: 80%;">
+							 1
+							 <span class="visually-hidden">unread messages</span>
+						 </span>
+					 </i>
+				 </a>
+				 <script type="text/javascript">
+					 // hover effect
+					 const profile = document.getElementById("profile");
+					 profile.addEventListener("mouseover", () => {
+						 profile.style.opacity = 0.9;
+					 });
+					 profile.addEventListener("mouseleave", () => {
+						 profile.style.opacity = 1.0;
+					 });
+					 /* // ajust dropdown position
+					 const dropdownMenu = document.getElementById("custom-dropdown");
+					 const mediaQuery = window.matchMedia("(min-width: 768px)");
+					 function adjustDropdownMenuPosition() {
+						 if (mediaQuery.matches) {
+							 
+						 } else {
+							 dropdownMenu.style.left = "auto";
+						 }
+					 }
+					 window.addEventListener("resize", adjustDropdownMenuPosition);
+					 adjustDropdownMenuPosition(); */
+			    </script>
 		    </div>
+		    <!-- user profile collapse -->
+		    <div class="d-flex flex-row-reverse" style="position: absolute; z-index: 1000; top: 100%; right: 0%;">
+				<div class="collapse" id="user-profile-collapse">
+					<div class="card card-body text-center p-0" th:object="${userProfile}" style="--bs-card-border-color: #6c757d">
+						<ul class="list-group list-group-flush">
+							<li class="list-group-item"><u>ユーザー名</u><div class="fs-5" th:text="*{username}"></div></li>
+							<li class="list-group-item p-0">
+								<!-- notification accordion -->
+								<div class="accordion" id="notification-accordion" style="--bs-accordion-border-radius: ; --bs-accordion-inner-border-radius: ;">
+									<div class="accordion-item" style="border: 0;">
+										<div class="accordion-header" style="--bs-accordion-active-bg: #e9ecef; --bs-accordion-btn-focus-box-shadow: ; 
+											--bs-accordion-btn-active-icon: url('data:image/svg+xml,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 16 16\' fill=\'%23212529\'%3e%3cpath fill-rule=\'evenodd\' d=\'M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z\'/%3e%3c/svg%3e');">
+											<button id="notification" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#notification-collapse" aria-expanded="false" aria-controls="notification-collapse">
+												お知らせ<span class="badge rounded-pill" style="background-color: rgb(255, 19, 19);">1</span></a>
+											</button>
+			    						</div>
+			    						<div id="notification-collapse" class="accordion-collapse collapse">
+			      							<div class="accordion-body p-3" style="--bs-card-border-color: rgba(0, 0, 0, 0.175)">
+					  							<div class="card text-start">
+													<div class="card-header">
+														メールアドレス登録のお願い
+													</div>
+													<div class="p-3">
+														パスワードリセット時に必要です、忘れる前に早めの登録をお願いします。<br>
+														<a href="">登録画面へ</a>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<!-- end -->
+								</div>
+							</li>
+							<script type="text/javascript">
+								const overlay = document.getElementById("overlay");
+								const notification = document.getElementById("notification");
+								notification.addEventListener("click", () => {
+									if (notification.classList.contains("collapsed")) {
+										overlay.style.display = "none";
+									} else {
+										overlay.style.display = "block";
+									}
+								});
+								overlay.addEventListener("click", () => {
+									overlay.style.display = "none";
+									const userCollapse = document.getElementById("user-profile-collapse");
+									userCollapse.classList.remove("show");
+									const notificationCollapse = document.getElementById("notification-collapse");
+									notificationCollapse.classList.remove("show");
+									notification.classList.add("collapsed");
+								});											
+							</script>
+							<li class="list-group-item"><u>読書中の本</u><div><span class="fs-5" th:text="*{readingNumber}"></span><span>冊</span></div></li>
+							<li class="list-group-item"><u>今まで読んだ本</u><div><span class="fs-5" th:text="*{finishedNumber}"></span><span>冊</span></div></li>
+							<li class="list-group-item"><a class="link-body-emphasis link-underline link-underline-opacity-0" href=""><i class="bi bi-gear"></i>設定</a></li>
+							<li class="list-group-item"><form th:action="@{/logout}" method="post"><button type="submit" class="btn btn-secondary">ログアウト</button></form></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<!-- end profile icon -->
 	    </div>
 		<!-- search box -->
 		<div id="search-box" class="position-absolute" style="right: 50%; transform: translateX(50%);" data-bs-toggle="modal" data-bs-target="#searchModal">
@@ -155,6 +268,7 @@
 	</nav>
 	<!-- end navbar -->
 	<div class="container">
+							
 		<!-- sort area -->
 		<div class="row mb-3">
 			<div class="col-auto">
@@ -229,91 +343,91 @@
 					<!-- all -->
 					<button type="button" value="すべて" class="tag-button btn btn-primary p-1 m-2 bg-primary-subtle text-dark" style="--bs-btn-border-color: transparent;">
 						<div class="d-flex justify-content-start">
-							<i class="bi bi-bookmark"></i><span>すべて</span>
+							<i class="bi bi-tag"></i><span>すべて</span>
 						</div>
 					</button>
 					<!-- novel -->
 					<button type="button" value="小説" class="tag-button btn btn-primary p-1 m-2 bg-primary-subtle text-dark" style="--bs-btn-border-color: transparent;">
 						<div class="d-flex justify-content-start">
-							<i class="bi bi-bookmark"></i><span>小説</span>
+							<i class="bi bi-tag"></i><span>小説</span>
 						</div>
 					</button>
 					<!-- nonfiction -->
 					<button type="button" value="ノンフィクション" class="tag-button btn btn-primary p-1 m-2 bg-primary-subtle text-dark" style="--bs-btn-border-color: transparent;">
 						<div class="d-flex justify-content-start">
-							<i class="bi bi-bookmark"></i><span>ノンフィクション</span>
+							<i class="bi bi-tag"></i><span>ノンフィクション</span>
 						</div>
 					</button>
 					<!-- mystery -->
 					<button type="button" value="ミステリー" class="tag-button btn btn-primary p-1 m-2 bg-primary-subtle text-dark" style="--bs-btn-border-color: transparent;">
 						<div class="d-flex justify-content-start">
-							<i class="bi bi-bookmark"></i><span>ミステリー</span>
+							<i class="bi bi-tag"></i><span>ミステリー</span>
 						</div>
 					</button>
 					<!-- suspense -->
 					<button type="button" value="サスペンス" class="tag-button btn btn-primary p-1 m-2 bg-primary-subtle text-dark" style="--bs-btn-border-color: transparent;">
 						<div class="d-flex justify-content-start">
-							<i class="bi bi-bookmark"></i><span>サスペンス</span>
+							<i class="bi bi-tag"></i><span>サスペンス</span>
 						</div>
 					</button>
 					<!-- sf -->
 					<button type="button" value="SF" class="tag-button btn btn-primary p-1 m-2 bg-primary-subtle text-dark" style="--bs-btn-border-color: transparent;">
 						<div class="d-flex justify-content-start">
-							<i class="bi bi-bookmark"></i><span>SF</span>
+							<i class="bi bi-tag"></i><span>SF</span>
 						</div>
 					</button>
 					<!-- fantagy -->
 					<button type="button" value="ファンタジー" class="tag-button btn btn-primary p-1 m-2 bg-primary-subtle text-dark" style="--bs-btn-border-color: transparent;">
 						<div class="d-flex justify-content-start">
-							<i class="bi bi-bookmark"></i><span>ファンタジー</span>
+							<i class="bi bi-tag"></i><span>ファンタジー</span>
 						</div>
 					</button>
 					<!-- romance -->
 					<button type="button" value="ロマンス" class="tag-button btn btn-primary p-1 m-2 bg-primary-subtle text-dark" style="--bs-btn-border-color: transparent;">
 						<div class="d-flex justify-content-start">
-							<i class="bi bi-bookmark"></i><span>ロマンス</span>
+							<i class="bi bi-tag"></i><span>ロマンス</span>
 						</div>
 					</button>
 					<!-- history -->
 					<button type="button" value="歴史" class="tag-button btn btn-primary p-1 m-2 bg-primary-subtle text-dark" style="--bs-btn-border-color: transparent;">
 						<div class="d-flex justify-content-start">
-							<i class="bi bi-bookmark"></i><span>歴史</span>
+							<i class="bi bi-tag"></i><span>歴史</span>
 						</div>
 					</button>
 					<!-- self development -->
 					<button type="button" value="自己啓発" class="tag-button btn btn-primary p-1 m-2 bg-primary-subtle text-dark" style="--bs-btn-border-color: transparent;">
 						<div class="d-flex justify-content-start">
-							<i class="bi bi-bookmark"></i><span>自己啓発</span>
+							<i class="bi bi-tag"></i><span>自己啓発</span>
 						</div>
 					</button>
 					<!-- money -->
 					<button type="button" value="お金" class="tag-button btn btn-primary p-1 m-2 bg-primary-subtle text-dark" style="--bs-btn-border-color: transparent;">
 						<div class="d-flex justify-content-start">
-							<i class="bi bi-bookmark"></i><span>お金</span>
+							<i class="bi bi-tag"></i><span>お金</span>
 						</div>
 					</button>
 					<!-- study -->
 					<button type="button" value="学習" class="tag-button btn btn-primary p-1 m-2 bg-primary-subtle text-dark" style="--bs-btn-border-color: transparent;">
 						<div class="d-flex justify-content-start">
-							<i class="bi bi-bookmark"></i><span>学習</span>
+							<i class="bi bi-tag"></i><span>学習</span>
 						</div>
 					</button>
 					<!-- comic -->
 					<button type="button" value="コミック" class="tag-button btn btn-primary p-1 m-2 bg-primary-subtle text-dark" style="--bs-btn-border-color: transparent;">
 						<div class="d-flex justify-content-start">
-							<i class="bi bi-bookmark"></i><span>コミック</span>
+							<i class="bi bi-tag"></i><span>コミック</span>
 						</div>
 					</button>
 					<!-- others -->
 					<button type="button" value="その他" class="tag-button btn btn-primary p-1 m-2 bg-primary-subtle text-dark" style="--bs-btn-border-color: transparent;">
 						<div class="d-flex justify-content-start">
-							<i class="bi bi-bookmark"></i><span>その他</span>
+							<i class="bi bi-tag"></i><span>その他</span>
 						</div>
 					</button>
 				</div>
 			</div>
 			<script type="text/javascript">
-				// genreタグ遷移
+				// submit sortform by genre
 				document.querySelectorAll(".tag-button").forEach(button => {
 					button.addEventListener("click", function() {
 						const sortForm = document.getElementById("sort-form")
@@ -327,7 +441,7 @@
 					});
 				});
 				
-				// genreタグの開閉
+				// toggle genre tag
 				const genreButton = document.getElementById("genre-button");
 				const bookArea = document.getElementById("book-area")
 				const cardArea = document.getElementById("card-area")
@@ -448,7 +562,7 @@
 	<!-- when ocuured search error -->
 	<div th:if="${searchError} != null">
 		<script type="text/javascript">
-			// modalを開いた状態をデフォルトに
+			// open modal by default
 	        const searchBox = document.getElementById("search-box");
 	        searchBox.click();
 		</script>
