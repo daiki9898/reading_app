@@ -1,5 +1,10 @@
-# My Libraryとは
-My Libraryは読書を管理するアプリです。Spring Boot × Thymeleafで作成したSSR方式です。<br>
+# 読書管理アプリ「My Library」
+My Libraryは読書記録を一元的に管理するアプリです。<br>
+今自分が何の本を読んでいるか管理、また感想等自由に書き込めます。そして、読み終えた本は本棚に保管され、ユーザーは今まで読んだ本を後から振り返ることができます。<br>
+作成した背景としては、書籍の勉強からアプリ演習で技術を獲得したいと考えた際、せっかく作るなら何か役立つものが良いと考えました。
+そこで、自分が今まで読んだ本を単純に覚えていなかったこと、また友人におすすめの本を聞いた際、何を読んだか忘れてしまったと言っていたことから、このアプリを作成することを決めました。<br>
+<br>
+Spring Boot × Thymeleafで作成したSSR方式です。<br>
 まだ完成しておらず、なるべく早いデプロイを目指して頑張っています。※基本機能は実装済み<br>
 また、SPAの勉強として、完成後はRESTAPIに作り変えることを検討しています。
 
@@ -93,7 +98,7 @@ My Libraryは読書を管理するアプリです。Spring Boot × Thymeleafで�
 ### 2. **JOIN結果をDTOにセット**
 - 一般的なCRUD操作だけならSpring Data JPAを使えば、クエリをかかずに簡単に操作ができます。しかし、JOIN結果を取得するには適していませんでした。
 - ネット上のあらゆるサイトを検索し試しました。そこでは、Repositoryのメソッドに@Queryで、データを受け取るDTOクラスをFQCNで指定し、インスタンス化して値をセットすると書いてありました。しかし、いくらやっても上手くいきませんでした。
-- 最終的には、JdbcTemplateでDTOとJOIN結果のmappingを行う方法で成功しました。
+- 最終的に、JdbcTemplateでDTOとJOIN結果のmappingを行う方法を採用しました。
 <!-- [この本](https://www.amazon.co.jp/%E3%83%97%E3%83%AD%E3%81%AB%E3%81%AA%E3%82%8B%E3%81%9F%E3%82%81%E3%81%AESpring%E5%85%A5%E9%96%80%E3%83%BC%E3%83%BC%E3%82%BC%E3%83%AD%E3%81%8B%E3%82%89%E3%81%AE%E9%96%8B%E7%99%BA%E5%8A%9B%E9%A4%8A%E6%88%90%E8%AC%9B%E5%BA%A7-%E5%9C%9F%E5%B2%90-%E5%AD%9D%E5%B9%B3/dp/4297136139/ref=sr_1_3?__mk_ja_JP=%E3%82%AB%E3%82%BF%E3%82%AB%E3%83%8A&crid=26EDW40QRJ39B&keywords=Spring&qid=1707758787&sprefix=spring%2Caps%2C166&sr=8-3-spons&sp_csd=d2lkZ2V0TmFtZT1zcF9hdGY&psc=1 "プロになるためのSpring入門")にのっています、非常におすすめです。
 - 追記: Postgresのテーブルと対応したJavaのModel(Entity)をDBにinsertする際、enum型のmappingが上手くいかず、enum型なのに文字列を挿入しようとしているとエラーが出ました。フィールドに@Enumerated(TYPE.STRING)を付与すれば、EntityとTableのenum型のmappingは上手くいくようですが、結局解決しませんでした。わかる方がいれば教えていただきたいです。-->
 ### 3. **Spring Securityを理解する**
