@@ -98,7 +98,7 @@ public class FinishedListService {
 		return resultList;
 	}
 	
-	// crud for registration
+	// CRUD for registration
 	public FinishedListRegistration findByBookId(Integer bookId) {
 		FinishedListRegistration registration  = finishedRepository.findByBookId(bookId).orElseThrow(() -> new EntityNotFoundException("登録情報は見つかりませんでした"));
 		return registration;
@@ -117,6 +117,12 @@ public class FinishedListService {
 	
 	public void delete(Integer id) {
 		finishedRepository.deleteById(id);
+	}
+	
+	public List<FinishedListRegistration> deleteByUserId(Integer userId) {
+		List<FinishedListRegistration> registrations = finishedRepository.getListByUserId(userId).orElseThrow(() -> new EntityNotFoundException("登録情報は見つかりませんでした"));
+		readingRepository.deleteByUserId(userId);
+		return registrations;
 	}
 	
 	public void deleteByBookId(Integer bookId) {

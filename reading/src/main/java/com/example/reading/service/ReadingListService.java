@@ -42,7 +42,7 @@ public class ReadingListService {
 			result.setBookId(book.getBookId());
 			result.setTitle(book.getBookInfoDto().getTitle());
 			result.setStartDate(book.getStartDate());
-			// 画像のエンコード
+			// Image Encoding
 			Path filePath = Paths.get(book.getBookInfoDto().getImgSrc());
 			byte[] bytes = Files.readAllBytes(filePath);
 			String textData = Base64.getEncoder().encodeToString(bytes);
@@ -60,7 +60,7 @@ public class ReadingListService {
 			result.setBookId(book.getBookId());
 			result.setTitle(book.getBookInfoDto().getTitle());
 			result.setStartDate(book.getStartDate());
-			// 画像のエンコード
+			// Image Encoding
 			Path filePath = Paths.get(book.getBookInfoDto().getImgSrc());
 			byte[] bytes = Files.readAllBytes(filePath);
 			String textData = Base64.getEncoder().encodeToString(bytes);
@@ -78,7 +78,7 @@ public class ReadingListService {
 			result.setBookId(book.getBookId());
 			result.setTitle(book.getBookInfoDto().getTitle());
 			result.setStartDate(book.getStartDate());
-			// 画像のエンコード
+			// Image Encoding
 			Path filePath = Paths.get(book.getBookInfoDto().getImgSrc());
 			byte[] bytes = Files.readAllBytes(filePath);
 			String textData = Base64.getEncoder().encodeToString(bytes);
@@ -89,10 +89,10 @@ public class ReadingListService {
 	}
 	
 	
-	// 登録情報のCRUD
+	// CRUD for registration
 	public ReadingListRegistration findByBookId(Integer bookId) {
-		ReadingListRegistration readingListRegistration  = readingRepository.findByBookId(bookId).orElseThrow(() -> new EntityNotFoundException("登録情報は見つかりませんでした"));
-		return readingListRegistration;
+		ReadingListRegistration registration  = readingRepository.findByBookId(bookId).orElseThrow(() -> new EntityNotFoundException("登録情報は見つかりませんでした"));
+		return registration;
 	}
 	
 	public void insert(ReadingListRegistration registration) {
@@ -105,8 +105,14 @@ public class ReadingListService {
 		readingRepository.save(registration);
 	}
 	
-	public void delete(Integer id) {
+	public void deleteById(Integer id) {
 		readingRepository.deleteById(id);
+	}
+	
+	public List<ReadingListRegistration> deleteByUserId(Integer userId) {
+		List<ReadingListRegistration> registrations = readingRepository.getListByUserId(userId).orElseThrow(() -> new EntityNotFoundException("登録情報は見つかりませんでした"));
+		readingRepository.deleteByUserId(userId);
+		return registrations;
 	}
 	
 	public void deleteByBookId(Integer bookId) {

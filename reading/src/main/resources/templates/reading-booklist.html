@@ -117,7 +117,7 @@
 					 <i class="fs-2 text-light position-relative bi bi-person-circle" id="profile" style="font-style: normal;">
 						 <span class="position-absolute translate-middle badge rounded-pill" style="background-color: rgb(255, 19, 19); font-size: 10px; top: 23%; left: 80%;">
 							 1
-							 <span class="visually-hidden">unread messages</span>
+							 <span class="visually-hidden">User Profile</span>
 						 </span>
 					 </i>
 				 </a>
@@ -149,7 +149,10 @@
 				<div class="collapse" id="user-profile-collapse">
 					<div class="card card-body text-center p-0" th:object="${userProfile}" style="--bs-card-border-color: #6c757d">
 						<ul class="list-group list-group-flush">
-							<li class="list-group-item"><u>ユーザー名</u><div class="fs-5" th:text="*{username}"></div></li>
+							<li class="list-group-item">
+								<div class="fw-bold">ユーザー名</div>
+								<div class="fs-5" th:text="*{username}"></div>
+							</li>
 							<li class="list-group-item p-0">
 								<!-- notification accordion -->
 								<div class="accordion" id="notification-accordion" style="--bs-accordion-border-radius: ; --bs-accordion-inner-border-radius: ;">
@@ -168,7 +171,7 @@
 													</div>
 													<div class="p-3">
 														パスワードリセット時に必要です、忘れる前に早めの登録をお願いします。<br>
-														<a href="">登録画面へ</a>
+														<a href="/user/profile">登録画面へ</a>
 													</div>
 												</div>
 											</div>
@@ -196,15 +199,21 @@
 									notification.classList.add("collapsed");
 								});											
 							</script>
-							<li class="list-group-item"><u>読書中の本</u><div><span class="fs-5" th:text="*{readingNumber}"></span><span>冊</span></div></li>
-							<li class="list-group-item"><u>今まで読んだ本</u><div><span class="fs-5" th:text="*{finishedNumber}"></span><span>冊</span></div></li>
-							<li class="list-group-item"><a class="link-body-emphasis link-underline link-underline-opacity-0" href=""><i class="bi bi-gear"></i>設定</a></li>
+							<li class="list-group-item">
+								<div class="fw-bold">読書中の本</div>
+								<div><span class="fs-5" th:text="*{readingNumber}"></span><span>冊</span></div>
+							</li>
+							<li class="list-group-item">
+								<div class="fw-bold">今まで読んだ本</div>
+								<div><span class="fs-5" th:text="*{finishedNumber}"></span><span>冊</span></div>
+							</li>
+							<li class="list-group-item"><a class="link-body-emphasis link-underline link-underline-opacity-0" href="/user/profile"><i class="bi bi-gear"></i>設定</a></li>
 							<li class="list-group-item"><form th:action="@{/logout}" method="post"><button type="submit" class="btn btn-secondary">ログアウト</button></form></li>
 						</ul>
 					</div>
 				</div>
 			</div>
-			<!-- end profile icon -->
+			<!-- end user profile collapse -->
 	    </div>
 		<!-- search box -->
 		<div id="search-box" class="position-absolute" style="right: 50%; transform: translateX(50%);" data-bs-toggle="modal" data-bs-target="#searchModal">
@@ -270,7 +279,7 @@
 	<div class="container">
 							
 		<!-- sort area -->
-		<div class="row mb-3">
+		<div class="row mb-3" th:if="${not #lists.isEmpty(bookList)}">
 			<div class="col-auto">
 				 <form id="sort-form"><select class="sort form-select" name="order" aria-label="Order">
 			     	<option value="asc" th:selected="${order == 'asc'}">昇順</option>
@@ -288,15 +297,15 @@
 					<i class="bi bi-caret-down-fill"></i>
 				</button>
 			</div>
-		</div>
-		<script type="text/javascript">
-	        const selects = document.querySelectorAll(".sort");
-	        selects.forEach((select) => {
-				select.addEventListener("change", () => {
-					document.getElementById("sort-form").submit();
+			<script type="text/javascript">
+		        const selects = document.querySelectorAll(".sort");
+		        selects.forEach((select) => {
+					select.addEventListener("change", () => {
+						document.getElementById("sort-form").submit();
+					});
 				});
-			});
-	</script>
+			</script>
+		</div>
 		<!-- end sort area -->
 		<div class="row">
 			<!-- book -->

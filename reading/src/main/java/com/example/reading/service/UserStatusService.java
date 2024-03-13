@@ -39,8 +39,10 @@ public class UserStatusService {
 		userStatusRepository.save(userStatus);
 	}
 	
-	public void delete(Integer userId) {
+	public UserStatus deleteById(Integer userId) {
+		UserStatus userStatus = userStatusRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("ユーザー情報は見つかりませんでした"));
 		userStatusRepository.deleteById(userId);
+		return userStatus;
 	}
 	
 }

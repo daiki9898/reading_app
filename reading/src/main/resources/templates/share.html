@@ -34,46 +34,36 @@
 					<a class="nav-link" href="/user/update/display-registerform">登録</a>
         		</li>
 			</ul>
-			<div class="ms-auto me-2">
-				<div class="drop-down position-relative" style="color: white;">
-					<div class="dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-						<i class="text-light fs-2 position-relative bi bi-person-circle" id="profile" style="opacity: 0.9;">
-							<span class="position-absolute translate-middle border border-info rounded-circle hover" style="background-color: rgb(6, 255, 58); top: 25%; left: 72%; padding: 0.4rem;">
-								<span class="visually-hidden">User Profile</span>
-							</span>
-					  	</i>
-				  	</div>
-				  	<ul class="dropdown-menu text-center" id="custom-dropdown" th:object="${userProfile}">
-						  <li class="dropdown-item"><u>ユーザー名</u><p class="fs-5" th:text="*{username}"></p></li>
-						  <li class="dropdown-item"><u>読書中の本</u><p><span class="fs-5" th:text="*{readingNumber}"></span><span>冊</span></p></li>
-						  <li class="dropdown-item"><u>今まで読んだ本</u><div><span class="fs-5" th:text="*{finishedNumber}"></span><span>冊</span></div></li>
-						  <li><hr class="dropdown-divider"></li>
-						  <li><form th:action="@{/logout}" method="post"><button type="submit" class="btn btn-secondary">ログアウト</button></form></li>
-				 	</ul>
-				 	<script type="text/javascript">
-					 	// hover effect
-					 	const point = document.getElementById("profile");
-					 	point.addEventListener("mouseover", () => {
-							 point.style.opacity = 1;
-					 	});
-					 	point.addEventListener("mouseleave", () => {
-							 point.style.opacity = 0.9;
-					 	});
-					 	// ドロップダウン位置調整
-					 	const dropdownMenu = document.getElementById("custom-dropdown");
-					 	const mediaQuery = window.matchMedia("(min-width: 768px)");
-					 	function adjustDropdownMenuPosition() {
-							 if (mediaQuery.matches) {
-								 dropdownMenu.style.left = "-200%";
-							} else {
-								dropdownMenu.style.left = "auto";
-						 	}
-					  	}
-					 	window.addEventListener("resize", adjustDropdownMenuPosition);
-					 	adjustDropdownMenuPosition();
-				 	</script>
-			 	</div>
-		 	</div>
+	    </div>
+	    <!-- profile icon -->
+		<div class="ms-auto">
+			<a data-bs-toggle="collapse" href="#user-profile-collapse" role="button" aria-expanded="false" aria-controls="user-profile-collapase" style="text-decoration: none;">
+				<i class="fs-2 text-light position-relative bi bi-person-circle" id="profile"></i>
+			</a>
+			<script type="text/javascript">
+				 // hover effect
+				 const profile = document.getElementById("profile");
+				 profile.addEventListener("mouseover", () => {
+					 profile.style.opacity = 0.9;
+				 });
+				 profile.addEventListener("mouseleave", () => {
+					 profile.style.opacity = 1.0;
+				 });
+		 	</script>
+		</div>
+		<!-- user profile collapse -->
+	    <div class="d-flex flex-row-reverse" style="position: absolute; z-index: 1000; top: 100%; right: 0%;">
+			<div class="collapse" id="user-profile-collapse">
+				<div class="card card-body text-center p-0" th:object="${userProfile}" style="--bs-card-border-color: #6c757d">
+					<ul class="list-group list-group-flush">
+						<li class="list-group-item"><div class="fw-bold">ユーザー名</div><div class="fs-5" th:text="*{username}"></div></li>
+						<li class="list-group-item"><div class="fw-bold">読書中の本</div><div><span class="fs-5" th:text="*{readingNumber}"></span><span>冊</span></div></li>
+						<li class="list-group-item"><div class="fw-bold">今まで読んだ本</div><div><span class="fs-5" th:text="*{finishedNumber}"></span><span>冊</span></div></li>
+						<li class="list-group-item"><a class="link-body-emphasis link-underline link-underline-opacity-0" href=""><i class="bi bi-gear"></i>設定</a></li>
+						<li class="list-group-item"><form th:action="@{/logout}" method="post"><button type="submit" class="btn btn-secondary">ログアウト</button></form></li>
+					</ul>
+				</div>
+			</div>
 	    </div>
     </div>
 </nav>

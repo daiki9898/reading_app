@@ -1,6 +1,7 @@
 package com.example.reading.service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 //import java.time.LocalDateTime;
 
@@ -46,12 +47,21 @@ public class CustomUserDetailsService implements UserDetailsService {
 		return account.getUserId();
 	}
 	
+	public Optional<String> getUserEmailByUsername(String username) throws UsernameNotFoundException {
+		Account account = accountRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username + "was not found"));
+		return Optional.ofNullable(account.getUserEmail());
+	}
+	
 	public boolean isUserNameExists(String username) {
 		return accountRepository.existsByUsername(username);
 	}
 	
 	public void updateLastLoginDateByUsername(LocalDateTime lastLoginDate, String username) {
 		accountRepository.updateLastLoginDateByUsername(lastLoginDate, username);
+	}
+	
+	public void deleteById(Integer userId) {
+		accountRepository.deleteById(userId);
 	}
 	
 }
