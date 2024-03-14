@@ -1,5 +1,7 @@
 package com.example.reading.aspect;
 
+import java.util.Optional;
+
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.security.core.Authentication;
@@ -38,7 +40,11 @@ public class UserProfileAspect {
         UserStatus userStatus = userStatusService.findById(userId);
         userProfile.setReadingNumber(userStatus.getReadingBookNumber());
         userProfile.setFinishedNumber(userStatus.getFinishedBookNumber());
-
+        userProfile.setGenreTagOpenStatus(userStatus.getGnereTagOpenStatus());
+		Optional<String> userEmail = userService.getUserEmailById(userId);
+		userEmail.ifPresent(email -> {
+			userProfile.setEmailExists(true);
+		});
         model.addAttribute("userProfile", userProfile);
 	}
 }

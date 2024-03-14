@@ -12,13 +12,17 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.example.reading.dto.UserProfile;
-import com.example.reading.input.UserProfileInput;
+import com.example.reading.input.user_settings.UserEmailInput;
+import com.example.reading.input.user_settings.UserOptionInput;
+import com.example.reading.input.user_settings.UsernameInput;
 import com.example.reading.model.FinishedListRegistration;
 import com.example.reading.model.ReadingListRegistration;
 import com.example.reading.model.UserStatus;
@@ -32,7 +36,7 @@ import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/user/profile")
+@RequestMapping("/user/settings")
 public class UserUpdateController {
 	
 	private final CustomUserDetailsService userService;
@@ -56,43 +60,114 @@ public class UserUpdateController {
         UserStatus userStatus = userStatusService.findById(userId);
         userProfile.setReadingNumber(userStatus.getReadingBookNumber());
         userProfile.setFinishedNumber(userStatus.getFinishedBookNumber());
-
         model.addAttribute("userProfile", userProfile);
-        Map<String, Object> userInfo = new HashMap<>();
-        userInfo.put("username", username);
+        
+        Map<String, Object> userInfo = new HashMap<String, Object>();
         userInfo.put("userId", userId);
+        userInfo.put("genreTagOpenStatus", userStatus.getGnereTagOpenStatus());
+ 
         return userInfo;
 	}
 	
 	@GetMapping
-	public String diplayProfile(Model model) {
-		UserProfileInput userProfileInput = new UserProfileInput();
+	public String diplayProfile(Model model, @ModelAttribute UsernameInput usernameInput, @ModelAttribute UserEmailInput userEmailInput) {
+		UserOptionInput optionInput = new UserOptionInput();
 		Map<String, Object> userInfo = addUserProfileData(model);
 		Integer userId = (Integer) userInfo.get("userId");
+		optionInput.setUserId(userId);
+		boolean genreTagOpenStatus = (boolean) userInfo.get("genreTagOpenStatus");
+		if (genreTagOpenStatus == true) {
+			optionInput.setGenreTagStatus("open");
+		}
+		model.addAttribute("optionInput", optionInput);
 		
-		userProfileInput.setUserId(userId);
-		model.addAttribute("userProfileInput", userProfileInput);
-		
-		String username = (String) userInfo.get("username");
-		model.addAttribute("username", username);
-		
-		Optional<String> userEmail = userService.getUserEmailByUsername(username);
+		Optional<String> userEmail = userService.getUserEmailById(userId);
 		userEmail.ifPresent(email -> {
 			model.addAttribute("email", email);
 		});
-		return "user-profile";
+		return "user/authentication/user-profile";
 	}
 	
-	@PostMapping("/edit/{id}")
-	public String editProfile(@PathVariable String id,  Model model, BindingResult bindingResult) {
+	@PostMapping("/update-username/{id}")
+	public String updateUsernmae(@PathVariable String id, @Validated UsernameInput usernameInput, BindingResult bindingResult, Model model) throws NumberFormatException {
+		Integer userId = Integer.valueOf(id);
 		if (bindingResult.hasErrors()) {
-			return "user-profile";
+			UserOptionInput optionInput = new UserOptionInput();
+			Map<String, Object> userInfo = addUserProfileData(model);
+			optionInput.setUserId(userId);
+			boolean genreTagOpenStatus = (boolean) userInfo.get("genreTagOpenStatus");
+			if (genreTagOpenStatus == true) {
+				optionInput.setGenreTagStatus("open");
+			}
+			model.addAttribute("optionInput", optionInput);
+			model.addAttribute("userEmailInput", new UserEmailInput());
+			
+			Optional<String> userEmail = userService.getUserEmailById(userId);
+			userEmail.ifPresent(email -> {
+				model.addAttribute("email", email);
+			});
+			
+			return "user/authentication/user-profile";
 		}
-		
-		return "redirect:/user/profile";
+		userService.updateUsernameById(usernameInput.getUsername(), userId);
+		return "redirect:/user/";
 	}
 	
-	@GetMapping("/delete/{id}")
+	@PostMapping("/update-email/{id}")
+	public String updateEmail(@PathVariable String id, @Validated UserEmailInput emailInput, BindingResult bindingResult, Model model) throws NumberFormatException {
+		Integer userId = Integer.valueOf(id);
+		if (bindingResult.hasErrors()) {
+			UserOptionInput optionInput = new UserOptionInput();
+			Map<String, Object> userInfo = addUserProfileData(model);
+			optionInput.setUserId(userId);
+			boolean genreTagOpenStatus = (boolean) userInfo.get("genreTagOpenStatus");
+			if (genreTagOpenStatus == true) {
+				optionInput.setGenreTagStatus("open");
+			}
+			model.addAttribute("optionInput", optionInput);
+			model.addAttribute("usernameInput", new UsernameInput());
+			
+			Optional<String> userEmail = userService.getUserEmailById(userId);
+			userEmail.ifPresent(email -> {
+				model.addAttribute("email", email);
+			});
+			
+			return "user/authentication/user-profile";
+		}
+		userService.updateEmailById(emailInput.getEmailAddress(), userId);
+		return "redirect:/user/settings";
+	}
+	
+	@PostMapping("/update-status/{id}")
+	public String editProfile(@PathVariable String id, @Validated UserOptionInput optionInput, BindingResult bindingResult, Model model) {
+		Integer userId = Integer.valueOf(id);
+		if (bindingResult.hasErrors()) {
+			addUserProfileData(model);
+			Optional<String> userEmail = userService.getUserEmailById(userId);
+			userEmail.ifPresent(email -> {
+				model.addAttribute("email", email);
+			});
+			model.addAttribute("usernameInput", new UsernameInput());
+			model.addAttribute("userEmailInput", new UserEmailInput());
+			
+			return "user/authentication/user-profile";
+		}
+		if (optionInput.getGenreTagStatus() == null) {
+			userStatusService.updateGenreTagStatus(false, userId);
+		} else if (optionInput.getGenreTagStatus().equals("open")){
+			userStatusService.updateGenreTagStatus(true, userId);
+		}
+		return "redirect:/user/settings";
+	}
+	
+	@GetMapping("/delete-email/{id}")
+	public String deleteEmail(@PathVariable String id) throws NumberFormatException {
+		Integer userId = Integer.valueOf(id);
+		userService.updateEmailById(null, userId);
+		return "redirect:/user/settings";
+	}
+	
+	@GetMapping("/delete-account/{id}")
 	public String deleteAccount(@PathVariable String id) throws NumberFormatException {
 		Integer userId = Integer.valueOf(id);
 		// Delete related information

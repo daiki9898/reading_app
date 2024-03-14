@@ -80,7 +80,7 @@ public class BookDisplayController {
 		if (searchError != null) {
 			model.addAttribute("searchError", searchError);
 		}
-		return "reading-booklist";
+		return "user/book/reading-booklist";
 	}
 	
 	@GetMapping("/home/{genre}")
@@ -108,10 +108,12 @@ public class BookDisplayController {
 		SearchInput searchInput = new SearchInput();
 		model.addAttribute("searchInput", searchInput);
 		BookInput bookInput = new BookInput();
+		bookInput.setStartDate(LocalDate.now());
 		model.addAttribute("bookInput", bookInput);
 		model.addAttribute("order", order);
 		model.addAttribute("sort", sort);
-		return "reading-booklist";
+		model.addAttribute("genre", genre);
+		return "user/book/reading-booklist";
 	}
 	
 //	// タグ検索
@@ -130,7 +132,7 @@ public class BookDisplayController {
 	public String displayDetail(Model model, @PathVariable String id) throws NumberFormatException {
 		EditBookInput editBookInput = bookService.findById(Integer.valueOf(id));
 		model.addAttribute("editBookInput", editBookInput);
-		return "book-detail";
+		return "user/book/book-detail";
 	}
 	
 	@GetMapping("/finished-booklist")
@@ -140,7 +142,7 @@ public class BookDisplayController {
 		model.addAttribute("finishedBookList", finishedBookList);
 		FinishedSearchInput finishedSearchInput = new FinishedSearchInput();
 		model.addAttribute("finishedSearchInput", finishedSearchInput);
-		return "finished-booklist";
+		return "user/finished-book/finished-booklist";
 	}
 	
 //	// タグ検索
@@ -158,7 +160,7 @@ public class BookDisplayController {
 	public String displayFinishedDetail(Model model, @PathVariable String id) throws NumberFormatException {
 		FinishedEditBookInput finishedEditBookInput = bookService.findFinishedBookById(Integer.valueOf(id));
 		model.addAttribute("finishedEditBookInput", finishedEditBookInput);
-		return "finished-book-detail";
+		return "user/finished-book/finished-book-detail";
 	}
 	
 	
@@ -195,7 +197,7 @@ public class BookDisplayController {
 		model.addAttribute("searchInput", searchInput);
 		model.addAttribute("order", order);
 		model.addAttribute("sort", sort);
-		return "search/search-result";
+		return "user/book/search-result";
 	}
 	
 //	@GetMapping("/search-reading-booklist-error")
@@ -229,7 +231,7 @@ public class BookDisplayController {
 		List<BookResult> finishedSearchBookList = finishedListService.searchBook(userId, finishedSearchInput);
 		model.addAttribute("finishedSearchBookList", finishedSearchBookList);
 		model.addAttribute("finishedSearchInput", finishedSearchInput);
-		return "search/finished-search-result";
+		return "user/finished-book/finished-search-result";
 	}
 	
 	@GetMapping("/search-finished-booklist-error")
@@ -239,6 +241,6 @@ public class BookDisplayController {
 		model.addAttribute("finishedBookList", finishedBookList);
 		FinishedSearchInput finishedSearchInput = new FinishedSearchInput();
 		model.addAttribute("finishedSearchInput", finishedSearchInput);
-		return "search/finished-search-result-error";
+		return "user/finished-book/finished-search-result-error";
 	}
 }

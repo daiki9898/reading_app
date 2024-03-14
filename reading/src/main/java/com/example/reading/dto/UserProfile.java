@@ -10,4 +10,9 @@ public class UserProfile {
 	private int readingNumber;
 	
 	private int finishedNumber;
+	
+	private boolean genreTagOpenStatus;
+	
+	private boolean isEmailExists = false;
+	
 }

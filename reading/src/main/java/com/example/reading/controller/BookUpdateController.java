@@ -2,6 +2,7 @@ package com.example.reading.controller;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.security.core.Authentication;
@@ -76,9 +77,10 @@ public class BookUpdateController {
 	@GetMapping("/display-registerform")
 	public String displayForm(Model model) {
 		BookInput bookInput = new BookInput();
+		bookInput.setStartDate(LocalDate.now());
 		model.addAttribute("bookInput", bookInput);
 		addUserProfileData(model);
-		return "registerform";
+		return "user/book/registerform";
 	}
 	
 	@GetMapping("/execute-delete/{id}")
@@ -122,7 +124,7 @@ public class BookUpdateController {
 			model.addAttribute("bookList", bookList);
 			SearchInput searchInput = new SearchInput();
 			model.addAttribute("searchInput", searchInput);
-			return "register-error";
+			return "user/book/register-error";
 		}
 		// register book
         Integer userId = getUserId();
@@ -141,7 +143,7 @@ public class BookUpdateController {
 			EditBookInput nowBook = bookService.findById(editBookInput.getBookId());
 			model.addAttribute("nowBook", nowBook);
 			addUserProfileData(model);
-			return "edit-error";
+			return "user/book/edit-error";
 		}
 		readingListService.update(editBookInput);
         Integer userId = getUserId();
@@ -168,7 +170,7 @@ public class BookUpdateController {
 			FinishedEditBookInput nowBook = bookService.findFinishedBookById(finishedEditBookInput.getBookId());
 			model.addAttribute("nowBook", nowBook);
 			addUserProfileData(model);
-			return "finished-edit-error";
+			return "/user/finished-book/finished-edit-error";
 		}
 		finishedListService.update(finishedEditBookInput);
 		Integer userId = getUserId();

@@ -59,7 +59,7 @@
 						<li class="list-group-item"><div class="fw-bold">ユーザー名</div><div class="fs-5" th:text="*{username}"></div></li>
 						<li class="list-group-item"><div class="fw-bold">読書中の本</div><div><span class="fs-5" th:text="*{readingNumber}"></span><span>冊</span></div></li>
 						<li class="list-group-item"><div class="fw-bold">今まで読んだ本</div><div><span class="fs-5" th:text="*{finishedNumber}"></span><span>冊</span></div></li>
-						<li class="list-group-item"><a class="link-body-emphasis link-underline link-underline-opacity-0" href=""><i class="bi bi-gear"></i>設定</a></li>
+						<li class="list-group-item"><a class="link-body-emphasis link-underline link-underline-opacity-0" href="/user/settings"><i class="bi bi-gear"></i>設定</a></li>
 						<li class="list-group-item"><form th:action="@{/logout}" method="post"><button type="submit" class="btn btn-secondary">ログアウト</button></form></li>
 					</ul>
 				</div>

@@ -42,22 +42,39 @@ public class CustomUserDetailsService implements UserDetailsService {
 		accountRepository.customSave(userInput.getUsername(), hashedPassword);
 	}
 	
+//	public Account findById(Integer userId) {
+//		Account account = accountRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("アカウントが見つかりませんでした"));
+//		return account;
+//	}
+	
 	public Integer getUserIdbyUsername(String username) throws UsernameNotFoundException {
 		Account account = accountRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username + "was not found"));
 		return account.getUserId();
 	}
 	
-	public Optional<String> getUserEmailByUsername(String username) throws UsernameNotFoundException {
-		Account account = accountRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username + "was not found"));
+	public Optional<String> getUserEmailById(Integer userId) {
+		Account account = accountRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("アカウントが見つかりませんでした"));
 		return Optional.ofNullable(account.getUserEmail());
 	}
 	
-	public boolean isUserNameExists(String username) {
+	public boolean isUsernameExists(String username) {
 		return accountRepository.existsByUsername(username);
+	}
+	
+	public boolean isUserEmailExists(String email) {
+		return accountRepository.existsByUserEmail(email);
 	}
 	
 	public void updateLastLoginDateByUsername(LocalDateTime lastLoginDate, String username) {
 		accountRepository.updateLastLoginDateByUsername(lastLoginDate, username);
+	}
+	
+	public void updateEmailById(String email, Integer userId) {
+		accountRepository.updateEmailById(email, userId);
+	}
+	
+	public void updateUsernameById(String username, Integer userId) {
+		accountRepository.updateUsernameById(username, userId);
 	}
 	
 	public void deleteById(Integer userId) {

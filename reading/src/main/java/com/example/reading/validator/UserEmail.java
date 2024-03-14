@@ -10,15 +10,14 @@ import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
 @Documented
-@Constraint(validatedBy = {MaxFileSizeValidator.class})
+@Constraint(validatedBy = {UserEmailValidator.class})
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface MaxFileSize {
+public @interface UserEmail {
 	
-	String message() default "画像サイズは1MB以下にしてください";
+	String message() default "このメールアドレスは既に他のアカウントと紐づけられています";
 	
 	Class<?>[] groups() default {};
 	 
 	Class<? extends Payload>[] payload() default {};
-
 }

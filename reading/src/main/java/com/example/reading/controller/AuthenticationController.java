@@ -29,18 +29,18 @@ public class AuthenticationController {
 	@GetMapping("/register-user")
 	public String displayUserForm(Model model) {
 		model.addAttribute("userRegistrationInput", new UserRegistrationInput());
-		return "user-registerform";
+		return "user/authentication/user-registerform";
 	}
 	
 	@GetMapping("/login")
 	public String displayLoginForm(@RequestParam(name = "error", required = false) String error, @RequestParam(name = "timeout", required = false) String timeout, Model model) {
 		if (timeout != null) {
-			return "timeout";
+			return "user/authentication/timeout";
 		}
 		if (error != null) {
 			model.addAttribute("errorMessage", "ログインに失敗しました");
 		}
-		return "login";
+		return "user/authentication/login";
 	}
 	
 	SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();
@@ -54,11 +54,11 @@ public class AuthenticationController {
 	@PostMapping("/register-user")
 	public String registerUser(@Validated UserRegistrationInput userInput, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
 		if(bindingResult.hasErrors()) {
-			return "user-registerform";
+			return "user/authentication/user-registerform";
 		}
-		if(userService.isUserNameExists(userInput.getUsername())) {
+		if(userService.isUsernameExists(userInput.getUsername())) {
 			model.addAttribute("errorMassage", "そのユーザー名は既に登録されています");
-			return "user-registerform";
+			return "user/authentication/user-registerform";
 		}
 		userService.insert(userInput);
 		userStatusService.insert(userService.getUserIdbyUsername(userInput.getUsername()));

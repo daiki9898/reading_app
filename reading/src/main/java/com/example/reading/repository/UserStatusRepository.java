@@ -16,4 +16,8 @@ public interface UserStatusRepository extends JpaRepository<UserStatus, Integer>
 	@Query(value = "UPDATE user_status SET uploaded_image_number = ?1, total_image_size = ?2 WHERE user_id =?3", nativeQuery = true)
 	void updateImageRegistrationStatus(Integer userId, int imageNumber, long imageSize);
 	
+	@Modifying
+	@Query(value = "UPDATE user_status SET genre_tag_open_status = ?1 WHERE user_id = ?2", nativeQuery = true)
+	void updateGenreTagStatusById(boolean genreTagOpenStatus, Integer userId);
+	
 }

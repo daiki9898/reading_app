@@ -23,6 +23,6 @@ public class AdminController {
 	public String displayHome(Model model) {
 		List<UserDto> userDtoList = userListService.getUserList();
 		model.addAttribute("userList", userDtoList);
-		return "admin-home";
+		return "admin/home";
 	}
 }

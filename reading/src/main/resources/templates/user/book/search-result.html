@@ -15,7 +15,7 @@
     </style>
 </head>
 <body>
-	<div th:replace="~{reading-booklist::header}"></div>
+	<div th:replace="~{user/book/reading-booklist::header}"></div>
 	<div class="container">
 		<!-- sort area -->
 		<div class="row mb-3" th:if="${not #lists.isEmpty(searchBookList)}">

@@ -21,10 +21,19 @@ public interface AccountRepository extends JpaRepository<Account, Integer>{
 	List<Account> findAllExceptADMIN();
 	
 	boolean existsByUsername(String username);
+	boolean existsByUserEmail(String userEmail);
 	Optional<Account> findByUsername(String username);
 	
 	@Modifying
 	@Query(value = "UPDATE user_login_info SET last_login_date = ?1 WHERE user_name = ?2", nativeQuery = true)
 	void updateLastLoginDateByUsername(LocalDateTime localDateTime, String usernanme);
+	
+	@Modifying
+	@Query(value = "UPDATE user_login_info SET user_email = ?1 WHERE user_id = ?2", nativeQuery = true)
+	void updateEmailById(String email, Integer userId);
+	
+	@Modifying
+	@Query(value = "UPDATE user_login_info SET user_name = ?1 WHERE user_id = ?2", nativeQuery = true)
+	void updateUsernameById(String username, Integer userId);
 	
 }
