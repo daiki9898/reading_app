@@ -15,6 +15,7 @@ import com.example.reading.input.UserRegistrationInput;
 import com.example.reading.service.CustomUserDetailsService;
 import com.example.reading.service.UserStatusService;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -43,13 +44,46 @@ public class AuthenticationController {
 		return "user/authentication/login";
 	}
 	
+	@GetMapping("/delete-account/success")
+	public String displayDeleteSuccessPage() {
+		return "user/authentication/account-deleted";
+	}
+	
 	SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();
 	
-	@GetMapping("/custom/logout")
-	public String logout(Authentication authentication, HttpServletRequest request, HttpServletResponse response) {
+	@PostMapping("/username/logout")
+	public String usernameLogout(Authentication authentication, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
 		this.logoutHandler.logout(request, response, authentication);
-		return "redirect:/register-user";
+		 Cookie[] cookies = request.getCookies();
+		 if (cookies != null) {
+			 for (Cookie cookie : cookies) {
+				 if ("JSESSIONID".equals(cookie.getName())) {
+					 cookie.setMaxAge(0); 
+	                 response.addCookie(cookie);
+	                 break; 
+				 }
+			 }
+		 }
+		 redirectAttributes.addFlashAttribute("usernameSuccessMessage", "usernameSuccessMessage");
+		return "redirect:/login";
 	}
+	
+	@PostMapping("/delete-account/logout")
+	public String deleteAccountLogout(Authentication authentication, HttpServletRequest request, HttpServletResponse response) {
+		this.logoutHandler.logout(request, response, authentication);
+		 Cookie[] cookies = request.getCookies();
+		 if (cookies != null) {
+			 for (Cookie cookie : cookies) {
+				 if ("JSESSIONID".equals(cookie.getName())) {
+					 cookie.setMaxAge(0); 
+	                 response.addCookie(cookie);
+	                 break; 
+				 }
+			 }
+		 }
+		return "redirect:/delete-account/success";
+	}
+	
 	
 	@PostMapping("/register-user")
 	public String registerUser(@Validated UserRegistrationInput userInput, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.View;
 
 import com.example.reading.dto.UserProfile;
 import com.example.reading.input.user_settings.UserEmailInput;
@@ -32,6 +35,7 @@ import com.example.reading.service.FinishedListService;
 import com.example.reading.service.ReadingListService;
 import com.example.reading.service.UserStatusService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @Controller
@@ -89,7 +93,7 @@ public class UserUpdateController {
 	}
 	
 	@PostMapping("/update-username/{id}")
-	public String updateUsernmae(@PathVariable String id, @Validated UsernameInput usernameInput, BindingResult bindingResult, Model model) throws NumberFormatException {
+	public ModelAndView updateUsernmae(@PathVariable String id, @Validated UsernameInput usernameInput, BindingResult bindingResult, Model model, HttpServletRequest request) throws NumberFormatException {
 		Integer userId = Integer.valueOf(id);
 		if (bindingResult.hasErrors()) {
 			UserOptionInput optionInput = new UserOptionInput();
@@ -107,10 +111,13 @@ public class UserUpdateController {
 				model.addAttribute("email", email);
 			});
 			
-			return "user/authentication/user-profile";
+			return new ModelAndView("user/authentication/user-profile");
 		}
 		userService.updateUsernameById(usernameInput.getUsername(), userId);
-		return "redirect:/user/";
+		request.setAttribute(
+			      View.RESPONSE_STATUS_ATTRIBUTE, HttpStatus.TEMPORARY_REDIRECT);
+		
+		return new ModelAndView("redirect:/username/logout");
 	}
 	
 	@PostMapping("/update-email/{id}")
@@ -160,15 +167,15 @@ public class UserUpdateController {
 		return "redirect:/user/settings";
 	}
 	
-	@GetMapping("/delete-email/{id}")
+	@PostMapping("/delete-email/{id}")
 	public String deleteEmail(@PathVariable String id) throws NumberFormatException {
 		Integer userId = Integer.valueOf(id);
 		userService.updateEmailById(null, userId);
 		return "redirect:/user/settings";
 	}
 	
-	@GetMapping("/delete-account/{id}")
-	public String deleteAccount(@PathVariable String id) throws NumberFormatException {
+	@PostMapping("/delete-account/{id}")
+	public ModelAndView deleteAccount(@PathVariable String id, HttpServletRequest request) throws NumberFormatException {
 		Integer userId = Integer.valueOf(id);
 		// Delete related information
 		UserStatus userStatus = userStatusService.deleteById(userId);
@@ -194,7 +201,9 @@ public class UserUpdateController {
 		}
 		// delete account
 		userService.deleteById(userId);
+		request.setAttribute(
+			      View.RESPONSE_STATUS_ATTRIBUTE, HttpStatus.TEMPORARY_REDIRECT);
 		
-		return "redirect:/custom/logout";
+		return new ModelAndView("redirect:/delete-account/logout");
 	}
 }

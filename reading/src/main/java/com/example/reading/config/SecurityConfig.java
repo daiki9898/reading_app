@@ -61,7 +61,7 @@ public class SecurityConfig {
 				.ignoringRequestMatchers(new AntPathRequestMatcher("/register-user"))
 			)
 			.authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
-				.requestMatchers("/", "/register-user", "/login").permitAll()
+				.requestMatchers("/", "/register-user", "/login", "/delete-account/success").permitAll()
 				.requestMatchers("/admin/**").hasRole("ADMIN")
 				.requestMatchers("/admin/**").fullyAuthenticated()
 				.anyRequest().authenticated()

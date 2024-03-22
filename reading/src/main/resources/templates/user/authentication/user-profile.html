@@ -129,7 +129,9 @@
 								</div>
 								<div class="modal-footer">
 									<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
-									<a th:href="@{'/user/settings/delete-email/' + ${optionInput.userId}}" type="button" class="btn btn-danger">削除</a>
+									<form th:action="@{'/user/settings/delete-email/' + ${optionInput.userId}}" method="post">
+										<button type="submit" class="btn btn-danger">削除</button>
+									</form>
 								</div>
 							</div>
 						</div>
@@ -172,7 +174,9 @@
 							</div>
 							<div class="modal-footer">
 								<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
-								<a th:href="@{'/user/settings/delete/' + *{userId}}" type="button" class="btn btn-danger">削除</a>
+								<form th:action="@{'/user/settings/delete-account/' + *{userId}}" method="post">
+									<button type="submit" class="btn btn-danger">削除</button>
+								</form>
 							</div>
 						</div>
 					</div>
