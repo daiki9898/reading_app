@@ -7,12 +7,15 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.example.reading.input.EmailInput;
 import com.example.reading.input.UserRegistrationInput;
 import com.example.reading.service.CustomUserDetailsService;
+import com.example.reading.service.EmailSenderService;
 import com.example.reading.service.UserStatusService;
 
 import jakarta.servlet.http.Cookie;
@@ -26,6 +29,7 @@ public class AuthenticationController {
 	
 	private final CustomUserDetailsService userService;
 	private final UserStatusService userStatusService;
+	private final EmailSenderService emailSenderService;
 	
 	@GetMapping("/register-user")
 	public String displayUserForm(Model model) {
@@ -47,6 +51,32 @@ public class AuthenticationController {
 	@GetMapping("/delete-account/success")
 	public String displayDeleteSuccessPage() {
 		return "user/authentication/account-deleted";
+	}
+	
+	@GetMapping("/password-reset-link")
+	public String displayPasswordResetLink(Model model) {
+		model.addAttribute("emailInput", new EmailInput());
+		return "user/authentication/password-reset-link";
+	}
+	
+	@GetMapping("/password-reset-link/sent")
+	public String displaySentPasswordResetLinkPage(@ModelAttribute("emailInput") EmailInput emailInput) {
+		if (emailInput.getUserEmail() == null) {
+			return "redirect:/password-reset-link";
+		}
+		return "user/authentication/password-reset-link";
+	}
+	
+	@PostMapping("/send-password-reset-link")
+	public String sendPasswordResetLink(@Validated EmailInput emailInput, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+		if (bindingResult.hasErrors()) {
+			return "user/authentication/password-reset-link";
+		}
+		Integer userId = userService.getUserIdByUserEmail(emailInput.getUserEmail());
+		emailSenderService.sendEmailWithResetLink(emailInput.getUserEmail(), userId);
+		redirectAttributes.addFlashAttribute("emailInput", emailInput);
+		redirectAttributes.addFlashAttribute("successMessage", "successMessage");
+		return "redirect:/password-reset-link/sent";
 	}
 	
 	SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();

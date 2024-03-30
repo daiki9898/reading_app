@@ -52,6 +52,11 @@ public class CustomUserDetailsService implements UserDetailsService {
 		return account.getUserId();
 	}
 	
+	public Integer getUserIdByUserEmail(String userEmail) {
+		Account account = accountRepository.findByUserEmail(userEmail).orElseThrow(() -> new UsernameNotFoundException("アカウントが見つかりませんでした"));
+		return account.getUserId();
+	}
+	
 	public Optional<String> getUserEmailById(Integer userId) {
 		Account account = accountRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("アカウントが見つかりませんでした"));
 		return Optional.ofNullable(account.getUserEmail());

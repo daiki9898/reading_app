@@ -14,7 +14,6 @@ import org.springframework.security.web.authentication.rememberme.JdbcTokenRepos
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
@@ -58,10 +57,9 @@ public class SecurityConfig {
 			.cors(customizer -> customizer.configurationSource(corsConfigurationSource()))
 			.csrf(csrf -> csrf
 				.csrfTokenRepository(new HttpSessionCsrfTokenRepository())
-				.ignoringRequestMatchers(new AntPathRequestMatcher("/register-user"))
 			)
 			.authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
-				.requestMatchers("/", "/register-user", "/login", "/delete-account/success").permitAll()
+				.requestMatchers("/", "/register-user", "/login", "/delete-account/success", "/password-reset-link", "/send-password-reset-link", "/password-reset-link/sent").permitAll()
 				.requestMatchers("/admin/**").hasRole("ADMIN")
 				.requestMatchers("/admin/**").fullyAuthenticated()
 				.anyRequest().authenticated()

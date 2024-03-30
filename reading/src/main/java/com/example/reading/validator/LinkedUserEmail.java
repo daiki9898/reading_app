@@ -10,10 +10,10 @@ import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
 @Documented
-@Constraint(validatedBy = {UserEmailValidator.class})
+@Constraint(validatedBy = {LinkedUserEmailValidator.class})
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface UserEmail {
+public @interface LinkedUserEmail {
 	
 	String message() default "このメールアドレスは既に他のアカウントと紐づけられています";
 	

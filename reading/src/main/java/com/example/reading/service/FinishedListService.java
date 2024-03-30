@@ -40,7 +40,7 @@ public class FinishedListService {
 	@Value("${default.pic}")
 	private String defaultPath;
 	
-	// display finsihedlist
+	// 読了済みリスト
 	public List<BookResult> findAll(Integer userId) throws IOException {
 		List<FinishedListDto> finishedBookList =  listRepository.getFinishedListByUserId(userId);
 		List<BookResult> resultList = new ArrayList<BookResult>();
@@ -79,7 +79,7 @@ public class FinishedListService {
 		return resultList;
 	}
 	
-	public List<BookResult> searchBook(Integer userId, String genre) throws IOException {
+	public List<BookResult> searchBookByGenre(Integer userId, String genre) throws IOException {
 		List<FinishedListDto> finishedBookList =  listRepository.searchFinishedBookByGenre(userId, genre);
 		List<BookResult> resultList = new ArrayList<BookResult>();
 		for (FinishedListDto book : finishedBookList) {
@@ -98,7 +98,7 @@ public class FinishedListService {
 		return resultList;
 	}
 	
-	// CRUD for registration
+	// 登録情報のCRUD
 	public FinishedListRegistration findByBookId(Integer bookId) {
 		FinishedListRegistration registration  = finishedRepository.findByBookId(bookId).orElseThrow(() -> new EntityNotFoundException("登録情報は見つかりませんでした"));
 		return registration;

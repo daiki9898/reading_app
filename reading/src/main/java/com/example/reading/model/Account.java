@@ -30,11 +30,11 @@ public class Account {
 	@Column(name="password")
 	private String password;
 	
-	@Column(name="role", columnDefinition="UserRole DEFAULT 'USER'::UserRole")
+	@Column(name="role")
 	@Enumerated(EnumType.STRING)
 	private UserRole role;
 	
-	@Column(name="registered_date", columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+	@Column(name="registered_date")
 	private LocalDateTime registeredDate;
 	
 	@Column(name="last_login_date")

@@ -48,7 +48,7 @@ public class BookService {
 	@Value("${default.pic}")
 	private String defaultPath;
 	
-    // Method to hash userid
+    // userIdをハッシュ化する関数
 	public String caluculateHash(Integer userId) {
 		String id = userId.toString();
 		String hexString = "";
@@ -100,7 +100,7 @@ public class BookService {
 			// update user_status
 			MultipartFile imgFile = bookInput.getImgFile();
 			userStatusRepository.updateImageRegistrationStatus(userId, 1, imgFile.getSize());
-			// create derectory for user's image storage
+			// ユーザー用の画像ディレクトリの作成
 			String fileDirectory = imgFolder + caluculateHash(userId);
 			try {
 	            Files.createDirectories(Paths.get(fileDirectory));
@@ -148,7 +148,7 @@ public class BookService {
 			MultipartFile imgFile = editBookInput.getImgFile();
 			userStatusRepository.updateImageRegistrationStatus(userId, 0, fileSize + imgFile.getSize());
 			
-			// create derectory for user's image storage
+			// ユーザー用の画像ディレクトリの作成
 			String fileDirectory = imgFolder + caluculateHash(userId);
 			try {
 	            Files.createDirectories(Paths.get(fileDirectory));
@@ -206,7 +206,7 @@ public class BookService {
 			MultipartFile imgFile = finishedEditBookInput.getImgFile();
 			userStatusRepository.updateImageRegistrationStatus(userId, 0, fileSize + imgFile.getSize());
 			
-			// create derectory for user's image storage
+			// ユーザー用の画像ディレクトリの作成
 			String fileDirectory = imgFolder + caluculateHash(userId);
 			try {
 	            Files.createDirectories(Paths.get(fileDirectory));

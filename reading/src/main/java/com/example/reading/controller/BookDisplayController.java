@@ -40,7 +40,7 @@ public class BookDisplayController {
 	private final BookService bookService;
 	private final ReadingListService readingListService;
 	
-	// get userid method
+	// UserIdを返すメソッド
 	public Integer getUserId() {
 		SecurityContext context = SecurityContextHolder.getContext();
 		Authentication authentication = context.getAuthentication();
@@ -48,12 +48,13 @@ public class BookDisplayController {
         return userId;
 	}
 	
+//	読書リスト関係
 	@GetMapping("/home")
 	public String displayList(Model model, @RequestParam(name="order", defaultValue="asc") String order, @RequestParam(name="sort", defaultValue="date") String sort, @RequestParam(name="search-error", required=false) String searchError) throws IOException {
 		Integer userId = getUserId();
 		List<BookResult> bookList = readingListService.findAll(userId);
 		
-		// sort bookList
+		// sort
 		if (bookList != null) {
 			if (sort.equals("date")) {
 				if (order.equals("asc")) {
@@ -83,12 +84,13 @@ public class BookDisplayController {
 		return "user/book/reading-booklist";
 	}
 	
+	// by genre
 	@GetMapping("/home/{genre}")
 	public String displayListByGenre(Model model, @PathVariable(name= "genre", required = true) String genre, @RequestParam(name="order", defaultValue="asc") String order, @RequestParam(name="sort", defaultValue="date") String sort) throws IOException {
 		Integer userId = getUserId();
 		List<BookResult> bookList = readingListService.searchBookByGenre(userId, genre);
 		
-		// sort bookList
+		// sort
 		if (bookList != null) {
 			if (sort.equals("date")) {
 				if (order.equals("asc")) {
@@ -116,18 +118,6 @@ public class BookDisplayController {
 		return "user/book/reading-booklist";
 	}
 	
-//	// タグ検索
-//	@GetMapping("/search-reading-booklist")
-//	public String searchBookByGenre(Model model, @RequestParam(name= "genre", required = true) String genre) throws IOException {
-//		List<BookResult> bookList = readingListService.searchBookByGenre(getUserId(), genre);
-//		model.addAttribute("bookList", bookList);
-//		SearchInput searchInput = new SearchInput();
-//		model.addAttribute("searchInput", searchInput);
-//		BookInput bookInput = new BookInput();
-//		model.addAttribute("bookInput", bookInput);
-//		return "reading-booklist";
-//	}
-	
 	@GetMapping("/book-detail/{id}")
 	public String displayDetail(Model model, @PathVariable String id) throws NumberFormatException {
 		EditBookInput editBookInput = bookService.findById(Integer.valueOf(id));
@@ -135,36 +125,7 @@ public class BookDisplayController {
 		return "user/book/book-detail";
 	}
 	
-	@GetMapping("/finished-booklist")
-	public String displayFinishedList(Model model) throws IOException {
-		Integer userId = getUserId();
-		List<BookResult> finishedBookList = finishedListService.findAll(userId);
-		model.addAttribute("finishedBookList", finishedBookList);
-		FinishedSearchInput finishedSearchInput = new FinishedSearchInput();
-		model.addAttribute("finishedSearchInput", finishedSearchInput);
-		return "user/finished-book/finished-booklist";
-	}
-	
-//	// タグ検索
-//	@GetMapping("/search-finished-booklist")
-//	public String searchFinishedBookByGenre(Model model, @RequestParam(name= "genre", required = true) String genre) throws IOException {
-//		List<BookResult> finishedBookList = finishedListService.searchBook(getUserId(), genre);
-//		model.addAttribute("finishedBookList", finishedBookList);
-//		FinishedSearchInput finishedSearchInput = new FinishedSearchInput();
-//		model.addAttribute("finishedSearchInput", finishedSearchInput);
-//		return "finished-booklist";
-//	}
-	
-		
-	@GetMapping("/finished-book-detail/{id}")
-	public String displayFinishedDetail(Model model, @PathVariable String id) throws NumberFormatException {
-		FinishedEditBookInput finishedEditBookInput = bookService.findFinishedBookById(Integer.valueOf(id));
-		model.addAttribute("finishedEditBookInput", finishedEditBookInput);
-		return "user/finished-book/finished-book-detail";
-	}
-	
-	
-	// 読書リスト検索関係
+	// 検索
 	@PostMapping("/search-reading-booklist")
 	public String searchBook(Model model, SearchInput searchInput, @RequestParam(name="order", defaultValue="asc") String order, @RequestParam(name="sort", defaultValue="date") String sort) throws IOException {
 		if (searchInput == null) {
@@ -200,19 +161,25 @@ public class BookDisplayController {
 		return "user/book/search-result";
 	}
 	
-//	@GetMapping("/search-reading-booklist-error")
-//	public String showSearchError(Model model) throws IOException {
-//		Integer userId = getUserId();
-//		List<BookResult> bookList = readingListService.findAll(userId);
-//		model.addAttribute("bookList", bookList);
-//		SearchInput searchInput = new SearchInput();
-//		model.addAttribute("searchInput", searchInput);
-//		BookInput bookInput = new BookInput();
-//		model.addAttribute("bookInput", bookInput);
-//		return "search/search-result-error";
-//	}
+//	読了済みリスト関係
+	@GetMapping("/finished-booklist")
+	public String displayFinishedList(Model model) throws IOException {
+		Integer userId = getUserId();
+		List<BookResult> finishedBookList = finishedListService.findAll(userId);
+		model.addAttribute("finishedBookList", finishedBookList);
+		FinishedSearchInput finishedSearchInput = new FinishedSearchInput();
+		model.addAttribute("finishedSearchInput", finishedSearchInput);
+		return "user/finished-book/finished-booklist";
+	}
+		
+	@GetMapping("/finished-book-detail/{id}")
+	public String displayFinishedDetail(Model model, @PathVariable String id) throws NumberFormatException {
+		FinishedEditBookInput finishedEditBookInput = bookService.findFinishedBookById(Integer.valueOf(id));
+		model.addAttribute("finishedEditBookInput", finishedEditBookInput);
+		return "user/finished-book/finished-book-detail";
+	}
 	
-    // 本棚(読了済みリスト)検索関係
+    // 検索
 	@PostMapping("/search-finished-booklist")
 	public String searchFinishedBook(Model model, FinishedSearchInput finishedSearchInput) throws IOException {
 		if (finishedSearchInput == null) {

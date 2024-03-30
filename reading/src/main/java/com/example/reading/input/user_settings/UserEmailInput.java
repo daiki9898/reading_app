@@ -1,6 +1,6 @@
 package com.example.reading.input.user_settings;
 
-import com.example.reading.validator.UserEmail;
+import com.example.reading.validator.LinkedUserEmail;
 
 import jakarta.validation.constraints.Email;
 import lombok.Data;
@@ -9,6 +9,6 @@ import lombok.Data;
 public class UserEmailInput {
 
 	@Email(message = "不正な形式です")
-	@UserEmail
+	@LinkedUserEmail
 	private String emailAddress;
 }

@@ -33,7 +33,7 @@
 							<hr>
 							<form class="needs-validation" id="username-form" th:action="@{'/user/settings/update-username/' + ${optionInput.userId}}" method="post">
 								<div th:object="${usernameInput}">
-									<div th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="text-danger">Title Error</div>
+									<div th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="text-danger">Username Error</div>
 									<label for="username-input" class="form-label">新しいユーザー名</label>
 									<input type="text" class="form-control" id="username-input" placeholder="半角英数字8-20文字" th:field="*{username}" required>
 								</div>
@@ -67,7 +67,7 @@
 							<div class="modal-body">
 								<form class="needs-validation" id="email-form" th:action="@{'/user/settings/update-email/' + ${optionInput.userId}}" method="post">
 									<div th:object="${userEmailInput}">
-										<div th:if="${#fields.hasErrors('emailAddress')}" th:errors="*{emailAddress}" class="text-danger">Title Error</div>
+										<div th:if="${#fields.hasErrors('emailAddress')}" th:errors="*{emailAddress}" class="text-danger">Email Error</div>
 										<label for="email-input" class="form-label">Email address</label>
 										<input type="email" class="form-control" id="email-input" placeholder="name@example.com" th:field="*{emailAddress}" required>
 									</div>
@@ -98,7 +98,7 @@
 								<div class="modal-body">
 									<form class="needs-validation" id="email-form" th:action="@{'/user/settings/update-email/' + ${optionInput.userId}}" method="post">
 										<div th:object="${userEmailInput}">
-											<div th:if="${#fields.hasErrors('emailAddress')}" th:errors="*{emailAddress}" class="text-danger">Title Error</div>
+											<div th:if="${#fields.hasErrors('emailAddress')}" th:errors="*{emailAddress}" class="text-danger">Email Error</div>
 											<label for="email-input" class="form-label">Email address</label>
 											<input type="email" class="form-control" id="email-input" placeholder="name@example.com" th:field="*{emailAddress}" required>
 										</div>

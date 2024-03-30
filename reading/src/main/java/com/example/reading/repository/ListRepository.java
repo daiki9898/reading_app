@@ -24,13 +24,13 @@ public class ListRepository {
 	
 	private final JdbcTemplate jdbcTemplate;
 	
-//	readinglist
+//	読書リスト
 	public List<ReadingListDto> getReadingListByUserId(Integer userId) {
 		String query = "SELECT r.user_id, r.book_id, r.start_date, b.title, b.img_src FROM reading_list_registration r INNER JOIN bookinfo b ON r.book_id = b.book_id WHERE r.user_id = ?";
 		return jdbcTemplate.query(query, new RegingListRowMapper(), userId);
 	}
 	
-	// Method for searching reading booklist
+	// 検索
 	public List<ReadingListDto> searchBook(Integer userId, String title, String genre, String author, YearMonth roughStartDate, LocalDate specificStartDate) {
 		String query = "SELECT r.user_id, r.book_id, r.start_date, b.title, b.img_src FROM reading_list_registration r INNER JOIN bookinfo b ON r.book_id = b.book_id WHERE r.user_id = ?";
 		StringBuilder sb = new StringBuilder();
@@ -129,13 +129,13 @@ public class ListRepository {
 	}
 	
 	
-//	finishedlist
+//    読了済みリスト
 	public List<FinishedListDto> getFinishedListByUserId(Integer userId) {
 		String query = "SELECT f.user_id, f.book_id, f.start_date, f.end_date, b.title, b.img_src FROM finished_list_registration f INNER JOIN bookinfo b ON f.book_id = b.book_id WHERE f.user_id = ?";
 		return jdbcTemplate.query(query, new FinishedListRowMapper(), userId);
 	}
 	
-	// Method for searching finished booklist
+	// 検索
 	public List<FinishedListDto> searchFinishedBook(Integer userId, String title, String genre, String author, YearMonth roughStartDate, YearMonth roughEndDate, LocalDate specificEndDate) {
 		String query = "SELECT f.user_id, f.book_id, f.start_date, f.end_date, b.title, b.img_src FROM finished_list_registration f INNER JOIN bookinfo b ON f.book_id = b.book_id WHERE f.user_id = ?";
 		StringBuilder sb = new StringBuilder();

@@ -33,7 +33,7 @@ public class ReadingListService {
 	private final FinishedRegistrationRepository finishedRepository;
 	private final ListRepository listRepository;
 	
-	// display Booklist
+	// 読書リスト
 	public List<BookResult> findAll(Integer userId) throws IOException {
 		List<ReadingListDto> readingBookList =  listRepository.getReadingListByUserId(userId);
 		List<BookResult> resultList = new ArrayList<BookResult>();
@@ -42,7 +42,7 @@ public class ReadingListService {
 			result.setBookId(book.getBookId());
 			result.setTitle(book.getBookInfoDto().getTitle());
 			result.setStartDate(book.getStartDate());
-			// Image Encoding
+			// 画像のエンコード
 			Path filePath = Paths.get(book.getBookInfoDto().getImgSrc());
 			byte[] bytes = Files.readAllBytes(filePath);
 			String textData = Base64.getEncoder().encodeToString(bytes);
@@ -60,7 +60,7 @@ public class ReadingListService {
 			result.setBookId(book.getBookId());
 			result.setTitle(book.getBookInfoDto().getTitle());
 			result.setStartDate(book.getStartDate());
-			// Image Encoding
+			// 画像のエンコード
 			Path filePath = Paths.get(book.getBookInfoDto().getImgSrc());
 			byte[] bytes = Files.readAllBytes(filePath);
 			String textData = Base64.getEncoder().encodeToString(bytes);
@@ -78,7 +78,7 @@ public class ReadingListService {
 			result.setBookId(book.getBookId());
 			result.setTitle(book.getBookInfoDto().getTitle());
 			result.setStartDate(book.getStartDate());
-			// Image Encoding
+			// 画像のエンコード
 			Path filePath = Paths.get(book.getBookInfoDto().getImgSrc());
 			byte[] bytes = Files.readAllBytes(filePath);
 			String textData = Base64.getEncoder().encodeToString(bytes);
@@ -89,7 +89,7 @@ public class ReadingListService {
 	}
 	
 	
-	// CRUD for registration
+	// 登録情報のCRUD
 	public ReadingListRegistration findByBookId(Integer bookId) {
 		ReadingListRegistration registration  = readingRepository.findByBookId(bookId).orElseThrow(() -> new EntityNotFoundException("登録情報は見つかりませんでした"));
 		return registration;

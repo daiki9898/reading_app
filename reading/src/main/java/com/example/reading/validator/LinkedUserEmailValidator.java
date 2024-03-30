@@ -7,12 +7,12 @@ import jakarta.validation.ConstraintValidatorContext;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class UserEmailValidator implements ConstraintValidator<UserEmail, String>{
+public class LinkedUserEmailValidator implements ConstraintValidator<LinkedUserEmail, String>{
 	
 	private final CustomUserDetailsService userService;
 	
 	@Override
-	public void initialize(UserEmail annotaion) {
+	public void initialize(LinkedUserEmail annotaion) {
 		
 	}
 
