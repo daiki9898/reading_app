@@ -22,5 +22,8 @@ public class PasswordResetToken {
 	
 	@Column(name = "generated_time")
 	private LocalDateTime generatedTime;
+	
+	@Column(name = "secret_word")
+	private String secretWord;
 
 }

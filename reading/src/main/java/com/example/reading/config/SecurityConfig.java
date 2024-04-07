@@ -59,7 +59,7 @@ public class SecurityConfig {
 				.csrfTokenRepository(new HttpSessionCsrfTokenRepository())
 			)
 			.authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
-				.requestMatchers("/", "/register-user", "/login", "/delete-account/success", "/password-reset-link", "/send-password-reset-link", "/password-reset-link/sent").permitAll()
+				.requestMatchers("/", "/register-user", "/login", "/delete-account/success", "/password-reset-link", "/send-password-reset-link", "/password-reset-link/sent", "/password-reset/verify", "password-reset").permitAll()
 				.requestMatchers("/admin/**").hasRole("ADMIN")
 				.requestMatchers("/admin/**").fullyAuthenticated()
 				.anyRequest().authenticated()

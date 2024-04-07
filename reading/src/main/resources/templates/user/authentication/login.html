@@ -28,6 +28,11 @@
 				<div class="text-center fs-5">ユーザー名が変更されました。<br>利用する場合は再度ログインしてください</div>
 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 			</div>
+			<!-- パスワードリセット後メッセージ -->
+			<div th:if="${passwordResetSuccessMessage != null}" class="alert alert-success alert-dismissible fade show" role="alert" style="width: 25rem;">
+				<div class="text-center fs-5">パスワードが変更されました。</div>
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>
 			<!-- timeout message -->
 <!--			<div th:if="${param.timeout}" class="alert alert-danger alert-dismissible fade show" role="alert" style="width: 25rem;">-->
 <!--				<div class="text-center fs-5">セッションがタイムアウトしました</div>-->
@@ -84,7 +89,7 @@
 	            </form>
 			</div>
 			<!-- 何らかのメッセージがない場合 -->
-			<div th:if="${successMessage == null && usernameSuccessMessage == null}" class="m-3">
+			<div th:if="${successMessage == null && usernameSuccessMessage == null && passwordResetSuccessMessage == null}" class="m-3">
 				<p class="text-center">ユーザー登録がまだの方はこちら</p>
 				<div class="d-grid col-6 mx-auto">
 					<a class="btn btn-secondary" role="button" href="/register-user">新規登録</a>

@@ -74,6 +74,11 @@ public class CustomUserDetailsService implements UserDetailsService {
 		accountRepository.updateLastLoginDateByUsername(lastLoginDate, username);
 	}
 	
+	public void updatePasswordById(String password, Integer userId) {
+		String hashPassword = passwordEncoder.encode(password);
+		accountRepository.updatePasswordById(hashPassword, userId);
+	}
+	
 	public void updateEmailById(String email, Integer userId) {
 		accountRepository.updateEmailById(email, userId);
 	}

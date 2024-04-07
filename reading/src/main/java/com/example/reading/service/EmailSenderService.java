@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.reading.model.PasswordResetToken;
 import com.example.reading.repository.PasswordResetTokenRepository;
@@ -16,6 +17,7 @@ import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class EmailSenderService {
 	
@@ -52,7 +54,7 @@ public class EmailSenderService {
 	}
 	
 	// パスワードリセット時
-	public void sendEmailWithResetLink(String toEmail, Integer userId) {
+	public void sendEmailWithResetLink(String toEmail, String secretWord, Integer userId) {
 		MimeMessage message = mailSender.createMimeMessage();
 		try {
 			MimeMessageHelper helper = new MimeMessageHelper(message, true);
@@ -65,6 +67,7 @@ public class EmailSenderService {
 			passwordResetToken.setUserId(userId);
 			passwordResetToken.setOnetimeToken(token);
 			passwordResetToken.setGeneratedTime(LocalDateTime.now());
+			passwordResetToken.setSecretWord(secretWord);
 			passwordResetTokenRepository.save(passwordResetToken);
 			String link = resetLink + token;
 			// html対応していない場合

@@ -32,6 +32,10 @@ public interface AccountRepository extends JpaRepository<Account, Integer>{
 	void updateLastLoginDateByUsername(LocalDateTime localDateTime, String usernanme);
 	
 	@Modifying
+	@Query(value = "UPDATE user_login_info SET password = ?1 WHERE user_id = ?2", nativeQuery = true)
+	void updatePasswordById(String password, Integer user_id);
+	
+	@Modifying
 	@Query(value = "UPDATE user_login_info SET user_email = ?1 WHERE user_id = ?2", nativeQuery = true)
 	void updateEmailById(String email, Integer userId);
 	

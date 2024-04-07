@@ -52,7 +52,7 @@
 		<!-- email area -->
 		<div class="border border-3 border-secondary-subtle rounded p-3 mb-4">
 			<div class="fw-bold">メールアドレス</div>
-			<!-- if email not exists -->
+			<!-- emailがない場合 -->
 			<div class="fs-5" th:if="${email == null}">
 				<p>未登録</p>
 				<button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#registerEmailModal">登録</button>
@@ -82,7 +82,7 @@
 				</div>
 				<!-- end -->
 			</div>
-			<!-- if email exists -->
+			<!-- emailがある場合 -->
 			<div th:if="${email != null}">
 				<p class="fs-5" th:text="${email}"></p>
 				<div class="d-block">
@@ -139,7 +139,7 @@
 					<!-- end modal -->
 				</div>
 			</div>
-			<!-- end if email exists -->
+			<!-- emailがある場合終 -->
 		</div>
 		<div th:object="${optionInput}">
 			<!-- genretag area -->

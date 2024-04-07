@@ -49,14 +49,14 @@ public class UserUpdateController {
 	private final FinishedListService finishedListService;
 	private final BookService bookService;
 	
-	// common process
+	// 共通処理
 	public Map<String, Object> addUserProfileData(Model model) {
 		// get username
 		SecurityContext context = SecurityContextHolder.getContext();
         Authentication authentication = context.getAuthentication();
         String username = authentication.getName();
         
-        // set values to userProfile
+        // 値のセット
         UserProfile userProfile = new UserProfile();
         userProfile.setUsername(username);
 
@@ -177,7 +177,7 @@ public class UserUpdateController {
 	@PostMapping("/delete-account/{id}")
 	public ModelAndView deleteAccount(@PathVariable String id, HttpServletRequest request) throws NumberFormatException {
 		Integer userId = Integer.valueOf(id);
-		// Delete related information
+		// 関連情報の削除
 		UserStatus userStatus = userStatusService.deleteById(userId);
 		if (userStatus.getReadingBookNumber() != 0) {
 			List<ReadingListRegistration> readingListRegistrations = readingListService.deleteByUserId(userId);
