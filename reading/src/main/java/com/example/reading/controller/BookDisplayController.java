@@ -128,9 +128,9 @@ public class BookDisplayController {
 	// 検索
 	@PostMapping("/search-reading-booklist")
 	public String searchBook(Model model, SearchInput searchInput, @RequestParam(name="order", defaultValue="asc") String order, @RequestParam(name="sort", defaultValue="date") String sort) throws IOException {
-		if (searchInput == null) {
-			return "redirect:/user/home";
-		}
+//		if (searchInput == null) {
+//			return "redirect:/user/home";
+//		}
 		String title = searchInput.getTitle();
 		String genre = searchInput.getGenre();
 		String author = searchInput.getAuthor();
@@ -139,6 +139,7 @@ public class BookDisplayController {
 		if (title.isBlank() && genre.isEmpty() && author.isBlank() && roughStartDate == null && specificStartDate == null) {
 			return "redirect:/user/home?search-error";
 		}
+		
 		Integer userId = getUserId();
 		List<BookResult> searchBookList = readingListService.searchBook(userId, searchInput);
 		if (sort.equals("date")) {
@@ -162,16 +163,64 @@ public class BookDisplayController {
 	}
 	
 //	読了済みリスト関係
-	@GetMapping("/finished-booklist")
-	public String displayFinishedList(Model model) throws IOException {
-		Integer userId = getUserId();
-		List<BookResult> finishedBookList = finishedListService.findAll(userId);
+	@GetMapping("/shelf")
+	public String displayFinishedList(Model model, @RequestParam(name="order", defaultValue="asc") String order, @RequestParam(name="sort", defaultValue="date") String sort, @RequestParam(name="search-error", required=false) String searchError) throws IOException {
+		List<BookResult> finishedBookList = finishedListService.findAll(getUserId());
+		// sort
+		if (finishedBookList != null) {
+			if (sort.equals("date")) {
+				if (order.equals("asc")) {
+					finishedBookList.sort(Comparator.comparing(BookResult::getEndDate));
+				} else if (order.equals("desc")) {
+					finishedBookList.sort(Comparator.comparing(BookResult::getEndDate).reversed());
+				}
+			} else if (sort.equals("title")) {
+				if (order.equals("asc")) {
+					finishedBookList.sort(Comparator.comparing(BookResult::getTitle));
+				} else if (order.equals("desc")) {
+					finishedBookList.sort(Comparator.comparing(BookResult::getTitle).reversed());
+				}
+			}
+		}
 		model.addAttribute("finishedBookList", finishedBookList);
 		FinishedSearchInput finishedSearchInput = new FinishedSearchInput();
 		model.addAttribute("finishedSearchInput", finishedSearchInput);
+		model.addAttribute("order", order);
+		model.addAttribute("sort", sort);
+		if (searchError != null) {
+			model.addAttribute("searchError", searchError);
+		}
 		return "user/finished-book/finished-booklist";
 	}
-		
+	
+	// by genre
+	@GetMapping("/shelf/{genre}")
+	public String displayFinishedListByGenre(Model model, @PathVariable(name= "genre", required = true) String genre, @RequestParam(name="order", defaultValue="asc") String order, @RequestParam(name="sort", defaultValue="date") String sort) throws IOException {
+		List<BookResult> finishedBookList = finishedListService.searchBookByGenre(getUserId(), genre);
+		// sort
+		if (finishedBookList != null) {
+			if (sort.equals("date")) {
+				if (order.equals("asc")) {
+					finishedBookList.sort(Comparator.comparing(BookResult::getStartDate));
+				} else if (order.equals("desc")) {
+					finishedBookList.sort(Comparator.comparing(BookResult::getStartDate).reversed());
+				}
+			} else if (sort.equals("title")) {
+				if (order.equals("asc")) {
+					finishedBookList.sort(Comparator.comparing(BookResult::getTitle));
+				} else if (order.equals("desc")) {
+					finishedBookList.sort(Comparator.comparing(BookResult::getTitle).reversed());
+				}
+			}
+		}
+		model.addAttribute("finishedBookList", finishedBookList);
+		model.addAttribute("finishedSearchInput", new FinishedSearchInput());
+		model.addAttribute("order", order);
+		model.addAttribute("sort", sort);
+		model.addAttribute("genre", genre);
+		return "user/finished-book/finished-booklist";
+	}
+	
 	@GetMapping("/finished-book-detail/{id}")
 	public String displayFinishedDetail(Model model, @PathVariable String id) throws NumberFormatException {
 		FinishedEditBookInput finishedEditBookInput = bookService.findFinishedBookById(Integer.valueOf(id));
@@ -181,10 +230,10 @@ public class BookDisplayController {
 	
     // 検索
 	@PostMapping("/search-finished-booklist")
-	public String searchFinishedBook(Model model, FinishedSearchInput finishedSearchInput) throws IOException {
-		if (finishedSearchInput == null) {
-			return "redirect:/user/finished-booklist";
-		}
+	public String searchFinishedBook(Model model, FinishedSearchInput finishedSearchInput,  @RequestParam(name="order", defaultValue="asc") String order, @RequestParam(name="sort", defaultValue="date") String sort) throws IOException {
+//		if (finishedSearchInput == null) {
+//			return "redirect:/user/shelf";
+//		}
 		String title = finishedSearchInput.getTitle();
 		String genre = finishedSearchInput.getGenre();
 		String author = finishedSearchInput.getAuthor();
@@ -192,22 +241,27 @@ public class BookDisplayController {
 		YearMonth roughEndDate = finishedSearchInput.getRoughEndDate();
 		LocalDate specificEndDate = finishedSearchInput.getSpecificEndDate();
 		if (title.isBlank() && genre.isEmpty() && author.isBlank() && roughStartDate == null && roughEndDate == null && specificEndDate == null) {
-			return "redirect:/user/search-finished-booklist-error";
+			return "redirect:/user/shelf?search-error";
 		}
-		Integer userId = getUserId();
-		List<BookResult> finishedSearchBookList = finishedListService.searchBook(userId, finishedSearchInput);
-		model.addAttribute("finishedSearchBookList", finishedSearchBookList);
-		model.addAttribute("finishedSearchInput", finishedSearchInput);
-		return "user/finished-book/finished-search-result";
-	}
-	
-	@GetMapping("/search-finished-booklist-error")
-	public String showFinishedSearchError(Model model) throws IOException {
-		Integer userId = getUserId();
-		List<BookResult> finishedBookList = finishedListService.findAll(userId);
+		
+		List<BookResult> finishedBookList = finishedListService.searchBook(getUserId(), finishedSearchInput);
+		if (sort.equals("date")) {
+			if (order.equals("asc")) {
+				finishedBookList.sort(Comparator.comparing(BookResult::getEndDate));
+			} else if (order.equals("desc")) {
+				finishedBookList.sort(Comparator.comparing(BookResult::getEndDate).reversed());
+			}
+		} else if (sort.equals("title")) {
+			if (order.equals("asc")) {
+				finishedBookList.sort(Comparator.comparing(BookResult::getTitle));
+			} else if (order.equals("desc")) {
+				finishedBookList.sort(Comparator.comparing(BookResult::getTitle).reversed());
+			}
+		}
 		model.addAttribute("finishedBookList", finishedBookList);
-		FinishedSearchInput finishedSearchInput = new FinishedSearchInput();
 		model.addAttribute("finishedSearchInput", finishedSearchInput);
-		return "user/finished-book/finished-search-result-error";
+		model.addAttribute("order", order);
+		model.addAttribute("sort", sort);
+		return "user/finished-book/finished-search-result";
 	}
 }

@@ -15,8 +15,10 @@
     </style>
 </head>
 <body>
+	<div id="overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 999; display: none;"></div>
 	<!-- navbar -->
-	<nav class="navbar navbar-expand-lg bg-info mb-5" th:fragment="header" style="--bs-navbar-color: rgba(255, 255, 255, 0.55);
+	<nav class="navbar navbar-expand-lg bg-info mb-5" th:fragment="header" style="position: relative; 
+		--bs-navbar-color: rgba(255, 255, 255, 0.55);
 	    --bs-navbar-hover-color: rgba(255, 255, 255, 0.75);
 	    --bs-navbar-disabled-color: rgba(255, 255, 255, 0.25);
 	    --bs-navbar-active-color: #fff;
@@ -28,7 +30,7 @@
 				<i class="bi bi-book d-inline-block align-text-top" alt="Logo"></i>
 				My Library
 			</a>
-		    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon" style="background-image: url('data:image/svg+xml,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 30 30\'%3e%3cpath stroke=\'rgba%28255, 255, 255, 0.55%29\' stroke-linecap=\'round\' stroke-miterlimit=\'10\' stroke-width=\'2\' d=\'M4 7h22M4 15h22M4 23h22\'/%3e%3c/svg%3e');"></span>
 		    </button>
 		    <div class="collapse navbar-collapse" id="navbarNavDropdown">
@@ -50,48 +52,98 @@
 						<a class="nav-link" href="/user/update/display-registerform">登録</a>
         			</li>
 				</ul>
-				<!-- profile icon -->
-				<div class="ms-auto me-2">
-					<div class="drop-down position-relative" style="color: white;">
-						<div class="dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-							<i class="text-light fs-2 position-relative bi bi-person-circle" id="profile" style="opacity: 0.9;">
-								<span class="position-absolute translate-middle border border-info rounded-circle hover" style="background-color: rgb(6, 255, 58); top: 25%; left: 72%; padding: 0.4rem;">
-									<span class="visually-hidden">User Profile</span>
-								</span>
-						  	</i>
-					  	</div>
-					  	<ul class="dropdown-menu text-center" id="custom-dropdown" th:object="${userProfile}">
-							<li class="dropdown-item"><u>ユーザー名</u><p class="fs-5" th:text="*{username}"></p></li>
-						 	<li class="dropdown-item"><u>読書中の本</u><p><span class="fs-5" th:text="*{readingNumber}"></span><span>冊</span></p></li>
-						 	<li class="dropdown-item"><u>今まで読んだ本</u><div><span class="fs-5" th:text="*{finishedNumber}"></span><span>冊</span></div></li>
-						 	<li><hr class="dropdown-divider"></li>
-						 	<li><form th:action="@{/logout}" method="post"><button type="submit" class="btn btn-secondary">ログアウト</button></form></li>
-					 	</ul>
-					 	<script type="text/javascript">
-						 	// hover effect
-						 	const point = document.getElementById("profile");
-						 	point.addEventListener("mouseover", () => {
-								 point.style.opacity = 1;
-						 	});
-						 	point.addEventListener("mouseleave", () => {
-								 point.style.opacity = 0.9;
-						 	});
-						 	// ドロップダウン位置調整
-						 	const dropdownMenu = document.getElementById("custom-dropdown");
-						 	const mediaQuery = window.matchMedia("(min-width: 768px)");
-						 	function adjustDropdownMenuPosition() {
-								 if (mediaQuery.matches) {
-									 dropdownMenu.style.left = "-200%";
-								} else {
-									dropdownMenu.style.left = "auto";
-							 	}
-						  	}
-						 	window.addEventListener("resize", adjustDropdownMenuPosition);
-						 	adjustDropdownMenuPosition();
-					 	</script>
-				 	</div>
-			 	</div>
+			</div>
+			<!-- profile icon -->
+			<div class="ms-auto">
+				 <a data-bs-toggle="collapse" href="#user-profile-collapse" role="button" aria-expanded="false" aria-controls="user-profile-collapase" style="text-decoration: none;">
+					 <i class="fs-2 text-light position-relative bi bi-person-circle" id="profile" style="font-style: normal;">
+						 <span class="position-absolute translate-middle badge rounded-pill" style="background-color: rgb(255, 19, 19); font-size: 10px; top: 23%; left: 80%;" th:if="${!userProfile.isEmailExists}">
+							 1
+							 <span class="visually-hidden">User Profile</span>
+						 </span>
+					 </i>
+				 </a>
+				 <script type="text/javascript">
+					 // hover effect
+					 const profile = document.getElementById("profile");
+					 profile.addEventListener("mouseover", () => {
+						 profile.style.opacity = 0.9;
+					 });
+					 profile.addEventListener("mouseleave", () => {
+						 profile.style.opacity = 1.0;
+					 });
+			    </script>
 		    </div>
+		    <!-- user profile collapse -->
+		    <div class="d-flex flex-row-reverse" style="position: absolute; z-index: 1000; top: 100%; right: 0%;">
+				<div class="collapse" id="user-profile-collapse">
+					<div class="card card-body text-center p-0" th:object="${userProfile}" style="--bs-card-border-color: #6c757d">
+						<ul class="list-group list-group-flush">
+							<li class="list-group-item">
+								<div class="fw-bold">ユーザー名</div>
+								<div class="fs-5" th:text="*{username}"></div>
+							</li>
+							<li class="list-group-item p-0">
+								<!-- notification accordion -->
+								<div class="accordion" id="notification-accordion" style="--bs-accordion-border-radius: ; --bs-accordion-inner-border-radius: ;">
+									<div class="accordion-item" style="border: 0;">
+										<div class="accordion-header" style="--bs-accordion-active-bg: #e9ecef; --bs-accordion-btn-focus-box-shadow: ; 
+											--bs-accordion-btn-active-icon: url('data:image/svg+xml,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 16 16\' fill=\'%23212529\'%3e%3cpath fill-rule=\'evenodd\' d=\'M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z\'/%3e%3c/svg%3e');">
+											<button id="notification" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#notification-collapse" aria-expanded="false" aria-controls="notification-collapse">
+												お知らせ<span class="badge rounded-pill" style="background-color: rgb(255, 19, 19);" th:if="${!userProfile.isEmailExists}">1</span></a>
+											</button>
+			    						</div>
+			    						<div id="notification-collapse" class="accordion-collapse collapse">
+			      							<div class="accordion-body p-3" style="--bs-card-border-color: rgba(0, 0, 0, 0.175)">
+					  							<div class="card text-start" th:if="${!userProfile.isEmailExists}">
+													<div class="card-header">
+														メールアドレス登録のお願い
+													</div>
+													<div class="p-3">
+														パスワードリセット時に必要です、忘れる前に早めの登録をお願いします。<br>
+														<a href="/user/settings">登録画面へ</a>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<!-- end -->
+								</div>
+							</li>
+							<script type="text/javascript">
+								const overlay = document.getElementById("overlay");
+								const notification = document.getElementById("notification");
+								notification.addEventListener("click", () => {
+									if (notification.classList.contains("collapsed")) {
+										overlay.style.display = "none";
+									} else {
+										overlay.style.display = "block";
+									}
+								});
+								overlay.addEventListener("click", () => {
+									overlay.style.display = "none";
+									const userCollapse = document.getElementById("user-profile-collapse");
+									userCollapse.classList.remove("show");
+									const notificationCollapse = document.getElementById("notification-collapse");
+									notificationCollapse.classList.remove("show");
+									notification.classList.add("collapsed");
+								});											
+							</script>
+							<li class="list-group-item">
+								<div class="fw-bold">読書中の本</div>
+								<div><span class="fs-5" th:text="*{readingNumber}"></span><span>冊</span></div>
+							</li>
+							<li class="list-group-item">
+								<div class="fw-bold">今まで読んだ本</div>
+								<div><span class="fs-5" th:text="*{finishedNumber}"></span><span>冊</span></div>
+							</li>
+							<li class="list-group-item"><a class="link-body-emphasis link-underline link-underline-opacity-0" href="/user/settings"><i class="bi bi-gear"></i>設定</a></li>
+							<li class="list-group-item"><form th:action="@{/logout}" method="post"><button type="submit" class="btn btn-secondary">ログアウト</button></form></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<!-- end user profile collapse -->
 	    </div>
 		<!-- search box -->
 		<div id="search-box" class="position-absolute" style="right: 50%; transform: translateX(50%);" data-bs-toggle="modal" data-bs-target="#searchModal">
@@ -158,7 +210,7 @@
 		<!-- sort area -->
 		<div class="row mb-3">
 			<div class="col-auto">
-				 <form id="sort-form" action="/user/home"><select class="sort form-select" name="order" aria-label="Order">
+				 <form id="sort-form"><select class="sort form-select" name="order" aria-label="Order">
 			     	<option value="asc" th:selected="${order == 'asc'}">昇順</option>
 			        <option value="desc" th:selected="${order == 'desc'}">降順</option>
 			     </select>
@@ -169,24 +221,61 @@
         			<option value="title" th:selected="${sort == 'title'}">タイトル</option>
       			</select></form>
 	    	</div>
-    		<div class="col-auto" style="position: absolute; right: 0%;">
-				<button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#genre-tags" aria-expanded="true" aria-controls="genre-tags">
-					<i class="bi bi-caret-down-fill"></i>
-				</button>
-			</div>
+	    	<div class="col-auto" th:if="${userProfile.genreTagOpenStatus == false}">
+				<select id="genre-select" class="form-select" name="genre" aria-label="Genre">
+        			<option value="すべて" th:selected="${genre == 'すべて'}">すべて</option>
+        			<option value="小説" th:selected="${genre == '小説'}">小説</option>
+        			<option value="ノンフィクション" th:selected="${genre == 'ノンフィクション'}">ノンフィクション</option>
+        			<option value="ミステリー" th:selected="${genre == 'ミステリー'}">ミステリー</option>
+        			<option value="サスペンス" th:selected="${genre == 'サスペンス'}">サスペンス</option>
+        			<option value="SF" th:selected="${genre == 'SF'}">SF</option>
+        			<option value="ファンタジー" th:selected="${genre == 'ファンタジー'}">ファンタジー</option>
+        			<option value="ロマンス" th:selected="${genre == 'ロマンス'}">ロマンス</option>
+        			<option value="歴史" th:selected="${genre == '歴史'}">歴史</option>
+        			<option value="自己啓発" th:selected="${genre == '自己啓発'}">自己啓発</option>
+        			<option value="お金" th:selected="${genre == 'お金'}">お金</option>
+        			<option value="学習" th:selected="${genre == '学習'}">学習</option>
+        			<option value="コミック" th:selected="${genre == 'コミック'}">コミック</option>
+        			<option value="その他" th:selected="${genre == 'その他'}">その他</option>
+      			</select>
+      			<script type="text/javascript">
+					const sortForm = document.getElementById("sort-form");
+					const genreSelects = document.querySelectorAll("#genre-select");
+					genreSelects.forEach((genreSelect) => {
+						genreSelect.addEventListener("change", function() {
+							const genre = this.value;
+							if (genre === "すべて") {
+								sortForm.action = "/user/home";
+							} else {
+								sortForm.action = "/user/home/" + genre;
+							}
+							sortForm.submit();
+						});
+					});
+				</script>
+	    	</div>
+			<script type="text/javascript">
+		        const selects = document.querySelectorAll(".sort");
+		        selects.forEach((select) => {
+					select.addEventListener("change", () => {
+						document.getElementById("sort-form").submit();
+					});
+				});
+			</script>
 		</div>
-		<!-- end sort area -->
-		<div class="row">
+		<!-- book area -->
+		<!-- ジャンルタグを出す場合 -->
+		<div class="row" th:if="${userProfile.genreTagOpenStatus == true}">
 			<!-- book -->
-			<div class="col-9 col-sm-10">
+			<div id="book-area" class="col-9 col-sm-10">
 				<div th:if="${#lists.isEmpty(bookList)}">
 					<h2><span th:text="${userProfile.username}"></span>さんが読書中の本はありません</h2>
 				</div>
-				<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 g-4">
+				<div id="card-area" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 g-4">
 		            <div th:each="book,iterStat : ${bookList}" th:object="${book}" class="col">
 						<div class="card h-100">
 			                <img th:src="*{imgFile}" class="card-img-top" style="height: 12rem;">
-							<div class="modal" th:id="'deletemodal-' + ${iterStat.index}" tabindex="-1">
+							<div th:id="'deletemodal-' + ${iterStat.index}" class="modal" tabindex="-1">
 								<div class="modal-dialog">
 									<div class="modal-content">
 										<div class="modal-header">
@@ -221,90 +310,91 @@
 					<!-- all -->
 					<button type="button" value="すべて" class="tag-button btn btn-primary p-1 m-2 bg-primary-subtle text-dark" style="--bs-btn-border-color: transparent;">
 						<div class="d-flex justify-content-start">
-							<i class="bi bi-bookmark"></i><span>すべて</span>
+							<i class="bi bi-tag"></i><span>すべて</span>
 						</div>
 					</button>
 					<!-- novel -->
 					<button type="button" value="小説" class="tag-button btn btn-primary p-1 m-2 bg-primary-subtle text-dark" style="--bs-btn-border-color: transparent;">
 						<div class="d-flex justify-content-start">
-							<i class="bi bi-bookmark"></i><span>小説</span>
+							<i class="bi bi-tag"></i><span>小説</span>
 						</div>
 					</button>
 					<!-- nonfiction -->
 					<button type="button" value="ノンフィクション" class="tag-button btn btn-primary p-1 m-2 bg-primary-subtle text-dark" style="--bs-btn-border-color: transparent;">
 						<div class="d-flex justify-content-start">
-							<i class="bi bi-bookmark"></i><span>ノンフィクション</span>
+							<i class="bi bi-tag"></i><span>ノンフィクション</span>
 						</div>
 					</button>
 					<!-- mystery -->
 					<button type="button" value="ミステリー" class="tag-button btn btn-primary p-1 m-2 bg-primary-subtle text-dark" style="--bs-btn-border-color: transparent;">
 						<div class="d-flex justify-content-start">
-							<i class="bi bi-bookmark"></i><span>ミステリー</span>
+							<i class="bi bi-tag"></i><span>ミステリー</span>
 						</div>
 					</button>
 					<!-- suspense -->
 					<button type="button" value="サスペンス" class="tag-button btn btn-primary p-1 m-2 bg-primary-subtle text-dark" style="--bs-btn-border-color: transparent;">
 						<div class="d-flex justify-content-start">
-							<i class="bi bi-bookmark"></i><span>サスペンス</span>
+							<i class="bi bi-tag"></i><span>サスペンス</span>
 						</div>
 					</button>
 					<!-- sf -->
 					<button type="button" value="SF" class="tag-button btn btn-primary p-1 m-2 bg-primary-subtle text-dark" style="--bs-btn-border-color: transparent;">
 						<div class="d-flex justify-content-start">
-							<i class="bi bi-bookmark"></i><span>SF</span>
+							<i class="bi bi-tag"></i><span>SF</span>
 						</div>
 					</button>
 					<!-- fantagy -->
 					<button type="button" value="ファンタジー" class="tag-button btn btn-primary p-1 m-2 bg-primary-subtle text-dark" style="--bs-btn-border-color: transparent;">
 						<div class="d-flex justify-content-start">
-							<i class="bi bi-bookmark"></i><span>ファンタジー</span>
+							<i class="bi bi-tag"></i><span>ファンタジー</span>
 						</div>
 					</button>
 					<!-- romance -->
 					<button type="button" value="ロマンス" class="tag-button btn btn-primary p-1 m-2 bg-primary-subtle text-dark" style="--bs-btn-border-color: transparent;">
 						<div class="d-flex justify-content-start">
-							<i class="bi bi-bookmark"></i><span>ロマンス</span>
+							<i class="bi bi-tag"></i><span>ロマンス</span>
 						</div>
 					</button>
 					<!-- history -->
 					<button type="button" value="歴史" class="tag-button btn btn-primary p-1 m-2 bg-primary-subtle text-dark" style="--bs-btn-border-color: transparent;">
 						<div class="d-flex justify-content-start">
-							<i class="bi bi-bookmark"></i><span>歴史</span>
+							<i class="bi bi-tag"></i><span>歴史</span>
 						</div>
 					</button>
 					<!-- self development -->
 					<button type="button" value="自己啓発" class="tag-button btn btn-primary p-1 m-2 bg-primary-subtle text-dark" style="--bs-btn-border-color: transparent;">
 						<div class="d-flex justify-content-start">
-							<i class="bi bi-bookmark"></i><span>自己啓発</span>
+							<i class="bi bi-tag"></i><span>自己啓発</span>
 						</div>
 					</button>
 					<!-- money -->
 					<button type="button" value="お金" class="tag-button btn btn-primary p-1 m-2 bg-primary-subtle text-dark" style="--bs-btn-border-color: transparent;">
 						<div class="d-flex justify-content-start">
-							<i class="bi bi-bookmark"></i><span>お金</span>
+							<i class="bi bi-tag"></i><span>お金</span>
 						</div>
 					</button>
 					<!-- study -->
 					<button type="button" value="学習" class="tag-button btn btn-primary p-1 m-2 bg-primary-subtle text-dark" style="--bs-btn-border-color: transparent;">
 						<div class="d-flex justify-content-start">
-							<i class="bi bi-bookmark"></i><span>学習</span>
+							<i class="bi bi-tag"></i><span>学習</span>
 						</div>
 					</button>
 					<!-- comic -->
 					<button type="button" value="コミック" class="tag-button btn btn-primary p-1 m-2 bg-primary-subtle text-dark" style="--bs-btn-border-color: transparent;">
 						<div class="d-flex justify-content-start">
-							<i class="bi bi-bookmark"></i><span>コミック</span>
+							<i class="bi bi-tag"></i><span>コミック</span>
 						</div>
 					</button>
 					<!-- others -->
 					<button type="button" value="その他" class="tag-button btn btn-primary p-1 m-2 bg-primary-subtle text-dark" style="--bs-btn-border-color: transparent;">
 						<div class="d-flex justify-content-start">
-							<i class="bi bi-bookmark"></i><span>その他</span>
+							<i class="bi bi-tag"></i><span>その他</span>
 						</div>
 					</button>
 				</div>
 			</div>
 			<script type="text/javascript">
+				// sortFormの実行
 				document.querySelectorAll(".tag-button").forEach(button => {
 					button.addEventListener("click", function() {
 						const sortForm = document.getElementById("sort-form")
@@ -320,6 +410,45 @@
 			</script>
 			<!-- end genre tag -->
 		</div>
+		<!-- ジャンルタグ表示なしの場合 -->
+		<div id="book-area" th:if="${userProfile.genreTagOpenStatus == false}">
+			<div th:if="${#lists.isEmpty(bookList)}">
+				<h2><span th:text="${userProfile.username}"></span>さんが読書中の本はありません</h2>
+			</div>
+			<div id="card-area" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4">
+	            <div th:each="book,iterStat : ${bookList}" th:object="${book}" class="col">
+					<div class="card h-100">
+		                <img th:src="*{imgFile}" class="card-img-top" style="height: 12rem;">
+						<div th:id="'deletemodal-' + ${iterStat.index}" class="modal" tabindex="-1">
+							<div class="modal-dialog">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h5 class="modal-title">本の削除</h5>
+										<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+									</div>
+									<div class="modal-body">
+			        					<p>削除してもよろしいですか？</p>
+			        				</div>
+			        				<div class="modal-footer">
+										<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
+										<a class="btn btn-danger" th:href="@{'/user/update/execute-delete/' + *{bookId}}" role="button">削除</a>
+									</div>
+								</div>
+							</div>
+						</div> 
+						<button type="button" class="btn-close position-absolute top-0 end-0" data-bs-toggle="modal" data-bs-target="#deletemodal" th:attr="data-bs-target='#deletemodal-' + ${iterStat.index}" aria-label="Close"></button>
+		                <div class="card-body">
+							<h5 class="card-title" th:text="*{title}"></h5>
+							<a th:href="@{'/user/book-detail/' + *{bookId}}" style="text-decoration: none;">詳細</a>
+		                </div>
+		                <div class="card-footer">
+							<small class="text-body-secondary">From </small><small class="text-body-secondary" th:text="*{#temporals.format(startDate, 'yyyy/MM/dd')}"></small>
+		                </div>
+	              	</div>
+	            </div>
+			</div>
+		</div>
+		<!-- register button -->
 		<a id="register-button" class="icon-link icon-link-hover mt-4" style="--bs-icon-link-transform: translate3d(0, -.125rem, 0);" data-bs-toggle="modal" data-bs-target="#registerModal">
 			<i class="fs-5 bi bi-plus-square"></i>
 		</a>
@@ -364,14 +493,13 @@
 							<div class="mb-4">
 								<div th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}" class="text-danger">Date Error</div>
 								<label for="start-date" class="form-label">開始日</label>
-								<span class="text-danger">必須</span>
+								<span class="text-danger">必須</p>
 								<input type="date" id="start-date" class="form-control" th:field="*{startDate}" required>
 							</div>
 							<div class="mb-4">
-								<div th:if="${#fields.hasErrors('imgFile')}" th:errors="*{imgFile}" class="text-danger">FileSize Error</div>
 								<label for="book-image" class="form-label">本の画像</label>
 								<input type="file" id="book-image" class="form-control" accept="image/*" th:field="*{imgFile}">
-								<div id="fileHelp" class="form-text">サイズは1MBまでです、画像を登録すると読み込みが遅くなります</div>
+								<div id="fileHelp" class="form-text">サイズは10MBまでです、画像を登録すると読み込みが遅くなります</div>
 							</div>
 							<div class="input-group">
 								<span class="input-group-text">メモ</span>
@@ -391,24 +519,10 @@
 	<!-- Bootstrap js -->
 	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js" integrity="sha384-fbbOQedDUMZZ5KreZpsbe1LCZPVmfTnH7ois6mU1QK+m14rQ1l2bGBq41eYeM/fS" crossorigin="anonymous"></script>
-	<!-- js -->
 	<script type="text/javascript">
-		
-		// modalを開いた状態をデフォルトに
-	    document.addEventListener("DOMContentLoaded", function() {
-	        const registerButton = document.getElementById("register-button");
-	        registerButton.click();
-	    });
-	    
-	    // sort
-		document.addEventListener("DOMContentLoaded", function() {
-	        const selects = document.querySelectorAll(".sort");
-	        selects.forEach((select) => {
-				select.addEventListener("change", () => {
-					document.getElementById("sort-form").submit();
-				});
-			});
-	    });
+		// 登録エラー時、デフォルトでモーダルを開く
+        const registerButton = document.getElementById("register-button");
+        registerButton.click();
 	</script>
 </body>
 </html>

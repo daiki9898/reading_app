@@ -74,7 +74,7 @@ public class BookUpdateController {
         model.addAttribute("userProfile", userProfile);
 	}
 	
-	@GetMapping("/display-registerform")
+	@GetMapping("/book-registerform")
 	public String displayForm(Model model) {
 		BookInput bookInput = new BookInput();
 		bookInput.setStartDate(LocalDate.now());
@@ -115,7 +115,7 @@ public class BookUpdateController {
 		return "redirect:/user/finished-booklist";
 	}
 	
-	@PostMapping("/execute-register")
+	@PostMapping("/register-book")
 	public String executeRegister(@Validated BookInput bookInput, BindingResult bindingResult, Model model) throws IOException {
 		if (bindingResult.hasErrors()) {
 			addUserProfileData(model);

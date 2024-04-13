@@ -39,17 +39,17 @@
 						<a class="nav-link active" aria-current="page" href="/user/home">Home</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link active" href="/user/finished-booklist">本棚</a>
+						<a class="nav-link active" href="/user/shelf">本棚</a>
 					</li>
 					<li class="nav-item dropdown">
 						<a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">書籍一覧</a>
 						<ul class="dropdown-menu">
 							<li><a class="dropdown-item" href="/user/home">読書中</a></li>
-							<li><a class="dropdown-item" href="/user/finished-booklist">読了済み</a></li>
+							<li><a class="dropdown-item" href="/user/shelf">読了済み</a></li>
 						</ul>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" href="/user/update/display-registerform">登録</a>
+						<a class="nav-link" href="/user/update/book-registerform">登録</a>
         			</li>
 				</ul>
 			</div>
@@ -531,7 +531,7 @@
 						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 					</div>
 					<div class="modal-body">
-						<form id="register-form" class="needs-validation" th:action="@{/user/update/execute-register}" method="post" enctype="multipart/form-data" th:object="${bookInput}">
+						<form id="register-form" class="needs-validation" th:action="@{/user/update/register-book}" method="post" enctype="multipart/form-data" th:object="${bookInput}">
 							<div class="mb-4">
 								<div th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="text-danger">Title Error</div>
 								<label for="book-title" class="form-label">タイトル</label>
