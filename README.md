@@ -20,7 +20,14 @@ Spring Boot × Thymeleafで作成したSSR方式です。<br>
 - もちろん後から内容を編集することも可能です。
 - 検索条件を指定し本を詳細に検索することもできます。
 
-<!-- # 詳細画面 -->
+# 説明動画
+
+https://github.com/daiki9898/reading_app/assets/158798056/320df7e9-41b3-45dc-a8e0-a75bec255843
+
+
+
+
+
 
 # 使用技術
 <table>
