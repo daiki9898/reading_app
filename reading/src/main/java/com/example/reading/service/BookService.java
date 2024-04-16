@@ -96,10 +96,11 @@ public class BookService {
 		book.setAuthor(bookInput.getAuthor());
 		book.setGenre(bookInput.getGenre());
 		book.setComment(bookInput.getComment());
+		// 画像が登録された場合
 		if (!(bookInput.getImgFile().isEmpty())) {
-			// update user_status
+			// ユーザーの利用状況を更新
 			MultipartFile imgFile = bookInput.getImgFile();
-			userStatusRepository.updateImageRegistrationStatus(userId, 1, imgFile.getSize());
+			userStatusRepository.updateImageRegistrationStatus(userId, 1, imgFile.getSize()); // 本の冊数、画像サイズ
 			// ユーザー用の画像ディレクトリの作成
 			String fileDirectory = imgFolder + caluculateHash(userId);
 			try {
@@ -110,7 +111,7 @@ public class BookService {
 			String fileName = bookInput.getTitle() + "_" + UUID.randomUUID().toString() + ".jpg";
 			String fullPath =  fileDirectory + "/" + fileName;
 			book.setImgSrc(fullPath);
-			// save image
+			// 画像を保存
 			Path filePath = Paths.get(fullPath);
 			try (OutputStream stream = Files.newOutputStream(filePath)) {
 				byte[] bytes = imgFile.getBytes();
@@ -133,8 +134,10 @@ public class BookService {
 		book.setAuthor(editBookInput.getAuthor());
 		book.setGenre(editBookInput.getGenre());
 		book.setComment(editBookInput.getComment());
+		// 画像が登録された場合
 		if (!(editBookInput.getImgFile().isEmpty())) {
 			long fileSize = 0;
+			// 既に登録されている場合
 			if (!(nowBook.getImgSrc().equals(defaultPath))) {
 				File file = new File(nowBook.getImgSrc());
 				if (file.exists()) {
@@ -144,7 +147,7 @@ public class BookService {
 					throw new FileNotFoundException("指定されたファイルは存在しません：" + nowBook.getImgSrc());
 				}
 			}
-			// update user_status
+			// ユーザーの利用状況を更新
 			MultipartFile imgFile = editBookInput.getImgFile();
 			userStatusRepository.updateImageRegistrationStatus(userId, 0, fileSize + imgFile.getSize());
 			
@@ -158,7 +161,7 @@ public class BookService {
 			String fileName = editBookInput.getTitle() + "_" + UUID.randomUUID().toString() + ".jpg";
 			String fullPath =  fileDirectory + "/" + fileName;
 			book.setImgSrc(fullPath);
-			// sava image
+			// 画像の保存
 			Path filePath = Paths.get(fullPath);
 			try (OutputStream stream = Files.newOutputStream(filePath);) {
 				byte[] bytes = imgFile.getBytes();
@@ -167,7 +170,8 @@ public class BookService {
 				throw new RuntimeException("画像の保存に失敗しました", e);
 			}
 		} else {
-			if (editBookInput.getCheckBoxValue() != null && !(nowBook.getImgSrc().equals(defaultPath))) {
+			// デフォルト画像を選択して、既に画像を登録している場合
+			if (editBookInput.getImageOptions().equals("default") && !(nowBook.getImgSrc().equals(defaultPath))) {
 				File file = new File(nowBook.getImgSrc());
 				if (file.exists()) {
 					userStatusRepository.updateImageRegistrationStatus(userId, -1, -file.length());
@@ -191,8 +195,10 @@ public class BookService {
 		book.setAuthor(finishedEditBookInput.getAuthor());
 		book.setGenre(finishedEditBookInput.getGenre());
 		book.setComment(finishedEditBookInput.getComment());
+		// 画像が登録された場合
 		if (!(finishedEditBookInput.getImgFile().isEmpty())) {
 			long fileSize = 0;
+			// 既に登録されている場合
 			if (!(nowBook.getImgSrc().equals(defaultPath))) {
 				File file = new File(nowBook.getImgSrc());
 				if (file.exists()) {
@@ -202,7 +208,7 @@ public class BookService {
 					throw new FileNotFoundException("指定されたファイルは存在しません：" + nowBook.getImgSrc());
 				}
 			}
-			// update user_status
+			// ユーザーの利用状況を更新
 			MultipartFile imgFile = finishedEditBookInput.getImgFile();
 			userStatusRepository.updateImageRegistrationStatus(userId, 0, fileSize + imgFile.getSize());
 			
@@ -216,7 +222,7 @@ public class BookService {
 			String fileName = finishedEditBookInput.getTitle() + "_" + UUID.randomUUID().toString() + ".jpg";
 			String fullPath =  fileDirectory + "/" + fileName;
 			book.setImgSrc(fullPath);
-			// save image
+			// 画像の保存
 			Path filePath = Paths.get(fullPath);
 			try (OutputStream stream = Files.newOutputStream(filePath);) {
 				byte[] bytes = imgFile.getBytes();
@@ -225,7 +231,8 @@ public class BookService {
 				throw new RuntimeException("画像の保存に失敗しました", e);
 			}
 		} else {
-			if (finishedEditBookInput.getCheckBoxValue() != null && !(nowBook.getImgSrc().equals(defaultPath))) {
+			// デフォルト画像を選択して、既に画像を登録している場合
+			if (finishedEditBookInput.getImageOptions().equals("default") && !(nowBook.getImgSrc().equals(defaultPath))) {
 				File file = new File(nowBook.getImgSrc());
 				if (file.exists()) {
 					userStatusRepository.updateImageRegistrationStatus(userId, -1, -file.length());
@@ -243,6 +250,7 @@ public class BookService {
 	
 	public void delete(Integer bookId) throws FileNotFoundException {
 		Book book = bookRepository.findById(bookId).orElseThrow(() -> new EntityNotFoundException("本が見つかりませんでした"));
+		// 画像を登録している場合
 		if (!(book.getImgSrc().equals(defaultPath))) {
 			File file = new File(book.getImgSrc());
 			if (file.exists()) {

@@ -25,14 +25,15 @@ public class UserProfileAspect {
 	private final CustomUserDetailsService userService;
 	private final UserStatusService userStatusService;
 	
-	@Before("execution(* com.example.reading.controller.BookDisplayController.*(..)) && args(model,..)")
+	@Before("execution(* com.example.reading.controller.ReadingBookController.*(..)) && args(model,..) || "
+			+ "execution(* com.example.reading.controller.FinishedBookController.*(..)) && args(model,..)")
 	public void addUserProfileData(Model model) {
-		// get username
+		// ユーザー名の取得
 		SecurityContext context = SecurityContextHolder.getContext();
         Authentication authentication = context.getAuthentication();
         String username = authentication.getName();
         
-        // set values to userProfile
+        // UserProfileに値をセット
         UserProfile userProfile = new UserProfile();
         userProfile.setUsername(username);
 
@@ -41,7 +42,9 @@ public class UserProfileAspect {
         userProfile.setReadingNumber(userStatus.getReadingBookNumber());
         userProfile.setFinishedNumber(userStatus.getFinishedBookNumber());
         userProfile.setGenreTagOpenStatus(userStatus.getGnereTagOpenStatus());
+        
 		Optional<String> userEmail = userService.getUserEmailById(userId);
+		// ユーザーがemailを登録している場合
 		userEmail.ifPresent(email -> {
 			userProfile.setEmailExists(true);
 		});

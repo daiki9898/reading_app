@@ -30,7 +30,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 			response.sendRedirect("/admin/home");
 			userService.updateLastLoginDateByUsername(LocalDateTime.now(), authentication.getName());
 		} else {
-			response.sendRedirect("/user/home");
+			response.sendRedirect("/user/reading-books");
 			userService.updateLastLoginDateByUsername(LocalDateTime.now(), authentication.getName());
 		}
 	}

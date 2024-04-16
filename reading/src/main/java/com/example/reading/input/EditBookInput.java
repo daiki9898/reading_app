@@ -27,10 +27,10 @@ public class EditBookInput {
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private LocalDate startDate;
 	
+	private String imageOptions;
+	
 	@MaxFileSize
 	private MultipartFile imgFile;
-	
-	private String checkBoxValue;
 	
 	private String comment;
 }

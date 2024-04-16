@@ -10,26 +10,28 @@
 <body>
 	<div th:replace="~{share::header}"></div>
 	<div class="container" th:object="${editBookInput}">
+		<!-- 本の詳細エリア -->
 		<div class="accordion" id="accordionPanelsStayOpenExample">
-		  <div class="px-3 py-2 accordion-item bg-primary-subtle text-secondary">タイトル</div>
-		  <div class="p-3 accordion-item" th:text="*{title}"></div>
-		  <div class="px-3 py-2 accordion-item bg-primary-subtle text-secondary">著者</div>
-		  <div class="p-3 accordion-item" th:text="*{author}"></div>
-		  <div class="px-3 py-2 accordion-item bg-primary-subtle text-secondary">ジャンル</div>
-		  <div class="p-3 accordion-item" th:text="*{genre}"></div>
-		  <div class="px-3 py-2 accordion-item bg-primary-subtle text-secondary">開始日</div>
-		  <div class="p-3 accordion-item" th:text="*{#temporals.format(startDate, 'yyyy/MM/dd')}"></div>
-		  <div class="accordion-item">
-		    <div class="accordion-header">
-		      <button class="px-3 py-2 accordion-button bg-primary-subtle text-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseComment" aria-expanded="true" aria-controls="panelsStayOpen-collapseComment">メモ</button>
-		    </div>
-		    <div id="panelsStayOpen-collapseComment" class="accordion-collapse collapse show">
-		      <div class="accordion-body p-3" th:text="*{comment}"></div>
-		    </div>
-		  </div>
+			<div class="px-3 py-2 accordion-item bg-primary-subtle text-secondary">タイトル</div>
+			<div class="p-3 accordion-item" th:text="*{title}"></div>
+			<div class="px-3 py-2 accordion-item bg-primary-subtle text-secondary">著者</div>
+			<div class="p-3 accordion-item" th:text="*{author}"></div>
+			<div class="px-3 py-2 accordion-item bg-primary-subtle text-secondary">ジャンル</div>
+			<div class="p-3 accordion-item" th:text="*{genre}"></div>
+			<div class="px-3 py-2 accordion-item bg-primary-subtle text-secondary">開始日</div>
+			<div class="p-3 accordion-item" th:text="*{#temporals.format(startDate, 'yyyy/MM/dd')}"></div>
+			<div class="accordion-item">
+				<div class="accordion-header">
+					<button class="px-3 py-2 accordion-button bg-primary-subtle text-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseComment" aria-expanded="true" aria-controls="panelsStayOpen-collapseComment">メモ</button>
+				</div>
+				<div id="panelsStayOpen-collapseComment" class="accordion-collapse collapse show">
+					<div class="accordion-body p-3" th:text="*{comment}"></div>
+				</div>
+			</div>
 		</div>
+		<!--  -->
 		<div class="d-block mt-4">
-			<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editModal">編集</button>
+			<button type="button" id="edit-button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editModal">編集</button>
 			<!-- editModal -->
 			<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
 				<div class="modal-dialog modal-lg">
@@ -39,13 +41,17 @@
 							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 						</div>
 						<div class="modal-body">
-							<form id="edit-form" class="needs-validation" th:action="@{/user/update/execute-edit}" method="post" enctype="multipart/form-data">
+							<form id="edit-form" class="needs-validation" th:action="@{'/user/reading-books/' + *{bookId} + '/edit'}" method="post" enctype="multipart/form-data">
 								<input type="hidden" th:field="*{bookId}">
 								<div class="mb-4">
 									<div th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="text-danger">Title Error</div>
 									<label for="book-title" class="form-label">タイトル</label>
 									<span class="text-danger">必須</span>
 									<input type="text" id="book-title" class="form-control" th:field="*{title}" required>
+								</div>
+								<div class="mb-4">
+									<label for="author" class="form-label">著者</label>
+									<input type="text" id="author" class="form-control" th:field="*{author}">
 								</div>
 								<div class="mb-4">
 									<select class="form-select" aria-label="Book genre select" th:field="*{genre}">
@@ -66,10 +72,6 @@
 									</select>
 								</div>
 								<div class="mb-4">
-									<label for="author" class="form-label">著者</label>
-									<input type="text" id="author" class="form-control" th:field="*{author}">
-								</div>
-								<div class="mb-4">
 									<div th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}" class="text-danger">Date Error</div>
 									<label for="start-date" class="form-label">開始日</label>
 									<span class="text-danger">必須</span>
@@ -77,13 +79,35 @@
 								</div>
 								<div class="mb-4">
 									<div th:if="${#fields.hasErrors('imgFile')}" th:errors="*{imgFile}" class="text-danger">FileSize Error</div>
-									<label for="book-image" class="form-label">画像を変更する</label>
-									<div class="d-inline-block form-check">
-										<input class="form-check-input" type="checkbox" value="default" id="default-check" th:field="*{checkBoxValue}">
-										<label class="form-check-label" for="default-check">デフォルト画像にする</label>
+									<div class="form-check form-check-inline">
+										<input class="form-check-input" type="radio" name="imageOptions" id="change-radio" value="change" checked>
+										<label class="form-check-label" for="change-radio">画像を変更する</label>
 									</div>
-									<input type="file" id="book-image" class="form-control" accept="image/*" th:field="*{imgFile}">
-									<div id="fileHelp" class="form-text">サイズは1MBまでです、画像を登録すると読み込みが遅くなります</div>
+									<div class="form-check form-check-inline">
+										<input class="form-check-input" type="radio" name="imageOptions" id="default-radio" value="default" th:field="*{imageOptions}">
+										<label class="form-check-label" for="default-radio">デフォルト画像にする</label>
+									</div>
+									<div id="image-area" class="mt-2">
+										<input type="file" id="book-image" class="form-control" accept="image/*" th:field="*{imgFile}">
+										<div id="fileHelp" class="form-text">サイズは1MBまでです、画像を登録すると読み込みが遅くなります</div>
+									</div>
+									<script type="text/javascript">
+										const changeRadio = document.getElementById("change-radio");
+										const defaultRadio = document.getElementById("default-radio");
+										const imageArea = document.getElementById("image-area");
+										// radioが変更された際の関数
+										function toggleFileInput() {
+											if (changeRadio.checked) {
+												imageArea.style.display = "block";
+											} else {
+												imageArea.style.display = "none";
+											}
+										}
+										changeRadio.addEventListener("change", toggleFileInput);
+										defaultRadio.addEventListener("change", toggleFileInput);
+										// 初期設定
+										toggleFileInput();
+									</script>
 								</div>
 								<div class="input-group mb-4">
 									<span class="input-group-text">メモ</span>
@@ -103,7 +127,7 @@
 				</div>
 			</div>
 			<!-- end editModal -->
-			<a class="btn btn-secondary" href="/user/home" role="button">一覧に戻る</a>
+			<a class="btn btn-secondary" href="/user/reading-books" role="button">一覧に戻る</a>
 		</div>
 	</div>
 	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>

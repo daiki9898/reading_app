@@ -31,10 +31,10 @@ public class FinishedEditBookInput {
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private LocalDate endDate;
 	
+	private String imageOptions;
+	
 	@MaxFileSize
 	private MultipartFile imgFile;
-	
-	private String checkBoxValue;
 	
 	private String comment;
 }
