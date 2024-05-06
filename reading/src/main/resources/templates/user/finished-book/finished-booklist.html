@@ -151,6 +151,7 @@
 				<input class="form-control" type="search" placeholder="検索" aria-label="Search">
 				<span class="position-absolute top-50 translate-middle" style="right: 0%;"><i class="bi bi-search text-secondary"></i></span>
 			</div>
+			<!-- search modal -->
 			<div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
 				<div class="modal-dialog">
 					<div class="modal-content">
@@ -209,6 +210,7 @@
 					</div>
 				</div>
 			</div>
+			<!-- end search modal -->
 		</nav>
 		<!-- end navbar -->
 	</div>
@@ -319,85 +321,71 @@
 				<!-- genre tag -->
 				<div id="genre-tags" class="collapse show col-3 col-sm-2 col-md-2 col-lg-2 col-xl-2 p-0" aria-label="tag-area" style="position: absolute; right: 0%;">
 					<div class="d-flex flex-column border">
-						<!-- all -->
 						<button type="button" value="すべて" class="tag-button btn btn-primary p-1 m-2 bg-primary-subtle text-dark" style="--bs-btn-border-color: transparent;">
 							<div class="d-flex justify-content-start">
 								<i class="bi bi-tag"></i><span>すべて</span>
 							</div>
 						</button>
-						<!-- novel -->
 						<button type="button" value="小説" class="tag-button btn btn-primary p-1 m-2 bg-primary-subtle text-dark" style="--bs-btn-border-color: transparent;">
 							<div class="d-flex justify-content-start">
 								<i class="bi bi-tag"></i><span>小説</span>
 							</div>
 						</button>
-						<!-- nonfiction -->
 						<button type="button" value="ノンフィクション" class="tag-button btn btn-primary p-1 m-2 bg-primary-subtle text-dark" style="--bs-btn-border-color: transparent;">
 							<div class="d-flex justify-content-start">
 								<i class="bi bi-tag"></i><span>ノンフィクション</span>
 							</div>
 						</button>
-						<!-- mystery -->
 						<button type="button" value="ミステリー" class="tag-button btn btn-primary p-1 m-2 bg-primary-subtle text-dark" style="--bs-btn-border-color: transparent;">
 							<div class="d-flex justify-content-start">
 								<i class="bi bi-tag"></i><span>ミステリー</span>
 							</div>
 						</button>
-						<!-- suspense -->
 						<button type="button" value="サスペンス" class="tag-button btn btn-primary p-1 m-2 bg-primary-subtle text-dark" style="--bs-btn-border-color: transparent;">
 							<div class="d-flex justify-content-start">
 								<i class="bi bi-tag"></i><span>サスペンス</span>
 							</div>
 						</button>
-						<!-- sf -->
 						<button type="button" value="SF" class="tag-button btn btn-primary p-1 m-2 bg-primary-subtle text-dark" style="--bs-btn-border-color: transparent;">
 							<div class="d-flex justify-content-start">
 								<i class="bi bi-tag"></i><span>SF</span>
 							</div>
 						</button>
-						<!-- fantagy -->
 						<button type="button" value="ファンタジー" class="tag-button btn btn-primary p-1 m-2 bg-primary-subtle text-dark" style="--bs-btn-border-color: transparent;">
 							<div class="d-flex justify-content-start">
 								<i class="bi bi-tag"></i><span>ファンタジー</span>
 							</div>
 						</button>
-						<!-- romance -->
 						<button type="button" value="ロマンス" class="tag-button btn btn-primary p-1 m-2 bg-primary-subtle text-dark" style="--bs-btn-border-color: transparent;">
 							<div class="d-flex justify-content-start">
 								<i class="bi bi-tag"></i><span>ロマンス</span>
 							</div>
 						</button>
-						<!-- history -->
 						<button type="button" value="歴史" class="tag-button btn btn-primary p-1 m-2 bg-primary-subtle text-dark" style="--bs-btn-border-color: transparent;">
 							<div class="d-flex justify-content-start">
 								<i class="bi bi-tag"></i><span>歴史</span>
 							</div>
 						</button>
-						<!-- self development -->
 						<button type="button" value="自己啓発" class="tag-button btn btn-primary p-1 m-2 bg-primary-subtle text-dark" style="--bs-btn-border-color: transparent;">
 							<div class="d-flex justify-content-start">
 								<i class="bi bi-tag"></i><span>自己啓発</span>
 							</div>
 						</button>
-						<!-- money -->
 						<button type="button" value="お金" class="tag-button btn btn-primary p-1 m-2 bg-primary-subtle text-dark" style="--bs-btn-border-color: transparent;">
 							<div class="d-flex justify-content-start">
 								<i class="bi bi-tag"></i><span>お金</span>
 							</div>
 						</button>
-						<!-- study -->
 						<button type="button" value="学習" class="tag-button btn btn-primary p-1 m-2 bg-primary-subtle text-dark" style="--bs-btn-border-color: transparent;">
 							<div class="d-flex justify-content-start">
 								<i class="bi bi-tag"></i><span>学習</span>
 							</div>
 						</button>
-						<!-- comic -->
 						<button type="button" value="コミック" class="tag-button btn btn-primary p-1 m-2 bg-primary-subtle text-dark" style="--bs-btn-border-color: transparent;">
 							<div class="d-flex justify-content-start">
 								<i class="bi bi-tag"></i><span>コミック</span>
 							</div>
 						</button>
-						<!-- others -->
 						<button type="button" value="その他" class="tag-button btn btn-primary p-1 m-2 bg-primary-subtle text-dark" style="--bs-btn-border-color: transparent;">
 							<div class="d-flex justify-content-start">
 								<i class="bi bi-tag"></i><span>その他</span>

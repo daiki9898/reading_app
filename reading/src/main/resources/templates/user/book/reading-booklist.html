@@ -463,69 +463,91 @@
 			<a id="register-button" class="icon-link icon-link-hover mt-4" style="--bs-icon-link-transform: translate3d(0, -.125rem, 0);" data-bs-toggle="modal" data-bs-target="#registerModal">
 				<i class="fs-5 bi bi-plus-square"></i>
 			</a>
-			<!-- registerModal -->
-			<div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
-				<div class="modal-dialog modal-lg">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h1 class="modal-title fs-5" id="registerModalLabel">本を登録する</h1>
-							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			<!-- register modal -->
+			<div th:if="${#lists.size(bookList) <= 9}">
+				<div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+					<div class="modal-dialog modal-lg">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h1 class="modal-title fs-5" id="registerModalLabel">本を登録する</h1>
+								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+							</div>
+							<div class="modal-body">
+								<form id="register-form" class="needs-validation" th:action="@{/user/reading-books/register}" method="post" enctype="multipart/form-data" th:object="${bookInput}">
+									<div class="mb-4">
+										<div th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="text-danger">Title Error</div>
+										<label for="book-title" class="form-label">タイトル</label>
+										<span class="text-danger">必須</span>
+										<input type="text" id="book-title" class="form-control" th:field="*{title}" required>
+									</div>
+									<div class="mb-4">
+										<label for="author" class="form-label">著者</label>
+										<input type="text" id="author" class="form-control" th:field="*{author}">
+									</div>
+									<div class="mb-4">
+										<select class="form-select" aria-label="Book genre select" th:field="*{genre}">
+											<option selected value="">本のジャンルを選んでください</option>
+											<option value="小説">小説</option>
+											<option value="ノンフィクション">ノンフィクション</option>
+											<option value="ミステリー">ミステリー</option>
+											<option value="サスペンス">サスペンス</option>
+											<option value="SF">SF</option>
+											<option value="ファンタジー">ファンタジー</option>
+											<option value="ロマンス">ロマンス</option>
+											<option value="歴史">歴史</option>
+											<option value="自己啓発">自己啓発</option>
+											<option value="お金">お金</option>			
+											<option value="学習">学習</option>
+											<option value="コミック">コミック</option>
+											<option value="その他">その他</option>
+										</select>
+									</div>
+									<div class="mb-4">
+										<div th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}" class="text-danger">Date Error</div>
+										<label for="start-date" class="form-label">開始日</label>
+										<span class="text-danger">必須</p>
+										<input type="date" id="start-date" class="form-control" th:field="*{startDate}" required>
+									</div>
+									<div class="mb-4">
+										<label for="book-image" class="form-label">本の画像</label>
+										<input type="file" id="book-image" class="form-control" accept="image/*" th:field="*{imgFile}">
+										<div id="fileHelp" class="form-text">サイズは10MBまでです、画像を登録すると読み込みが遅くなります</div>
+									</div>
+									<div class="input-group">
+										<span class="input-group-text">メモ</span>
+										<textarea class="form-control" aria-label="comment" placeholder="ご自由にお書きください" th:field="*{comment}"></textarea>
+									</div>
+								</form>
+							</div>
+							<div class="modal-footer">
+						        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
+						        <button type="submit" form="register-form" class="btn btn-primary">登録</button>
+		      				</div>
 						</div>
-						<div class="modal-body">
-							<form id="register-form" class="needs-validation" th:action="@{/user/reading-books/register}" method="post" enctype="multipart/form-data" th:object="${bookInput}">
-								<div class="mb-4">
-									<div th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="text-danger">Title Error</div>
-									<label for="book-title" class="form-label">タイトル</label>
-									<span class="text-danger">必須</span>
-									<input type="text" id="book-title" class="form-control" th:field="*{title}" required>
-								</div>
-								<div class="mb-4">
-									<label for="author" class="form-label">著者</label>
-									<input type="text" id="author" class="form-control" th:field="*{author}">
-								</div>
-								<div class="mb-4">
-									<select class="form-select" aria-label="Book genre select" th:field="*{genre}">
-										<option selected value="">本のジャンルを選んでください</option>
-										<option value="小説">小説</option>
-										<option value="ノンフィクション">ノンフィクション</option>
-										<option value="ミステリー">ミステリー</option>
-										<option value="サスペンス">サスペンス</option>
-										<option value="SF">SF</option>
-										<option value="ファンタジー">ファンタジー</option>
-										<option value="ロマンス">ロマンス</option>
-										<option value="歴史">歴史</option>
-										<option value="自己啓発">自己啓発</option>
-										<option value="お金">お金</option>			
-										<option value="学習">学習</option>
-										<option value="コミック">コミック</option>
-										<option value="その他">その他</option>
-									</select>
-								</div>
-								<div class="mb-4">
-									<div th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}" class="text-danger">Date Error</div>
-									<label for="start-date" class="form-label">開始日</label>
-									<span class="text-danger">必須</p>
-									<input type="date" id="start-date" class="form-control" th:field="*{startDate}" required>
-								</div>
-								<div class="mb-4">
-									<label for="book-image" class="form-label">本の画像</label>
-									<input type="file" id="book-image" class="form-control" accept="image/*" th:field="*{imgFile}">
-									<div id="fileHelp" class="form-text">サイズは10MBまでです、画像を登録すると読み込みが遅くなります</div>
-								</div>
-								<div class="input-group">
-									<span class="input-group-text">メモ</span>
-									<textarea class="form-control" aria-label="comment" placeholder="ご自由にお書きください" th:field="*{comment}"></textarea>
-								</div>
-							</form>
-						</div>
-						<div class="modal-footer">
-					        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
-					        <button type="submit" form="register-form" class="btn btn-primary">登録</button>
-	      				</div>
 					</div>
 				</div>
 			</div>
-			<!-- end registerModal -->
+			<!-- 読書中の本が10冊を超えたとき -->
+			<div th:if="${#lists.size(bookList) == 10}">
+				<div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h1 class="modal-title fs-5" id="registerModalLabel">読書リストの上限到達</h1>
+								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+							</div>
+							<div class="modal-body">
+								<strong class="text-danger">登録可能数は10冊までです。</strong>
+								<div>本を読み終えるか、本をリストから削除してください。</div>
+							</div>
+							<div class="modal-footer">
+						        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
+		      				</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- end register modal -->
 		</div>
 	</div>
 	<!-- Bootstrap js -->

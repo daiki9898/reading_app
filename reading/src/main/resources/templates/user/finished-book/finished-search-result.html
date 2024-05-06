@@ -34,7 +34,7 @@
 		</div>
 		<!-- book area -->
 		<h2 id="null-message" th:if="${#lists.isEmpty(finishedBookList)}">該当の本は見つかりませんでした</h2>
-		<div id="count-message" class="h2 mb-3" th:if="${not #lists.isEmpty(finishedBookList)}">該当の本は<span th:text="${#lists.size(finishedBookList)}"></span>件ありました</div>
+		<div id="count-message" class="h2 mb-3" th:if="${totalBooks}">該当の本は<span th:text="${totalBooks}"></span>件ありました</div>
 		<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4">
             <div th:each="book,iterStat : ${finishedBookList}" th:object="${book}" class="col">
 				<div class="card h-100">
@@ -97,6 +97,24 @@
 				</ul>
 			</nav>
 		</div>
+		<script type="text/javascript">
+			const pageLinks = document.querySelectorAll(".page-link");
+			pageLinks.forEach((link) => {
+				link.addEventListener("click", function(event) {
+					event.preventDefault();
+					
+					const url = new URL(link.href);
+					const searchParams = url.searchParams;
+					const page = searchParams.get("page");
+					const order = searchParams.get("order");
+					const sort = searchParams.get("sort");
+					
+					const searchForm = document.getElementById("search-form");
+					searchForm.action = searchForm.action + "?page=" + page + "&order=" + order + "&sort=" + sort;
+					searchForm.submit();
+				});
+			});
+		</script>
 	</div>
 	<!-- Bootstrap js -->
 	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
@@ -113,6 +131,6 @@
 				searchForm.submit();
 			});
 		});
-</script>
+	</script>
 </body>
 </html>
