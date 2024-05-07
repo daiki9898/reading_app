@@ -30,9 +30,11 @@
 						<li><a class="dropdown-item" href="/user/finished-books">読了済み</a></li>
 					</ul>
 				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="/user/reading-books/register">登録</a>
-        		</li>
+				<div th:if="${readingNumber < readingMaxSize}">
+					<li class="nav-item">
+						<a class="nav-link" href="/user/reading-books/register">登録</a>
+	        		</li>
+				</div>
 			</ul>
 	    </div>
 	    <!-- profile icon -->
@@ -56,11 +58,26 @@
 			<div class="collapse" id="user-profile-collapse">
 				<div class="card card-body text-center p-0" th:object="${userProfile}" style="--bs-card-border-color: #6c757d">
 					<ul class="list-group list-group-flush">
-						<li class="list-group-item"><div class="fw-bold">ユーザー名</div><div class="fs-5" th:text="*{username}"></div></li>
-						<li class="list-group-item"><div class="fw-bold">読書中の本</div><div><span class="fs-5" th:text="*{readingNumber}"></span><span>冊</span></div></li>
-						<li class="list-group-item"><div class="fw-bold">今まで読んだ本</div><div><span class="fs-5" th:text="*{finishedNumber}"></span><span>冊</span></div></li>
-						<li class="list-group-item"><a class="link-body-emphasis link-underline link-underline-opacity-0" href="/user/settings"><i class="bi bi-gear"></i>設定</a></li>
-						<li class="list-group-item"><form th:action="@{/logout}" method="post"><button type="submit" class="btn btn-secondary">ログアウト</button></form></li>
+						<li class="list-group-item">
+							<div class="fw-bold">ユーザー名</div>
+							<div class="fs-5" th:text="*{username}"></div>
+						</li>
+						<li class="list-group-item">
+							<div class="fw-bold">読書中の本</div>
+							<div><span class="fs-5" th:text="*{readingNumber}"></span>/<span th:text="${readingMaxSize}"></span>冊</div>
+						</li>
+						<li class="list-group-item">
+							<div class="fw-bold">今まで読んだ本</div>
+							<div><span class="fs-5" th:text="*{finishedNumber}"></span>/<span th:text="${finishedMaxSize}"></span>冊</div>
+						</li>
+						<li class="list-group-item">
+							<a class="link-body-emphasis link-underline link-underline-opacity-0" href="/user/settings"><i class="bi bi-gear"></i>設定</a>
+						</li>
+						<li class="list-group-item">
+							<form th:action="@{/logout}" method="post">
+								<button type="submit" class="btn btn-secondary">ログアウト</button>
+							</form>
+						</li>
 					</ul>
 				</div>
 			</div>

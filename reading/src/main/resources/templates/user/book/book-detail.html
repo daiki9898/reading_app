@@ -25,7 +25,7 @@
 					<button class="px-3 py-2 accordion-button bg-primary-subtle text-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseComment" aria-expanded="true" aria-controls="panelsStayOpen-collapseComment">メモ</button>
 				</div>
 				<div id="panelsStayOpen-collapseComment" class="accordion-collapse collapse show">
-					<div class="accordion-body p-3" th:text="*{comment}"></div>
+					<div class="accordion-body p-3" th:text="*{comment}" style="white-space: pre-wrap;"></div>
 				</div>
 			</div>
 		</div>
@@ -113,9 +113,11 @@
 									<span class="input-group-text">メモ</span>
 									<textarea class="form-control" aria-label="comment" placeholder="ご自由にお書きください" th:field="*{comment}"></textarea>
 								</div>
-								<div class="form-check form-switch">
-									<input class="form-check-input" type="checkbox" id="bookSwitch" name="isFinished" value="yes">
-									<label class="form-check-label" for="bookSwitch">読了</label>
+								<div th:if="${userProfile.finishedNumber < finishedMaxSize}">
+									<div class="form-check form-switch">
+										<input class="form-check-input" type="checkbox" id="bookSwitch" name="isFinished" value="yes">
+										<label class="form-check-label" for="bookSwitch">読了</label>
+									</div>
 								</div>
 							</form>
 						</div>

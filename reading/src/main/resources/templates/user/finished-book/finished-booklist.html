@@ -49,9 +49,11 @@
 								<li><a class="dropdown-item" href="/user/finished-books">読了済み</a></li>
 							</ul>
 						</li>
-						<li class="nav-item">
-							<a class="nav-link" href="/user/reading-books/register">登録</a>
-	        			</li>
+						<div th:if="${readingNumber < readingMaxSize}">
+							<li class="nav-item">
+								<a class="nav-link" href="/user/reading-books/register">登録</a>
+		        			</li>
+						</div>
 					</ul>
 				</div>
 				<!-- profile icon -->
@@ -132,14 +134,20 @@
 								</script>
 								<li class="list-group-item">
 									<div class="fw-bold">読書中の本</div>
-									<div><span class="fs-5" th:text="*{readingNumber}"></span><span>冊</span></div>
+									<div><span class="fs-5" th:text="*{readingNumber}"></span>/<span th:text="${readingMaxSize}"></span>冊</div>
 								</li>
 								<li class="list-group-item">
 									<div class="fw-bold">今まで読んだ本</div>
-									<div><span class="fs-5" th:text="*{finishedNumber}"></span><span>冊</span></div>
+									<div><span class="fs-5" th:text="*{finishedNumber}"></span>/<span th:text="${finishedMaxSize}"></span>冊</div>
 								</li>
-								<li class="list-group-item"><a class="link-body-emphasis link-underline link-underline-opacity-0" href="/user/settings"><i class="bi bi-gear"></i>設定</a></li>
-								<li class="list-group-item"><form th:action="@{/logout}" method="post"><button type="submit" class="btn btn-secondary">ログアウト</button></form></li>
+								<li class="list-group-item">
+									<a class="link-body-emphasis link-underline link-underline-opacity-0" href="/user/settings"><i class="bi bi-gear"></i>設定</a>
+								</li>
+								<li class="list-group-item">
+									<form th:action="@{/logout}" method="post">
+										<button type="submit" class="btn btn-secondary">ログアウト</button>
+									</form>
+								</li>
 							</ul>
 						</div>
 					</div>
@@ -216,6 +224,14 @@
 	</div>
 	<div class="container mb-3">
 		<div th:fragment="book-area">
+			<!-- リストが存在する場合 -->
+			<div th:if="${not #lists.isEmpty(finishedBookList) and #strings.isEmpty(genre)}">
+				<h2 class="mb-3">読了数：<span th:text="${userProfile.finishedNumber}"></span>/<span th:text="${finishedMaxSize}"></span>冊</h2>
+			</div>
+			<!-- リストが存在する場合かつ、ジャンル指定がある場合 -->
+			<div th:if="${not #lists.isEmpty(finishedBookList) and not #strings.isEmpty(genre)}">
+				<h2 class="mb-3">読了数：<span th:text="${#lists.size(finishedBookList)}"></span>/<span th:text="${userProfile.finishedNumber}"></span>冊</h2>
+			</div>
 			<!-- sort area -->
 			<div class="row mb-3">
 				<div class="col-auto">

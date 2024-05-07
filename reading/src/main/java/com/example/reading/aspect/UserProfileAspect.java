@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,6 +25,12 @@ public class UserProfileAspect {
 	
 	private final CustomUserDetailsService userService;
 	private final UserStatusService userStatusService;
+	
+	@Value("${reading.max.size}")
+	private int readingMaxSize; // 読書リストの上限冊数
+	
+	@Value("${finished.max.size}")
+	private int finishedMaxSize; // 読了済みリストの上限冊数
 	
 	@Before("execution(* com.example.reading.controller.ReadingBookController.*(..)) && args(model,..) || "
 			+ "execution(* com.example.reading.controller.FinishedBookController.*(..)) && args(model,..)")
@@ -49,5 +56,8 @@ public class UserProfileAspect {
 			userProfile.setEmailExists(true);
 		});
         model.addAttribute("userProfile", userProfile);
+        model.addAttribute("readingMaxSize", readingMaxSize);
+        model.addAttribute("finishedMaxSize", finishedMaxSize);
 	}
+	
 }

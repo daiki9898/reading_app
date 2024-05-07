@@ -158,9 +158,12 @@ public class BookService {
 	        } catch (IOException e) {
 	            throw new RuntimeException("ディレクトリの作成に失敗しました", e);
 	        }
-			String fileName = editBookInput.getTitle() + "_" + UUID.randomUUID().toString() + ".jpg";
+			// パスの作成
+			String sanitizedTitle = editBookInput.getTitle().replace("/", "-");
+			String fileName = sanitizedTitle + "_" + UUID.randomUUID().toString() + ".jpg";
 			String fullPath =  fileDirectory + "/" + fileName;
 			book.setImgSrc(fullPath);
+			
 			// 画像の保存
 			Path filePath = Paths.get(fullPath);
 			try (OutputStream stream = Files.newOutputStream(filePath);) {
@@ -219,9 +222,12 @@ public class BookService {
 	        } catch (IOException e) {
 	            throw new RuntimeException("ディレクトリの作成に失敗しました", e);
 	        }
-			String fileName = finishedEditBookInput.getTitle() + "_" + UUID.randomUUID().toString() + ".jpg";
+			// パスの作成
+			String sanitizedTitle = finishedEditBookInput.getTitle().replace("/", "-");
+			String fileName = sanitizedTitle + "_" + UUID.randomUUID().toString() + ".jpg";
 			String fullPath =  fileDirectory + "/" + fileName;
 			book.setImgSrc(fullPath);
+			
 			// 画像の保存
 			Path filePath = Paths.get(fullPath);
 			try (OutputStream stream = Files.newOutputStream(filePath);) {

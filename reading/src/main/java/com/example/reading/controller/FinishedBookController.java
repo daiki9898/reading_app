@@ -205,7 +205,7 @@ public class FinishedBookController {
 	    int toIndex = Math.min(fromIndex + pageSize, totalBooks);  // ページ終了インデックス（リストのサイズを超えないように）
 	    List<BookResult> pageContent = finishedBookList.subList(fromIndex, toIndex); // fromIndexから始まり、toIndexの前まで抜き取る
 	    
-	    if (totalBooks != 0 && page == 1) {
+	    if (totalBooks > 0 && page == 1) {
 	    	model.addAttribute("totalBooks", totalBooks);
 	    }
 		model.addAttribute("finishedBookList", pageContent);
