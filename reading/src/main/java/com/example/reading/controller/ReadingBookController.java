@@ -76,7 +76,10 @@ public class ReadingBookController {
 //	表示系
 	
 	@GetMapping
-	public String displayList(Model model, @RequestParam(name="order", defaultValue="asc") String order, @RequestParam(name="sort", defaultValue="date") String sort, @RequestParam(name="search-error", required=false) String searchError) throws IOException {
+	public String displayList(Model model,
+			@RequestParam(name="order", defaultValue="asc") String order,
+			@RequestParam(name="sort", defaultValue="date") String sort,
+			@RequestParam(name="search-error", required=false) String searchError) throws IOException {
 		List<BookResult> bookList = readingListService.findAll(getUserId());
 		// sort
 		if (bookList != null) {
@@ -109,7 +112,10 @@ public class ReadingBookController {
 	
 	// ジャンル別
 	@GetMapping("/{genre:\\D+}")
-	public String displayListByGenre(Model model, @PathVariable(name= "genre", required = true) String genre, @RequestParam(name="order", defaultValue="asc") String order, @RequestParam(name="sort", defaultValue="date") String sort) throws IOException {
+	public String displayListByGenre(Model model,
+			@PathVariable(name= "genre", required = true) String genre,
+			@RequestParam(name="order", defaultValue="asc") String order,
+			@RequestParam(name="sort", defaultValue="date") String sort) throws IOException {
 		List<BookResult> bookList = readingListService.searchBookByGenre(getUserId(), genre);
 		// sort
 		if (bookList != null) {
@@ -190,7 +196,6 @@ public class ReadingBookController {
 		BookInput bookInput = new BookInput();
 		bookInput.setStartDate(LocalDate.now());
 		model.addAttribute("bookInput", bookInput);
-		addUserProfileData(model);
 		return "user/book/registerform";
 	}
 	

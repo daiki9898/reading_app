@@ -64,6 +64,9 @@ public class SecurityConfig {
 				.requestMatchers("/admin/**").fullyAuthenticated()
 				.anyRequest().authenticated()
 			)
+//			.requiresChannel(channel -> channel // httpsへ強制リダイレクト
+//					.anyRequest().requiresSecure()
+//			)
 			.formLogin((formLogin) -> formLogin
 				.loginPage("/login")
 				.loginProcessingUrl("/execute-login")
