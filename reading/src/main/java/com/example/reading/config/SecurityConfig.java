@@ -37,7 +37,7 @@ public class SecurityConfig {
 	public UrlBasedCorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
 		configuration.setAllowCredentials(true);
-		configuration.addAllowedOrigin("http://localhost:8080");
+		configuration.addAllowedOrigin("https://reading-app.onrender.com");
 		configuration.addAllowedHeader("*");
 		configuration.addAllowedMethod("*");
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

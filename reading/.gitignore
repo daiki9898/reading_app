@@ -32,9 +32,6 @@ build/
 ### VS Code ###
 .vscode/
 
-### application properties ###
-src/main/resources/application.properties
-
 ### user image directory ###
 src/main/resources/static/img/*
 !src/main/resources/static/img/default.jpg
