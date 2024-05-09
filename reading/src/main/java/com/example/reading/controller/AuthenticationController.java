@@ -52,17 +52,20 @@ public class AuthenticationController {
 		return "user/authentication/login";
 	}
 	
+	// アカウント削除後の画面
 	@GetMapping("/delete-account/success")
 	public String displayDeleteSuccessPage() {
 		return "user/authentication/account-deleted";
 	}
 	
+	// リンク送信用のフォーム
 	@GetMapping("/password-reset-link")
 	public String displayPasswordResetLink(Model model) {
 		model.addAttribute("emailInput", new EmailInput());
 		return "user/authentication/password-reset/password-reset-link";
 	}
 	
+	// 送信後画面
 	@GetMapping("/password-reset-link/sent")
 	public String displaySentPasswordResetLinkPage(@ModelAttribute("emailInput") EmailInput emailInput) {
 		if (emailInput.getUserEmail() == null) {
@@ -71,6 +74,7 @@ public class AuthenticationController {
 		return "user/authentication/password-reset/password-reset-link";
 	}
 	
+	// リセット認証画面
 	@GetMapping("/password-reset/verify")
 	public String displayPasswordResetVerifyForm(Model model, @RequestParam String token) {
 		if (passwordResetTokenService.isValidOnetimeToken(token)) {
@@ -85,6 +89,7 @@ public class AuthenticationController {
 		return "user/authentication/password-reset/password-reset-verifyform";
 	}
 	
+	// 新規パスワード入力画面
 	@GetMapping("/password-reset")
 	public String displayPasswordResetForm(Model model, @RequestParam String token) {
 		if (!passwordResetTokenService.isValidOnetimeToken(token)) {
@@ -96,6 +101,49 @@ public class AuthenticationController {
 		return "user/authentication/password-reset/new-password-registrationform";
 	}
 	
+	@PostMapping("/register-user")
+	public String registerUser(@Validated UserRegistrationInput userInput, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
+		if(bindingResult.hasErrors()) {
+			return "user/authentication/user-registerform";
+		}
+		if(userService.isUsernameExists(userInput.getUsername())) {
+			model.addAttribute("errorMassage", "そのユーザー名は既に登録されています");
+			return "user/authentication/user-registerform";
+		}
+		userService.insert(userInput);
+		userStatusService.insert(userService.getUserIdbyUsername(userInput.getUsername()));
+		redirectAttributes.addFlashAttribute("successMessage", "successMessage");
+		return "redirect:/login";
+	}
+	
+	// リセットリンクの送信
+	@PostMapping("/send-password-reset-link")
+	public String sendPasswordResetLink(@Validated EmailInput emailInput, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+		if (bindingResult.hasErrors()) {
+			return "user/authentication/password-reset/password-reset-link";
+		}
+		Integer userId = userService.getUserIdByUserEmail(emailInput.getUserEmail());
+		emailSenderService.sendEmailWithResetLink(emailInput.getUserEmail(), emailInput.getSecretWord(), userId);
+		redirectAttributes.addFlashAttribute("emailInput", emailInput);
+		redirectAttributes.addFlashAttribute("successMessage", "successMessage");
+		return "redirect:/password-reset-link/sent";
+	}
+	
+	// パスワードリセットページの認証
+	@PostMapping("/password-reset/verify")
+	public String verifyPasswordResetForm(PasswordResetVerificationInput verifyInput, RedirectAttributes redirectAttributes) {
+		String token = verifyInput.getToken();
+		if (!passwordResetTokenService.isValidOnetimeToken(token)) {
+			return "redirect:/password-reset/verify?token=" + token;
+		}
+		if(!passwordResetTokenService.isPasswordResetAllowed(userService.getUserIdbyUsername(verifyInput.getUsername()), verifyInput.getSecretWord())) {
+			redirectAttributes.addFlashAttribute("errorMessage", "errorMessage");
+			return "redirect:/password-reset/verify?token=" + token;
+		}
+		return "redirect:/password-reset?token=" + token;
+	}
+	
+	// パスワードリセット処理
 	@PostMapping("/password-reset")
 	public String resetPassword(@Validated PasswordInput passwordInput, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
 		String token = passwordInput.getToken();
@@ -111,34 +159,9 @@ public class AuthenticationController {
 		return "redirect:/login";
 	}
 	
-	
-	@PostMapping("/password-reset/verify")
-	public String verifyPasswordResetForm(PasswordResetVerificationInput verifyInput, RedirectAttributes redirectAttributes) {
-		String token = verifyInput.getToken();
-		if (!passwordResetTokenService.isValidOnetimeToken(token)) {
-			return "redirect:/password-reset/verify?token=" + token;
-		}
-		if(!passwordResetTokenService.isPasswordResetAllowed(userService.getUserIdbyUsername(verifyInput.getUsername()), verifyInput.getSecretWord())) {
-			redirectAttributes.addFlashAttribute("errorMessage", "errorMessage");
-			return "redirect:/password-reset/verify?token=" + token;
-		}
-		return "redirect:/password-reset?token=" + token;
-	}
-	
-	@PostMapping("/send-password-reset-link")
-	public String sendPasswordResetLink(@Validated EmailInput emailInput, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
-		if (bindingResult.hasErrors()) {
-			return "user/authentication/password-reset/password-reset-link";
-		}
-		Integer userId = userService.getUserIdByUserEmail(emailInput.getUserEmail());
-		emailSenderService.sendEmailWithResetLink(emailInput.getUserEmail(), emailInput.getSecretWord(), userId);
-		redirectAttributes.addFlashAttribute("emailInput", emailInput);
-		redirectAttributes.addFlashAttribute("successMessage", "successMessage");
-		return "redirect:/password-reset-link/sent";
-	}
-	
 	SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();
 	
+	// ユーザー名変更後のログアウト処理
 	@PostMapping("/username/logout")
 	public String usernameLogout(Authentication authentication, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
 		this.logoutHandler.logout(request, response, authentication);
@@ -156,6 +179,7 @@ public class AuthenticationController {
 		return "redirect:/login";
 	}
 	
+	// アカウント削除後のログアウト処理
 	@PostMapping("/delete-account/logout")
 	public String deleteAccountLogout(Authentication authentication, HttpServletRequest request, HttpServletResponse response) {
 		this.logoutHandler.logout(request, response, authentication);
@@ -172,19 +196,4 @@ public class AuthenticationController {
 		return "redirect:/delete-account/success";
 	}
 	
-	
-	@PostMapping("/register-user")
-	public String registerUser(@Validated UserRegistrationInput userInput, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
-		if(bindingResult.hasErrors()) {
-			return "user/authentication/user-registerform";
-		}
-		if(userService.isUsernameExists(userInput.getUsername())) {
-			model.addAttribute("errorMassage", "そのユーザー名は既に登録されています");
-			return "user/authentication/user-registerform";
-		}
-		userService.insert(userInput);
-		userStatusService.insert(userService.getUserIdbyUsername(userInput.getUsername()));
-		redirectAttributes.addFlashAttribute("successMessage", "successMessage");
-		return "redirect:/login";
-	}
 }
