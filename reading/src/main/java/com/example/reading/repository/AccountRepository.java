@@ -16,7 +16,7 @@ import com.example.reading.model.Account;
 public interface AccountRepository extends JpaRepository<Account, Integer>{
 	
 	@Modifying
-	@Query(value = "INSERT INTO user_login_info (user_name, password) VALUES (?1, ?2)", nativeQuery = true)
+	@Query(value = "INSERT INTO user_login_info (username, password) VALUES (?1, ?2)", nativeQuery = true)
 	void customSave(String userName, String password);
 	
 	@Query(value = "SELECT * FROM user_login_info WHERE role = 'USER'", nativeQuery = true)
@@ -28,7 +28,7 @@ public interface AccountRepository extends JpaRepository<Account, Integer>{
 	Optional<Account> findByUserEmail(String userEmail);
 	
 	@Modifying
-	@Query(value = "UPDATE user_login_info SET last_login_date = ?1 WHERE user_name = ?2", nativeQuery = true)
+	@Query(value = "UPDATE user_login_info SET last_login_date = ?1 WHERE username = ?2", nativeQuery = true)
 	void updateLastLoginDateByUsername(LocalDateTime localDateTime, String usernanme);
 	
 	@Modifying

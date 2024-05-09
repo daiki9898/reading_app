@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>詳細画面</title>
+	<title>設定画面</title>
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 </head>
@@ -14,7 +14,7 @@
 		<div class="border border-3 border-secondary-subtle rounded p-3 mb-4">
 			<div class="fw-bold">ユーザー名</div>
 			<p class="fs-5" th:text="${userProfile.username}"></p>
-			<button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#updateUsernameModal">変更</button>
+			<button id="username-button" class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#updateUsernameModal">変更</button>
 			<!-- update username modal -->
 			<div class="modal fade" id="updateUsernameModal" tabindex="-1" aria-labelledby="updateUsernameLabel" aria-hidden="true">
 				<div class="modal-dialog modal-dialog-centered">
@@ -31,7 +31,7 @@
 								</strong>
 							</div>
 							<hr>
-							<form class="needs-validation" id="username-form" th:action="@{'/user/settings/update-username/' + ${optionInput.userId}}" method="post">
+							<form class="needs-validation" id="username-form" th:action="@{/user/settings/update-username}" method="post">
 								<div th:object="${usernameInput}">
 									<div th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="text-danger">Username Error</div>
 									<label for="username-input" class="form-label">新しいユーザー名</label>
@@ -65,7 +65,7 @@
 								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 							</div>
 							<div class="modal-body">
-								<form class="needs-validation" id="email-form" th:action="@{'/user/settings/update-email/' + ${optionInput.userId}}" method="post">
+								<form class="needs-validation" id="email-form" th:action="@{/user/settings/update-email}" method="post">
 									<div th:object="${userEmailInput}">
 										<div th:if="${#fields.hasErrors('emailAddress')}" th:errors="*{emailAddress}" class="text-danger">Email Error</div>
 										<label for="email-input" class="form-label">Email address</label>
@@ -96,7 +96,7 @@
 									<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 								</div>
 								<div class="modal-body">
-									<form class="needs-validation" id="email-form" th:action="@{'/user/settings/update-email/' + ${optionInput.userId}}" method="post">
+									<form class="needs-validation" id="email-form" th:action="@{/user/settings/update-email}" method="post">
 										<div th:object="${userEmailInput}">
 											<div th:if="${#fields.hasErrors('emailAddress')}" th:errors="*{emailAddress}" class="text-danger">Email Error</div>
 											<label for="email-input" class="form-label">Email address</label>
@@ -129,7 +129,7 @@
 								</div>
 								<div class="modal-footer">
 									<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
-									<form th:action="@{'/user/settings/delete-email/' + ${optionInput.userId}}" method="post">
+									<form th:action="@{/user/settings/delete-email}" method="post">
 										<button type="submit" class="btn btn-danger">削除</button>
 									</form>
 								</div>
@@ -143,7 +143,7 @@
 		</div>
 		<div th:object="${optionInput}">
 			<!-- genretag area -->
-			<form class="mb-5" th:action="@{'/user/settings/update-status/' + *{userId}}" method="post">
+			<form class="mb-5" th:action="@{/user/settings/update-status}" method="post">
 				<input type="hidden" th:field="*{userId}">
 				<div class="form-check mb-5">
 					<input id="genretag-radio" class="form-check-input" type="checkbox" value="open" th:field="*{genreTagStatus}">
@@ -174,7 +174,7 @@
 							</div>
 							<div class="modal-footer">
 								<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
-								<form th:action="@{'/user/settings/delete-account/' + *{userId}}" method="post">
+								<form th:action="@{/user/settings/delete-account}" method="post">
 									<button type="submit" class="btn btn-danger">削除</button>
 								</form>
 							</div>
@@ -185,7 +185,14 @@
 			</p>
 		</div>
 	</div>
+	<!-- Bootstrap js -->
 	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js" integrity="sha384-fbbOQedDUMZZ5KreZpsbe1LCZPVmfTnH7ois6mU1QK+m14rQ1l2bGBq41eYeM/fS" crossorigin="anonymous"></script>
+	<!-- ユーザー名が既に使われている時 -->
+	<script type="text/javascript">
+		// モーダルをデフォルトで開く
+        const usernameButton = document.getElementById("username-button");
+        usernameButton.click();
+	</script>
 </body>
 </html>
