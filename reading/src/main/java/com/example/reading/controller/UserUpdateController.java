@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -16,7 +17,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -31,6 +31,7 @@ import com.example.reading.model.ReadingListRegistration;
 import com.example.reading.model.UserStatus;
 import com.example.reading.service.BookService;
 import com.example.reading.service.CustomUserDetailsService;
+import com.example.reading.service.EmailSenderService;
 import com.example.reading.service.FinishedListService;
 import com.example.reading.service.ReadingListService;
 import com.example.reading.service.UserStatusService;
@@ -48,13 +49,29 @@ public class UserUpdateController {
 	private final ReadingListService readingListService;
 	private final FinishedListService finishedListService;
 	private final BookService bookService;
+	private final EmailSenderService emailSenderService;
+	
+	@Value("${base.url}")
+	private String url; // URL
+	
+	// userIdを返すメソッド
+	public Integer getUserId() {
+		SecurityContext context = SecurityContextHolder.getContext();
+		Authentication authentication = context.getAuthentication();
+        Integer userId = userService.getUserIdbyUsername(authentication.getName());
+        return userId;
+	}
+	
+	// usernameを返すメソッド
+	public String getUsername() {
+		SecurityContext context = SecurityContextHolder.getContext();
+        Authentication authentication = context.getAuthentication();
+        return authentication.getName();
+	}
 	
 	// 共通処理
 	public Map<String, Object> addUserProfileData(Model model) {
-		// get username
-		SecurityContext context = SecurityContextHolder.getContext();
-        Authentication authentication = context.getAuthentication();
-        String username = authentication.getName();
+        String username = getUsername();
         
         // 値のセット
         UserProfile userProfile = new UserProfile();
@@ -75,10 +92,12 @@ public class UserUpdateController {
 	
 	@GetMapping
 	public String diplayProfile(Model model, @ModelAttribute UsernameInput usernameInput, @ModelAttribute UserEmailInput userEmailInput) {
+		
 		UserOptionInput optionInput = new UserOptionInput();
 		Map<String, Object> userInfo = addUserProfileData(model);
 		Integer userId = (Integer) userInfo.get("userId");
 		optionInput.setUserId(userId);
+		
 		boolean genreTagOpenStatus = (boolean) userInfo.get("genreTagOpenStatus");
 		if (genreTagOpenStatus == true) {
 			optionInput.setGenreTagStatus("open");
@@ -89,16 +108,18 @@ public class UserUpdateController {
 		userEmail.ifPresent(email -> {
 			model.addAttribute("email", email);
 		});
-		return "user/authentication/user-profile";
+		return "user/authentication/user-profile/user-profile";
 	}
 	
-	@PostMapping("/update-username/{id}")
-	public ModelAndView updateUsernmae(@PathVariable String id, @Validated UsernameInput usernameInput, BindingResult bindingResult, Model model, HttpServletRequest request) throws NumberFormatException {
-		Integer userId = Integer.valueOf(id);
+	@PostMapping("/update-username")
+	public ModelAndView updateUsernmae(@Validated UsernameInput usernameInput, BindingResult bindingResult, Model model, HttpServletRequest request) {
+		Integer userId = getUserId();
 		if (bindingResult.hasErrors()) {
+			
 			UserOptionInput optionInput = new UserOptionInput();
 			Map<String, Object> userInfo = addUserProfileData(model);
 			optionInput.setUserId(userId);
+			
 			boolean genreTagOpenStatus = (boolean) userInfo.get("genreTagOpenStatus");
 			if (genreTagOpenStatus == true) {
 				optionInput.setGenreTagStatus("open");
@@ -111,7 +132,7 @@ public class UserUpdateController {
 				model.addAttribute("email", email);
 			});
 			
-			return new ModelAndView("user/authentication/user-profile");
+			return new ModelAndView("user/authentication/user-profile/username-error");
 		}
 		userService.updateUsernameById(usernameInput.getUsername(), userId);
 		request.setAttribute(
@@ -120,13 +141,15 @@ public class UserUpdateController {
 		return new ModelAndView("redirect:/username/logout");
 	}
 	
-	@PostMapping("/update-email/{id}")
-	public String updateEmail(@PathVariable String id, @Validated UserEmailInput emailInput, BindingResult bindingResult, Model model) throws NumberFormatException {
-		Integer userId = Integer.valueOf(id);
+	@PostMapping("/update-email")
+	public String updateEmail(@Validated UserEmailInput emailInput, BindingResult bindingResult, Model model) {
+		Integer userId = getUserId();
 		if (bindingResult.hasErrors()) {
+			
 			UserOptionInput optionInput = new UserOptionInput();
 			Map<String, Object> userInfo = addUserProfileData(model);
 			optionInput.setUserId(userId);
+			
 			boolean genreTagOpenStatus = (boolean) userInfo.get("genreTagOpenStatus");
 			if (genreTagOpenStatus == true) {
 				optionInput.setGenreTagStatus("open");
@@ -139,15 +162,27 @@ public class UserUpdateController {
 				model.addAttribute("email", email);
 			});
 			
-			return "user/authentication/user-profile";
+			return "user/authentication/user-profile/email-error";
 		}
-		userService.updateEmailById(emailInput.getEmailAddress(), userId);
+		String email = emailInput.getEmailAddress();
+		userService.updateEmailById(email, userId);
+		String subject = "メールアドレス連携完了";
+		String body = "この度はメールアドレスのアカウント連携を行っていただき、ありがとうございます。<br>"
+				+ "お客様のメールアドレスとの連携が正常に完了いたしました。<br>"
+				+ "<br>"
+				+ "もしパスワードを忘れてしまった場合は、本メールアドレスにリセットリンクを送信いたします。<br>"
+				+ "リセットリンクの送信はログイン画面、または下記リンクから行ってください。<br>"
+				+ "<a href='"+ url + "/password-reset-link'>" + url + "/password-reset-link</a><br>"
+				+ "<br>"
+				+ "何かご不明な点やお困りのことがございましたら、下記の連絡先までお気軽にお問い合わせください。<br>"
+				+ "今後ともどうぞよろしくお願いいたします。<br>";
+		emailSenderService.sendEmail(email, subject, getUsername(), body);
 		return "redirect:/user/settings";
 	}
 	
-	@PostMapping("/update-status/{id}")
-	public String editProfile(@PathVariable String id, @Validated UserOptionInput optionInput, BindingResult bindingResult, Model model) {
-		Integer userId = Integer.valueOf(id);
+	@PostMapping("/update-status")
+	public String editProfile(@Validated UserOptionInput optionInput, BindingResult bindingResult, Model model) {
+		Integer userId = getUserId();
 		if (bindingResult.hasErrors()) {
 			addUserProfileData(model);
 			Optional<String> userEmail = userService.getUserEmailById(userId);
@@ -157,7 +192,7 @@ public class UserUpdateController {
 			model.addAttribute("usernameInput", new UsernameInput());
 			model.addAttribute("userEmailInput", new UserEmailInput());
 			
-			return "user/authentication/user-profile";
+			return "user/authentication/user-profile/user-profile";
 		}
 		if (optionInput.getGenreTagStatus() == null) {
 			userStatusService.updateGenreTagStatus(false, userId);
@@ -167,16 +202,16 @@ public class UserUpdateController {
 		return "redirect:/user/settings";
 	}
 	
-	@PostMapping("/delete-email/{id}")
-	public String deleteEmail(@PathVariable String id) throws NumberFormatException {
-		Integer userId = Integer.valueOf(id);
+	@PostMapping("/delete-email")
+	public String deleteEmail() {
+		Integer userId = getUserId();
 		userService.updateEmailById(null, userId);
 		return "redirect:/user/settings";
 	}
 	
-	@PostMapping("/delete-account/{id}")
-	public ModelAndView deleteAccount(@PathVariable String id, HttpServletRequest request) throws NumberFormatException {
-		Integer userId = Integer.valueOf(id);
+	@PostMapping("/delete-account")
+	public ModelAndView deleteAccount(HttpServletRequest request) {
+		Integer userId = getUserId();
 		// 関連情報の削除
 		UserStatus userStatus = userStatusService.deleteById(userId);
 		if (userStatus.getReadingBookNumber() != 0) {

@@ -30,11 +30,16 @@ public class EmailSenderService {
 	@Value("${password.reset.link}")
 	private String resetLink;
 	
+	private String signature = "<br>--------------------------------------------------------------------------------<br>"
+			+ "MyLibrary運営局<br>"
+			+ "Email：mylibraryorganization@gmail.com<br>"
+			+ "--------------------------------------------------------------------------------";
+	
 	// メールアドレス登録時
-	public void sendEmail(String toEmail, String subject, String body, String username) {
+	public void sendEmail(String toEmail, String subject, String username, String body) {
 		MimeMessage message = mailSender.createMimeMessage();
 		try {
-			MimeMessageHelper helper = new MimeMessageHelper(message, true);
+			MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 			helper.setFrom(hostEmail);
 			helper.setTo(toEmail);
 			helper.setSubject(subject);
@@ -44,6 +49,7 @@ public class EmailSenderService {
 			String html = "<html><body>";
 			html += username + "様<br><br>";
 			html += body;
+			html += signature;
 			html += "<body><html>";
 			helper.setText(text, html);
 			
@@ -57,10 +63,11 @@ public class EmailSenderService {
 	public void sendEmailWithResetLink(String toEmail, String secretWord, Integer userId) {
 		MimeMessage message = mailSender.createMimeMessage();
 		try {
-			MimeMessageHelper helper = new MimeMessageHelper(message, true);
+			MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 			helper.setFrom(hostEmail);
 			helper.setTo(toEmail);
 			helper.setSubject("パスワードリセットリンクの送信");
+			
 			// ワンタイムトークンの生成＆保存
 			String token = UUID.randomUUID().toString();
 			PasswordResetToken passwordResetToken = new PasswordResetToken();
@@ -70,6 +77,7 @@ public class EmailSenderService {
 			passwordResetToken.setSecretWord(secretWord);
 			passwordResetTokenRepository.save(passwordResetToken);
 			String link = resetLink + token;
+			
 			// html対応していない場合
 			String text = "次のURLを直接ブラウザに入力してください、パスワードリセット画面に遷移します。" + link;
 			// 対応している場合
@@ -77,6 +85,7 @@ public class EmailSenderService {
 			html += "以下のURLをクリックしてください、パスワードリセット画面に遷移します。<br>";
 			html += "<a href='" + link + "'>" + link + "</a><br>";
 			html += "※有効時間は3分です";
+			html += signature;
 			html += "<body><html>";
 			helper.setText(text, html);
 			
