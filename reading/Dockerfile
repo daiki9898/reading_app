@@ -1,10 +1,7 @@
 # Build stage
 FROM maven:3-eclipse-temurin-21 AS build
+COPY /reading/src/main/resources/static/img/default.jpg /tmp/default.jpg
 COPY ./ /home/app
-
-# Copy the image to a temporary directory in the build stage
-COPY /home/app/reading/src/main/resources/static/img/default.jpg /tmp/default.jpg
-
 RUN cd /home/app && mvn clean package -DskipTests
 
 # Package stage
