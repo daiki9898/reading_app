@@ -1,6 +1,6 @@
 # Build stage
 FROM maven:3-eclipse-temurin-21 AS build
-COPY /reading/src/main/resources/static/img/default.jpg /tmp/default.jpg
+COPY /src/main/resources/static/img/default.jpg /tmp/default.jpg
 COPY ./ /home/app
 RUN cd /home/app && mvn clean package -DskipTests
 
