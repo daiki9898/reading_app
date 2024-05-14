@@ -1,6 +1,6 @@
 # Build stage
 FROM maven:3-eclipse-temurin-21 AS build
-RUN find /path/to/search -name "default.jpg" -printf
+RUN find ./ "default.jpg" -exec echo {} \
 COPY ./ /home/app
 RUN cd /home/app && mvn clean package -DskipTests
 
