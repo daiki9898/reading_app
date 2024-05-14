@@ -2,7 +2,7 @@
 FROM maven:3-eclipse-temurin-21 AS build
 RUN FILE_PATH=$(find / -name "default.jpg") && \
     echo "File path is $FILE_PATH" && \
-    cp $FILE_PATH /tmp/default.jpg
+    cp $FILE_PATH /tmp/
 COPY ./ /home/app
 COPY /tmp/default.jpg /home/app/static/
 RUN cd /home/app && mvn clean package -DskipTests
