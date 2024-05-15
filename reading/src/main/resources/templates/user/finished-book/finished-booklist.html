@@ -295,7 +295,7 @@
 				<div id="book-area" class="col-9 col-sm-10">
 					<div th:if="${#lists.isEmpty(finishedBookList)}">
 						<h2><span th:text="${userProfile.username}"></span>さんが読み終えた本はまだありません</h2>
-						<a class="btn btn-primary" href="/user/home" role="button">読書リストへ</a>
+						<a class="btn btn-primary" href="/user/reading-books" role="button">読書リストへ</a>
 					</div>
 					<div id="card-area" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 g-4">
 			            <div th:each="book,iterStat : ${finishedBookList}" th:object="${book}" class="col">
