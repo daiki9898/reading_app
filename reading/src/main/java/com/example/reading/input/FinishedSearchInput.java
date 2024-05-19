@@ -13,6 +13,8 @@ public class FinishedSearchInput {
 	
 	private String title;
 	
+	private String content;
+	
 	private String genre;
 	
 	private String author;

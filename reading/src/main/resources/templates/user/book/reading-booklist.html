@@ -171,7 +171,7 @@
 								<div id="inputHelp" class="text-danger text-center">最低1項目の入力が必要です</div>
 		         				<div class="mb-3">
 						            <label for="book-title" class="col-form-label">タイトル</label>
-						            <input type="text" class="form-control" id="book-title" th:field="${searchInput.title}">
+						            <input type="text" class="form-control" id="book-title" th:field="${searchInput.title}" placeholder="単語検索可">
 					         	</div>
 					         	<div class="mb-3">
 						            <select class="form-select" aria-label="Book genre select" th:field="${searchInput.genre}">
@@ -193,7 +193,7 @@
 		         				</div>
 		         				<div class="mb-3">
 						            <label for="book-author" class="col-form-label">著者</label>
-						            <input type="text" class="form-control" id="book-author" th:field="${searchInput.author}">
+						            <input type="text" class="form-control" id="book-author" th:field="${searchInput.author}" placeholder="単語検索可">
 		         				</div>
 		         				<div class="mb-3">
 						            <label for="rough-start-date" class="col-form-label">開始日</label>

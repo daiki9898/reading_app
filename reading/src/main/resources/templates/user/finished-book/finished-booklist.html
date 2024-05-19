@@ -170,10 +170,14 @@
 						<div class="modal-body">
 							<form id="search-form" th:action="@{/user/finished-books/search}" method="post">
 								<div id="inputHelp" class="text-danger text-center">最低1項目の入力が必要です</div>
-		         				<div class="mb-3">
+		         				<div>
 						            <label for="book-title" class="col-form-label">タイトル</label>
-						            <input type="text" class="form-control" id="book-title" th:field="${finishedSearchInput.title}">
+						            <input type="text" class="form-control" id="book-title" th:field="${finishedSearchInput.title}" placeholder="単語検索可">
 					         	</div>
+					         	<div class="mb-3">
+									 <label for="book-content" class="col-form-label">内容</label>
+									 <input type="text" class="form-control" id="book-content" th:field="${finishedSearchInput.content}" placeholder="メモの内容を単語検索可">
+								 </div>
 					         	<div class="mb-3">
 						            <select class="form-select" aria-label="Book genre select" th:field="${finishedSearchInput.genre}">
 										<option selected value="">本のジャンルを選んでください</option>
@@ -194,7 +198,7 @@
 		         				</div>
 		         				<div class="mb-3">
 						            <label for="book-author" class="col-form-label">著者</label>
-						            <input type="text" class="form-control" id="book-author" th:field="${finishedSearchInput.author}">
+						            <input type="text" class="form-control" id="book-author" th:field="${finishedSearchInput.author}" placeholder="単語検索可">
 		         				</div>
 		         				<div class="mb-3">
 						            <label for="duration" class="col-form-label">期間</label>
@@ -208,8 +212,8 @@
 						            <label for="specific-end-date" class="col-form-label">詳細日程</label>
 						            <input type="date" class="form-control" id="specific-end-date" th:field="${finishedSearchInput.specificEndDate}">
 		         				</div>
-		         				 <span id="dateHelp" class="form-text">読み終えた日付で検索します</span>
-		         			</form>
+		         				<span id="dateHelp" class="form-text">読み終えた日付で検索します</span>
+							</form>
 	      				</div>
 	     				<div class="modal-footer">
 					        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>

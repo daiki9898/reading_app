@@ -174,13 +174,14 @@ public class FinishedBookController {
 			@RequestParam(name="sort", defaultValue="date") String sort) throws IOException {
 		// 入力値の取得
 		String title = finishedSearchInput.getTitle();
+		String content = finishedSearchInput.getContent();
 		String genre = finishedSearchInput.getGenre();
 		String author = finishedSearchInput.getAuthor();
 		YearMonth roughStartDate = finishedSearchInput.getRoughStartDate();
 		YearMonth roughEndDate = finishedSearchInput.getRoughEndDate();
 		LocalDate specificEndDate = finishedSearchInput.getSpecificEndDate();
 		// 何も入力されなかった場合
-		if (title.isBlank() && genre.isEmpty() && author.isBlank() && roughStartDate == null && roughEndDate == null && specificEndDate == null) {
+		if (title.isBlank() && content.isBlank() && genre.isEmpty() && author.isBlank() && roughStartDate == null && roughEndDate == null && specificEndDate == null) {
 			return "redirect:/user/finished-books?search-error";
 		}
 		
