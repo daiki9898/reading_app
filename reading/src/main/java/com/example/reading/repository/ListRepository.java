@@ -15,6 +15,8 @@ import org.springframework.stereotype.Repository;
 import com.example.reading.dto.BookInfoDto;
 import com.example.reading.dto.FinishedListDto;
 import com.example.reading.dto.ReadingListDto;
+import com.example.reading.input.FinishedSearchInput;
+import com.example.reading.input.SearchInput;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,13 +33,22 @@ public class ListRepository {
 	}
 	
 	// 検索
-	public List<ReadingListDto> searchBook(Integer userId, String title, String genre, String author, YearMonth roughStartDate, LocalDate specificStartDate) {
+	public List<ReadingListDto> searchBook(Integer userId, SearchInput searchInput) {
+		// ベースのSQL
 		String query = "SELECT r.user_id, r.book_id, r.start_date, b.title, b.img_src FROM reading_list_registration r INNER JOIN bookinfo b ON r.book_id = b.book_id WHERE r.user_id = ?";
 		StringBuilder sb = new StringBuilder();
 		sb.append(query);
 		
+		// パラメーターを入れるリスト
 		List<Object> params = new ArrayList<>();
 		params.add(userId);
+		
+		// パラメーター
+		String title = searchInput.getTitle();
+		String genre = searchInput.getGenre();
+		String author = searchInput.getAuthor();
+		YearMonth roughStartDate = searchInput.getRoughStartDate();
+		LocalDate specificStartDate = searchInput.getSpecificStartDate();
 		
 	    if (!title.isBlank()) {
 	        sb.append(" AND b.title LIKE ?");
@@ -91,17 +102,32 @@ public class ListRepository {
 	}
 	
 	// 検索
-	public List<FinishedListDto> searchFinishedBook(Integer userId, String title, String genre, String author, YearMonth roughStartDate, YearMonth roughEndDate, LocalDate specificEndDate) {
+	public List<FinishedListDto> searchFinishedBook(Integer userId, FinishedSearchInput finishedSearchInput) {
+		// ベースのSQL
 		String query = "SELECT f.user_id, f.book_id, f.start_date, f.end_date, b.title, b.img_src FROM finished_list_registration f INNER JOIN bookinfo b ON f.book_id = b.book_id WHERE f.user_id = ?";
 		StringBuilder sb = new StringBuilder();
 		sb.append(query);
 		
+		// パラメーターを入れるリスト
 		List<Object> params = new ArrayList<>();
 		params.add(userId);
+		
+		// パラメーター
+		String title = finishedSearchInput.getTitle();
+		String content = finishedSearchInput.getContent();
+		String genre = finishedSearchInput.getGenre();
+		String author = finishedSearchInput.getAuthor();
+		YearMonth roughStartDate = finishedSearchInput.getRoughStartDate();
+		YearMonth roughEndDate = finishedSearchInput.getRoughEndDate();
+		LocalDate specificEndDate = finishedSearchInput.getSpecificEndDate();
 		
 	    if (!title.isBlank()) {
 	        sb.append(" AND b.title LIKE ?");
 	        params.add("%" + title + "%");
+	    }
+	    if(!content.isBlank()) {
+	    	sb.append(" AND b.comment LIKE ?");
+	    	params.add("%" + content + "%");
 	    }
 	    if (!genre.isBlank()) {
 	        sb.append(" AND b.genre = ?");

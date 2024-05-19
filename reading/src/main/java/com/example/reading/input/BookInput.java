@@ -16,16 +16,16 @@ public class BookInput {
 	@Pattern(regexp = "^[^\\s　]+.*", message = "空白文字は無効です")
 	private String title;
 	
-	private String author;
-	
 	private String genre;
+	
+	private String author;
 	
 	@NotNull(message="日付を選択してください")
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private LocalDate startDate;
 	
-	private String comment;
-	
 	@MaxFileSize
 	private MultipartFile imgFile;
+	
+	private String comment;
 }

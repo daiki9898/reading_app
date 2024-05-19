@@ -53,7 +53,7 @@ public class ReadingListService {
 	}
 	
 	public List<BookResult> searchBook(Integer userId, SearchInput searchInput) throws IOException {
-		List<ReadingListDto> readingBookList =  listRepository.searchBook(userId, searchInput.getTitle(), searchInput.getGenre(), searchInput.getAuthor(), searchInput.getRoughStartDate(), searchInput.getSpecificStartDate());
+		List<ReadingListDto> readingBookList =  listRepository.searchBook(userId, searchInput);
 		List<BookResult> resultList = new ArrayList<BookResult>();
 		for (ReadingListDto book : readingBookList) {
 			BookResult result = new BookResult();

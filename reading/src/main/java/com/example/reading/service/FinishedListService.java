@@ -61,7 +61,7 @@ public class FinishedListService {
 	}
 	
 	public List<BookResult> searchBook(Integer userId, FinishedSearchInput finishedSearchInput) throws IOException {
-		List<FinishedListDto> finishedBookList =  listRepository.searchFinishedBook(userId, finishedSearchInput.getTitle(), finishedSearchInput.getGenre(), finishedSearchInput.getAuthor(), finishedSearchInput.getRoughStartDate(), finishedSearchInput.getRoughEndDate(), finishedSearchInput.getSpecificEndDate());
+		List<FinishedListDto> finishedBookList =  listRepository.searchFinishedBook(userId, finishedSearchInput);
 		List<BookResult> resultList = new ArrayList<BookResult>();
 		for (FinishedListDto book : finishedBookList) {
 			BookResult result = new BookResult();
